@@ -1,0 +1,34 @@
+# Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
+node_modules
+
+#Symbols
+
+# Mono specific files
+# ---------------------
+# user preferences for mono
+*.userprefs
+
+# Parser Information Database file - just an optimization by mono
+*.pidb
+
+# Visual Studio specific and Resharper
+_resharper*
+*.resharper
+*.suo
+*.user
+.*.swp
+*.scc 
+*.vssscc 
+*.vspscc 
+*.o 
+*.lo 
+*.la 
+*.al 
+*.libs 
+*.so 
+*.so.[0-9]*
+
+#Mac specific
+.DS_Store
+*.DS_Store
+

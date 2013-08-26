@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link type='text/css' rel='stylesheet' href='/stylesheets/bootstrap.css' />
+    <link type='text/css' rel='stylesheet' href='/stylesheets/bootstrap-theme.css' />
+    
+    <link type='text/css' rel='stylesheet' href='/stylesheets/master-style.css' />
+    <link type='text/css' rel='stylesheet' href='/stylesheets/style.css' />
+
+
+    <script type='text/javascript' src='/javascripts/infra/jquery.js'></script>
+    <script type='text/javascript' src='/javascripts/infra/bootstrap.js'></script>
+    <script type='text/javascript' src='/javascripts/login.js'></script>
+  </head>
+  <body>
+    <div class='header'>
+      <nav class='navbar navbar-default' role='navigation'>
+      <!-- Brand and toggle get grouped for better mobile display -->
+        <div class='navbar-header'>
+          <button type='button' class='navbar-toggle' data-toggle='collapse' data-target='.navbar-ex1-collapse'>
+            <span class='sr-only'>Toggle navigation</span>
+            <span class='icon-bar'></span>
+            <span class='icon-bar'></span>
+            <span class='icon-bar'></span>
+          </button>
+          <a class='navbar-brand' href='#'><%= title %></a>
+        </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class='collapse navbar-collapse navbar-ex1-collapse'>
+          <ul id='ulLogin' class='nav navbar-nav navbar-right hide'>
+            <li><a href='#'>Login</a></li>
+            <li><a href='#'>Signup</a></li>
+            <li class='dropdown'>
+              <a href='#' class='dropdown-toggle' data-toggle='dropdown'>Amar Palsapure<b class='caret'></b></a>
+              <ul class='dropdown-menu'>
+                <li><a href='#'>Action</a></li>
+                <li><a href='#'>Another action</a></li>
+                <li><a href='#'>Something else here</a></li>
+                <li><a href='#'>Separated link</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </nav>
+    </div>
+    <div class='container'>
+      <div class='sub-header'>
+        <div class='row'>
+          <div class='mainSection col-xs-12 col-sm-12 col-lg-9'>
+            <div class='row'>
+              <div class='col-xs-12 col-sm-10 col-lg-10'>
+                <div class='searchbox'>
+                  <input type="text" placeholder="Search questions and answers..." class="noborder noboxshadow" />
+                </div>
+              </div>
+              <div class="pull-left mtl imglnk width2per"><img src="/images/img_searchlnk.png" alt=" " longdesc="#." style="width:100%;"></div>
+              <div class='col-xs-12 col-sm-2 col-lg-2'>
+                <button href="#." class="btn btn-flat btn-green">Search</button>
+              </div>        
+            </div> 
+          </div>
+          <div class='sideSection col-xs-12 col-sm-12 col-lg-3'>
+            <div class='row'>
+              <div class='col-xs-12 col-sm-12 col-lg-12'>
+                <div class="nospace btnquestion">
+                  <button href="#." class="btn btn-flat btn-skyblue pull-right btnquestion">
+                    <span class="mrm icon_ask">&nbsp;</span>Ask a Question
+                  </button>
+                </div>
+                <div class="clear"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class='content'>
+        <%-body -%>
+      </div>
+    </div>
+    <div class='footer'>
+      <nav class='footer navbar-default' role='navigation'>
+        <!-- Brand and toggle get grouped for better mobile display -->
+      <div class='navbar-header'>
+        <button type='button' class='navbar-toggle' data-toggle='collapse' data-target='.navbar-ex1-collapse'>
+          <span class='sr-only'>Toggle navigation</span>
+          <span class='icon-bar'></span>
+          <span class='icon-bar'></span>
+          <span class='icon-bar'></span>
+        </button>
+      </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class='collapse navbar-collapse navbar-ex1-collapse'>
+          <ul id='ulLogin' class='nav navbar-nav navbar-left'>
+            <li><a href='#'>about</a></li>
+            <li><a href='#'>contact us</a></li>
+            <li><a href='#'>feedback</a></li>
+            <li><a href='#'>help</a></li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </nav>
+    </div>
+  </body>
+</html>
