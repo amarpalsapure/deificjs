@@ -1,4 +1,4 @@
-deificjs
+Deific - QnA site using Node-Ember-Appacitive
 ========
 
-QnA website using Node.js/Ember.js/Appacitive.com.
+A simple ready to use QnA site using Node/Ember/Appacitive stack.
