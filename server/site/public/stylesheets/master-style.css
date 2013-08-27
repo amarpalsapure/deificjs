@@ -1,15 +1,14 @@
-.no-padding {
-	padding: 0px;
-}
-.no-padding-left {
-	padding-left: 0px;
-}
-.ptxs {
-	padding-top: 3px;
-}
-.pts {
-	padding-top: 5px;
-}
+.font120 {font-size: 1.2em;}
+.font110 {font-size: 1.1em;}
+.font105 {font-size: 1.05em;}
+.font95 { font-size: 0.95em;}
+.font9 { font-size: 0.9em;}
+.font85 { font-size: 0.85em;}
+.font8 { font-size: 0.8em;}
+.no-padding {padding: 0px;}
+.no-padding-left {padding-left: 0px;}
+.ptxs {	padding-top: 3px;}
+.pts {	padding-top: 5px;}
 .ptm {
 	padding-top: 10px;
 }
@@ -37,14 +36,10 @@
 .pbli {
 	padding-bottom: 10px !important;
 }
-.pbl {
-	padding-bottom: 15px;
-}
-.pbxl {
-	padding-bottom: 20px;
-}
+.pbxl {	padding-bottom: 25px;}
 .clear {clear:both;}
 .ptn, .pvn, .pan { padding-top: 0px; }
+.ptni, .pvni, .pani { padding-top: 0px !important; }
 .pts, .pvs, .pas { padding-top: 5px; }
 .ptm, .pvm, .pam { padding-top: 10px; }
 .ptl, .pvl, .pal { padding-top: 20px; }
@@ -53,6 +48,7 @@
 .prm, .phm, .pam { padding-right: 10px; }
 .prl, .phl, .pal { padding-right: 20px; }
 .pbn, .pvn, .pan { padding-bottom: 0px; }
+.pbni, .pvni, .pani { padding-bottom: 0px !important; }
 .pbs, .pvs, .pas { padding-bottom: 5px; }
 .pbm, .pvm, .pam { padding-bottom: 10px; }
 .pbl, .pvl, .pal { padding-bottom: 20px; }
@@ -79,23 +75,20 @@
 .mll, .mhl, .mal { margin-left: 20px; }
 .noborder { border:0px !important; }
 .noboxshadow { box-shadow:none !important; }
-
-.border-bottom {
-	border-bottom: solid 1px #eee;
+.border-bottom {border-bottom: solid 1px #ddd;}
+.border-bottom-dark {border-bottom: solid 1px #aaa;}
+.border-bottom-dashed{border-bottom: dashed 1px #ccc;}
+.arrow-left {
+	width: 0; 
+	height: 0; 
+	border-top: 10px solid transparent;
+	border-bottom: 10px solid transparent; 
+	border-right:10px solid black; 
 }
-.border-bottom-dark {
-	border-bottom: solid 1px #aaa;	
-}
-
-.vote-up, .vote-down {
-	display: block;
-	width: 32px;
-	height: 32px;
-	opacity: 0.5;
-}
-.vote-up {
-	background: transparent url('../images/vote-up.png') no-repeat;
-}
-.vote-down {
-	background: transparent url('../images/vote-down.png') no-repeat;
+.arrow-up {
+	width: 0; 
+	height: 0; 
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+	border-bottom: 10px solid black;
 }
