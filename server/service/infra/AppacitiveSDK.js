@@ -4,7 +4,7 @@
  * MIT license  : http://www.apache.org/licenses/LICENSE-2.0.html
  * Project      : https://github.com/chiragsanghvi/JavascriptSDK
  * Contact      : support@appacitive.com | csanghvi@appacitive.com
- * Build time 	: Thu Aug 22 15:46:28 IST 2013
+ * Build time 	: Sun Aug 25 12:00:33 IST 2013
  */
 
 // Add ECMA262-5 method binding if not supported natively
@@ -812,6 +812,12 @@ var global = {};
             },
             getCheckinUrl: function(userId, lat, lng) {
                 return String.format("{0}/{1}/chekin?lat={2}&lng={3}", this.userServiceUrl, userId, lat, lng);
+            },
+            getResetPasswordUrl: function(token) {
+                return String.format("{0}/resetpassword?token={1}", this.userServiceUrl, token);
+            },
+            getValidateResetPasswordUrl: function(token) {
+                return String.format("{0}/validateresetpasswordtoken?token={1}", this.userServiceUrl, token);
             }
         };
         this.device = {
@@ -958,8 +964,12 @@ var global = {};
 
             fileServiceUrl: 'file',
 
-            getUploadUrl: function (contentType) {
-                return String.format('{0}/uploadurl?contenttype={1}&expires=20', this.fileServiceUrl, escape(contentType));
+            getUploadUrl: function (contentType, fileName) {
+                if (fileName && fileName.length > 0) {
+                    return String.format('{0}/uploadurl?contenttype={1}&expires=20&filename={2}', this.fileServiceUrl, escape(contentType), escape(fileName));
+                } else {
+                    return String.format('{0}/uploadurl?contenttype={1}&expires=20', this.fileServiceUrl, escape(contentType));
+                }
             },
 
             getUpdateUrl: function (fileId, contentType) {
@@ -2304,8 +2314,11 @@ Depends on  NOTHING
 		this.articleId = options.articleId;
 		this.relation = options.relation;
 		this.schema = schema;
+		this.prev = options.prev;
 
 		this.label = '';
+		var that = this;
+
 		if (options.label && typeof options.label == 'string' && options.label.length > 0) this.label = '&label=' + options.label;
 
 		this.toRequest = function() {
@@ -2322,6 +2335,30 @@ Depends on  NOTHING
 
 
 		var parseNodes = function(nodes, endpointA) {
+			var articles = [];
+			nodes.forEach(function(o) {
+				var edge = o.__edge;
+				delete o.__edge;
+
+				edge.__endpointa = endpointA;
+				edge.__endpointb = {
+					articleid: o.__id,
+					label: edge.__label,
+					type: o.__schematype
+				};
+				delete edge.label;
+
+				var connection = new global.Appacitive.Connection(edge, true);
+				var tmpArticle = new global.Appacitive.Article(o, true);
+				tmpArticle.connection = connection;
+				
+				articles.push(tmpArticle);
+			});
+			return articles;
+		};
+
+
+		var	prevParseNodes = function(nodes, endpointA) {
 			var connections = [];
 			nodes.forEach(function(o) {
 				var edge = o.__edge;
@@ -2347,8 +2384,10 @@ Depends on  NOTHING
 			request.onSuccess = function(d) {
 			if (d && d.status && d.status.code == '200') {
 				   if (typeof onSuccess == 'function') {
-				   		onSuccess(parseNodes( d.nodes ? d.nodes : [], { articleid : options.articleId, type: schema, label: d.parent }), d.paginginfo);
-				   }
+					   var cb = parseNodes;
+					   if (that.prev) cb = prevParseNodes;
+				   	   onSuccess(cb( d.nodes ? d.nodes : [], { articleid : options.articleId, type: schema, label: d.parent }), d.paginginfo);   
+				   	}
 				} else {
 					d = d || {};
 					if (typeof onError == 'function') onError(d.status || { message : 'Server error', code: 400 });
@@ -2626,7 +2665,7 @@ Depends on  NOTHING
 							label: parentLabel
 						};
 						edge.__endpointb = {
-							articleid: tmpArticle.id,
+							articleid: tmpArticle.id(),
 							label: edge.__label
 						};
 						delete edge.__label;
@@ -3218,6 +3257,11 @@ Depends on  NOTHING
 				if (data && (data.article || data.connection || data.user || data.device)) {
 					_snapshot = data.article || data.connection || data.user || data.device;
 					_copy(_snapshot, article);
+					if (data.connection) {
+						if (!that.endpoints && (!that.endpointA || !that.endpointB)) {
+							that.setupConnection(article.__endpointa, article.__endpointb);
+						}
+					}
 					if (that.___collection && ( that.___collection.collectionType == 'article')) that.___collection.addToCollection(that);
 					if (typeof onSuccess == 'function') onSuccess(that);
 				} else {
@@ -3384,6 +3428,8 @@ Depends on  NOTHING
 		else _options = options;
 
 		this.collectionType = 'article';
+
+		this.type = function() { return _schema; };
 
 		if (!_options || !_options.schema) throw new Error('Must provide schema while initializing ArticleCollection.');
 		
@@ -3606,14 +3652,12 @@ Depends on  NOTHING
 		return this.getAllArticles();
 	};
 
-
-
 	global.Appacitive.ArticleCollection.prototype.articles = function() {
 		return this.getAll();
 	};
 
 	global.Appacitive.ArticleCollection.prototype.length = function() {
-		return this.articles.length;
+		return this.articles().length;
 	};
 
 })(global);(function(global) {
@@ -3641,6 +3685,8 @@ Depends on  NOTHING
 		var connectionMap = {};
 
 		this.collectionType = 'connection';
+
+		this.type = function() { return _relation; };
 
 		var that = this;
 
@@ -3822,7 +3868,7 @@ Depends on  NOTHING
 
 		this.fetch = function(onSuccess, onError) {
 			_connections.length = 0;
-
+			_query.prev = true;
 			_query.fetch(function(connections, pagingInfo) {
 				parseConnections(connections, pagingInfo, onSuccess);
 			}, function(err) {
@@ -3869,17 +3915,28 @@ Depends on  NOTHING
 		};
 
 		this.map = function() { return _connections.map.apply(this, arguments); };
-
-		this.forEach = function(delegate, context) {
-			context = context || this;
-			return _connections.forEach(delegate, context);
-		};
-
+		this.forEach = function() { return _connections.forEach.apply(this, arguments); };
 		this.filter = function() { return _connections.filter.apply(this, arguments); };
 
 	};
 
 	global.Appacitive.ConnectionCollection = _ConnectionCollection;
+
+	global.Appacitive.ConnectionCollection.prototype.toString = function() {
+		return JSON.stringify(this.getAllConnections());
+	};
+
+	global.Appacitive.ConnectionCollection.prototype.toJSON = function() {
+		return this.getAllConnections();
+	};
+
+	global.Appacitive.ConnectionCollection.prototype.connections = function() {
+		return this.getAll();
+	};
+
+	global.Appacitive.ConnectionCollection.prototype.length = function() {
+		return this.connections().length;
+	};
 
 })(global);(function (global) {
 
@@ -3931,6 +3988,7 @@ Depends on  NOTHING
 		this.type = 'article';
 		this.connectionCollections = [];
 		this.getArticle = this.getObject;
+		this.children = {};
 
 		if (this.get('__schematype').toLowerCase() == 'user') this.getFacebookProfile = _getFacebookProfile;
 
@@ -3964,13 +4022,35 @@ Depends on  NOTHING
 
 		options.schema = this.entityType;
 		options.articleId = this.get('__id');
-		
+		options.prev = true;
+
 		var collection = new global.Appacitive.ConnectionCollection({ relation: options.relation });
 		collection.query(new global.Appacitive.Queries.ConnectedArticlesQuery(options));
 		collection.connectedArticle = this;
 		this.connectionCollections.push(collection);
 
 		return collection;
+	};
+
+	global.Appacitive.Article.prototype.fetchConnectedArticles = function(options, onSuccess, onError) {
+		options = options || {};
+		if (typeof options == 'string') {
+			options = { relation: options };
+		}
+
+		options.schema = this.entityType;
+		options.articleId = this.get('__id');
+
+		var that = this;
+
+		var query = new global.Appacitive.Queries.ConnectedArticlesQuery(options);
+
+		query.fetch(function(articles, pagingInfo) {
+			that.children[options.relation] = articles;
+			if (onSuccess && typeof onSuccess == 'function') onSuccess(that, pagingInfo);
+		}, onError);		
+
+		return query; 
 	};
 
 	global.Appacitive.Article.multiDelete = function(options, onSuccess, onError) {
@@ -4048,8 +4128,7 @@ Depends on  NOTHING
 		if (options.schema.toLowerCase() == 'user') obj = new global.Appacitive.User({ __id: options.id });
 		else obj = new global.Appacitive.Article({ __schematype: options.schema, __id: options.id });
 		
-		obj.fields = options.fields;
-		obj.fetch(onSuccess, onError);
+		obj.fetch(onSuccess, onError, options.fields);
 
 		return obj;
 	};
@@ -4195,6 +4274,15 @@ Depends on  NOTHING
 
 		// 2
 		this.set('__endpointb', _parseEndpoint(endpointB, 'B', this));
+
+		// 3
+		this.endpoints = function() {
+			var endpoints = [];
+			endpoints.push(this.endpointA);
+			endpoints.push(this.endpointB);
+			return endpoints;
+		};
+
 	};
 
 	global.Appacitive.Connection.get = function(options, onSuccess, onError) {
@@ -4779,6 +4867,45 @@ Depends on  NOTHING
 			_authenticatedUser = null;
 			global.Appacitive.Session.removeUserAuthHeader(callback, avoidApiCall);
 		};
+
+		this.resetPassword = function(token, newPassword, onSuccess, onError) {
+			onSuccess = onSuccess || function(){};
+			onError = onError || function(){};
+
+			if (!token) throw new Error("Please specify token");
+			if (!newPassword || newPassword.length == 0) throw new Error("Please specify password");
+
+			var request = new global.Appacitive.HttpRequest();
+			request.url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory.user.getResetPasswordUrl(token);
+			request.method = 'post';
+			request.data = { newpassword: newPassword };
+			request.onSuccess = function(a) {
+				if (a && a.code == '200') {
+				 	if (typeof onSuccess == 'function') onSuccess();
+				} else { onError(a); }
+			};
+			request.onError = onError;
+			global.Appacitive.http.send(request); 
+		};
+
+		this.validateResetPasswordToken = function(token, onSuccess, onError) {
+			onSuccess = onSuccess || function(){};
+			onError = onError || function(){};
+
+			if (!token) throw new Error("Please specify token");
+
+			var request = new global.Appacitive.HttpRequest();
+			request.url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory.user.getValidateResetPasswordUrl(token);
+			request.method = 'post';
+			request.data = {};
+			request.onSuccess = function(a) {
+				if (a.status && a.status.code == '200') {
+				 	if (typeof onSuccess == 'function') onSuccess(a.user);
+				} else { onError(a.status); }
+			};
+			request.onError = onError;
+			global.Appacitive.http.send(request); 
+		};
 	};
 
 	global.Appacitive.Users = new UserManager();
@@ -5222,10 +5349,10 @@ Depends on  NOTHING
           if (!that.fileData) throw new Error('Please specify filedata');
           if (contentType || typeof contentType == 'string') that.contentType = contentType;
           else {
-              if (!that.contentType || typeof contentType !== 'string' || that.contentType.length == 0) that.contentType = 'text/plain';
+              if (!that.contentType || typeof that.contentType !== 'string' || that.contentType.length == 0) that.contentType = 'text/plain';
               try { that.contentType = file.type; } catch(e) {}
           }
-          var url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory.file.getUploadUrl(that.contentType);
+          var url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory.file.getUploadUrl(that.contentType, that.fileId ? that.fileId : '');
           onSuccess = onSuccess || function(){};
           onError = onError || function(){};
 
@@ -5317,6 +5444,29 @@ Depends on  NOTHING
           return this;
       };
 
+      this.getUploadUrl = function(onSuccess, onError, contentType) {
+          var that = this;
+
+          if (contentType || typeof contentType == 'string') this.contentType = contentType;
+          else {
+              if (!this.contentType || typeof this.contentType !== 'string' || this.contentType.length == 0) this.contentType = 'text/plain';
+          }
+
+          var url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory.file.getUploadUrl(this.contentType, this.fileId ? this.fileId : '');
+          onSuccess = onSuccess || function() {};
+          onError = onError || function() {};
+
+          _getUrls(url, function(response) {
+              if (response && response.status && response.status.code == '200') {
+                  that.url = response.url;
+                  onSuccess(response.url, that);
+              } else if (typeof onError == 'function') {
+                  onError(response.status, that);
+              }
+          }, onError);
+      };
+
+      return this;
   };
 
   global.Appacitive.File = _file;

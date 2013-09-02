@@ -7,36 +7,16 @@
 .font8 { font-size: 0.8em;}
 .no-padding {padding: 0px;}
 .no-padding-left {padding-left: 0px;}
-.ptxs {	padding-top: 3px;}
-.pts {	padding-top: 5px;}
-.ptm {
-	padding-top: 10px;
-}
-.ptl {
-	padding-top: 15px;
-}
-.ptxl {
-	padding-top: 20px;
-}
-.ptxxl {
-	padding-top: 25px;
-}
-.ptxxli {
-	padding-top: 25px !important;
-}
-.pbxs {
-	padding-bottom: 3px;
-}
-.pbs {
-	padding-bottom: 5px;
-}
-.pbm {
-	padding-bottom: 10px;
-}
-.pbli {
-	padding-bottom: 10px !important;
-}
-.pbxl {	padding-bottom: 25px;}
+.ptxs {padding-top: 3px;}
+.pts {padding-top: 5px;}
+.ptm {padding-top: 10px;}
+.ptl {padding-top: 15px;}
+.ptxl {padding-top: 20px;}
+.ptxxl {padding-top: 25px;}
+.ptxxli {padding-top: 25px !important;}
+.pbxs {padding-bottom: 3px;}
+.pbxl {	padding-bottom: 20px;}
+.pbxli {padding-bottom: 20px !important;}
 .clear {clear:both;}
 .ptn, .pvn, .pan { padding-top: 0px; }
 .ptni, .pvni, .pani { padding-top: 0px !important; }
@@ -52,6 +32,7 @@
 .pbs, .pvs, .pas { padding-bottom: 5px; }
 .pbm, .pvm, .pam { padding-bottom: 10px; }
 .pbl, .pvl, .pal { padding-bottom: 20px; }
+.pbli .pvli, .pali {padding-bottom: 10px !important;}
 .pln, .phn, .pan { padding-left: 0px; }
 .pls, .phs, .pas { padding-left: 5px; }
 .plm, .phm, .pam { padding-left: 10px; }

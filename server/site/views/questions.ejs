@@ -1,296 +1,236 @@
 <% layout('__layout') -%>
 
-<div class='row question-page'>
-  <div class='col-xs-12 col-sm-12 col-lg-9'>
-    <div class='mainSection'>
-      <div class='question pts'>
-        <div class='row time-row'>
-          <div class='col-xs-12 col-sm-12 col-lg-12'>
-            <div class='time-container'>
-              <div class='time-date'>
-                28
-              </div>
-              <div class='time-details'>
-                <div class='time-day'>
-                  Wednesday
-                </div>
-                <div class='time-month'>
-                  June 2013
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class='row'>
-          <div class='col-xs-12 col-sm-1 col-lg-1'>
-            <div class='row'>
-              <div class='col-xs-8 col-sm-12 col-lg-12 user-profile'>
-                <div class='divPic'><a class='user-img' href='#'><img src='/images/user-default.png'/></a></div>
-                <div class='divUserDetails'>
-                  <div class='divUser'><a href='#'>Some User</a></div>
-                  <div class='divPts'>1230</div>
-                </div>
-                <div class='divPosted'>
-                  asked...
-                </div>
-              </div>
-              <div class='col-xs-4 col-sm-12 col-lg-12 vote-panel'>
-                <a class="btn btn-success btn-sm" href="#"><i class='icon-large icon-thumbs-up'></i></a>
-                <a class="btn btn-danger btn-sm" href="#"><i class='icon-large icon-thumbs-down'></i></a>
-              </div>
-            </div>
-          </div>
-          <div class='col-xs-12 col-sm-11 col-lg-11 entity-container'>
-            <div class='row'>
+<% script('/javascripts/questionrouter.js') -%>
+<% script('/javascripts/infra/prettify.js') -%>
+<% script('/javascripts/controllers/questionController.js') -%>
+<% script('/javascripts/views/questionView.js') -%>
+
+
+<script type='text/x-handlebars', data-template-name='tag'>
+  <span class='label label-default'><a {{bindAttr href='view.selfurl'}}>{{tag}}</a></span>
+</script>
+
+<script type='text/x-handlebars', data-template-name='question'>
+  {{view Deific.HeaderView}} 
+
+  <div class='container'>
+    <div class='content'>
+      <div class='row question-page'>
+        <div class='col-xs-12 col-sm-12 col-lg-9'>
+        <div class='mainSection'>
+          <div class='question pts'>
+            <div class='row time-row'>
               <div class='col-xs-12 col-sm-12 col-lg-12'>
-                <h4 class='question-title'>
-                  <a class='font120' href="#">How to remove data from Jquery dialogue box when I close it?</a>
-                </h4>
-              </div>
-            </div>
-            <div class='row'>
-              <div class='col-xs-12 col-sm-12 col-lg-12 question-details'>
-                <span class="mrs"><span class='vote-count'>1</span> vote</span>
-                <span class="mrs">&#8226; <span class='answer-count'>20</span> answers </span>
-                <span class="mrs">&#8226; <span class='view-count'>05</span> views</span>
-              </div>
-            </div>
-            <div class='row'>
-              <div class='col-xs-12 col-sm-12 col-lg-12 question-tag'>
-                <div class='border-bottom pbl'>
-                  <span class="label label-default">Default</span>
-                  <span class="label label-default">Primary</span>
-                  <span class="label label-default">Success</span>
-                  <span class="label label-default">Info</span>
+                <div class='time-container'>
+                  <div class='time-date'>
+                    {{getdate __utcdatecreated}}
+                  </div>
+                  <div class='time-details'>
+                    <div class='time-day'>
+                      {{getday __utcdatecreated}}
+                    </div>
+                    <div class='time-month'>
+                      {{getmonth __utcdatecreated}} {{getyear __utcdatecreated}}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
             <div class='row'>
-              <div class='col-xs-12 col-sm-12 col-lg-12'>
-                <div class='border-bottom-dashed question-desc pbxl'>
-                  <p>
-                    I have JQuery dialog box for inserting new row in table. And everything works good. Few days ago when I inserted FlexiGrid for Table started a problem for me. When I insert new row dialog dissapear but when I open dialog for new insert data that is inserted before is still in dialog.
-                  </p>
-                  <p>
-                    How to reset dialog fields after I finish with it's usage.
-                  </p>
-                  <p>
-                    The code for dialog is this:
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div class='comment-container mbm border-bottom-dashed'>
-              <div class='comment'>
+              <!-- Question asked by goes here -->
+              <div class='col-xs-12 col-sm-1 col-lg-1'>
                 <div class='row'>
-                  <div class='col-lg-12'>
-                    <span class='comment-text'><code>How to reset dialog fields after I finish with it's usage</code> can you explain in more detail</span> - <a href='#' class='commentor'>Amar Palsapure</a><span class='divTime'>22 minutes ago</span>
+                  <div class='col-xs-8 col-sm-12 col-lg-12 user-profile'>
+                    <div class='divPic'><a class='user-img' {{bindAttr href='author.selfurl'}} {{bindAttr title='author.fullname'}}><img src='/images/user-default.png'/></a></div>
+                    <div class='divUserDetails'>
+                      <div class='divUser'><a {{bindAttr href='author.selfurl'}} {{bindAttr title='author.fullname'}}>{{author.fullname}}</a></div>
+                      <div class='divPts'>1230</div>
+                    </div>
+                    <div class='divPosted'>
+                      asked...
+                    </div>
+                  </div>
+                  <div class='col-xs-4 col-sm-12 col-lg-12 vote-panel'>
+                    <a class='btn btn-success btn-sm' href='#'><i class='icon-large icon-thumbs-up'></i></a>
+                    <a class='btn btn-danger btn-sm' href='#'><i class='icon-large icon-thumbs-down'></i></a>
                   </div>
                 </div>
               </div>
-              <div class='comment'>
+              <div class='col-xs-12 col-sm-11 col-lg-11 entity-container'>
+                <!-- Question title goes here -->
                 <div class='row'>
-                  <div class='col-lg-12'>
-                    <span class='comment-text'><code>How to reset dialog fields after I finish with it's usage test this one</code> can you explain in more detail</span> - <a href='#' class='commentor'>Amar Palsapure</a><span class='divTime'>22 minutes ago</span>
+                  <div class='col-xs-12 col-sm-12 col-lg-12'>
+                    <h4 class='question-title'>
+                      <a class='font120' {{bindAttr href='selfurl'}}>{{ title }}</a>
+                    </h4>
                   </div>
                 </div>
-              </div>
-              <div class='comment'>
+                <!-- Question up/down vote goes here -->
                 <div class='row'>
-                  <div class='col-lg-12'>
-                     <span class='comment-text'>This looks great.</span> - <a href='#' class='commentor'>Amar Palsapure</a><span class='divTime'>22 minutes ago</span>
+                  <div class='col-xs-12 col-sm-12 col-lg-12 question-details'>
+                    <span class='mrs'><span class='vote-count'>1</span> vote</span>
+                    <span class='mrs'>&#8226; <span class='answer-count'>20</span> answers </span>
+                    <span class='mrs'>&#8226; <span class='view-count'>05</span> views</span>
                   </div>
                 </div>
-              </div>
-            </div>
-            <div class='row comment-add-container'>
-              <div class='col-lg-12 text-right'>
-                <a class='comment-add font9' href='javascript:void()'>Add a Comment</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class='bubble'>
-      </div>
-      <div class='mtm ptxl mbm'>
-        <div class='row contentTitle'>
-          <div class='col-lg-12'>
-            <h1 class='mbn'>Answers</h1>
-          </div>
-        </div>
-      </div>
-      <div class='answer-list ptl'>
-        <div class='answer'>
-          <div class='row time-row'>
-            <div class='col-xs-12 col-sm-12 col-lg-12'>
-              <div class='time-container'>
-                <div class='time-date'>
-                  28
-                </div>
-                <div class='time-details'>
-                  <div class='time-day'>
-                    Wednesday
-                  </div>
-                  <div class='time-month'>
-                    June 2013
+                <!-- Question tags goes here -->
+                <div class='row'>
+                  <div class='col-xs-12 col-sm-12 col-lg-12 question-tag'>
+                    <div class='border-bottom pbl tag-container'>
+                      {{#each tag in __tags}}
+                        {{view Deific.TagView tagBinding=tag}}
+                      {{/each}}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-          <div class='row ptni pbni'>
-            <div class='col-xs-12 col-sm-1 col-lg-1'>
-              <div class='row'>
-                <div class='col-xs-8 col-sm-12 col-lg-12 user-profile'>
-                  <div class='divPic'><a href='#'><img class='user-img' src='https://www.gravatar.com/avatar/2c6f2703dc3e39b5e9c453d59883df72?s=36'/></a></div>
-                  <div class='divUserDetails'>
-                    <div class='divUser'><a href='#'>Some User</a></div>
-                    <div class='divPts'>1230</div>
-                  </div>
-                  <div class='divPosted'>
-                    answered...
-                  </div>
-                </div>
-                <div class='col-xs-4 col-sm-12 col-lg-12 vote-panel'>
-                  <a class="btn btn-success btn-sm" href="#"><i class='icon-large icon-thumbs-up'></i></a>
-                  <a class="btn btn-danger btn-sm" href="#"><i class='icon-large icon-thumbs-down'></i></a>
-                </div>
-              </div>
-            </div>
-            <div class='col-xs-12 col-sm-11 col-lg-11 entity-container'>
-              <div class='callout odd'>
-                <div class='arrow-container'>
-                  <div class='arrow-left'></div>
-                  <div class='arrow-up'></div>
-                </div>
+                <!-- Question description goes here -->
                 <div class='row'>
                   <div class='col-xs-12 col-sm-12 col-lg-12'>
                     <div class='border-bottom-dashed question-desc pbxl'>
-                      <p>
-                        I have JQuery dialog box for inserting new row in table. And everything works good. Few days ago when I inserted FlexiGrid for Table started a problem for me. When I insert new row dialog dissapear but when I open dialog for new insert data that is inserted before is still in dialog.
-                      </p>
-                      <p>
-                        How to reset dialog fields after I finish with it's usage.
-                      </p>
-                      <p>
-                        The code for dialog is this:
-                      </p>
+                      {{markdown description}}
                     </div>
                   </div>
                 </div>
-                <div class='comment-container mbm border-bottom-dashed'>
-                  <div class='comment'>
-                    <div class='row'>
-                      <div class='col-lg-12'>
-                        <span class='comment-text'><code>How to reset dialog fields after I finish with it's usage</code> can you explain in more detail</span> - <a href='#' class='commentor'>Amar Palsapure</a><span class='divTime'>22 minutes ago</span>
+                <!-- Question comments goes here -->
+                <div class='comment-container mbm'>
+                  {{#each comments}}
+                    <div class='comment'>
+                      <div class='row'>
+                        <div class='col-lg-12'>
+                            <span class='comment-text'>{{markdown text}}</span> - 
+                            <a {{bindAttr href='author.selfurl'}} {{bindAttr title='author.fullname'}} class='commentor'>{{author.fullname}}</a> <span class='divTime'>{{sincetime __utcdatecreated}}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div class='comment'>
-                    <div class='row'>
-                      <div class='col-lg-12'>
-                        <span class='comment-text'><code>How to reset dialog fields after I finish with it's usage test this one</code> can you explain in more detail</span> - <a href='#' class='commentor'>Amar Palsapure</a><span class='divTime'>22 minutes ago</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class='comment'>
-                    <div class='row'>
-                      <div class='col-lg-12'>
-                         <span class='comment-text'>This looks great.</span> - <a href='#' class='commentor'>Amar Palsapure</a><span class='divTime'>22 minutes ago</span>
-                      </div>
-                    </div>
-                  </div>
+                  {{/each}}
                 </div>
+                <!-- Question add comment goes here -->
                 <div class='row comment-add-container'>
-                  <div class='col-lg-12 text-right'>
-                    <a class='comment-add font9' href='javascript:void()'>Add a Comment</a>
-                  </div>
+                    {{#if isCommenting}}
+                    <div class='col-xs-12 col-sm-12 col-lg-12 mbm'>
+                      {{view Ember.TextArea id='questionComment' placeholder='What needs to be done?' valueBinding='newComment' action='createComment'}}
+                    </div>
+                    <div class='col-xs-12 col-sm-12 col-lg-12'>
+                      <button class='btn btn-xs btn-primary mrs' href='javascript:void(0)' {{action 'doneEditing'}}>Post</button>
+                      <a class='font9' {{action 'edit'}} class='comment-add font9' href='javascript:void()'>Cancel</a>
+                    </div>
+                    {{else}}
+                    <div class='col-lg-12 text-right'>
+                      <a {{action 'edit'}} class='comment-add font9' href='javascript:void()'>Add a Comment</a>
+                    </div>
+                    {{/if}}
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class='answer'>
-          <div class='row ptni pbni'>
-            <div class='col-xs-12 col-sm-1 col-lg-1'>
-              <div class='row'>
-                <div class='col-xs-8 col-sm-12 col-lg-12 user-profile'>
-                  <div class='divPic'><a href='#'><img class='user-img' src='https://www.gravatar.com/avatar/2c6f2703dc3e39b5e9c453d59883df72?s=36'/></a></div>
-                  <div class='divUserDetails'>
-                    <div class='divUser'><a href='#'>Some User</a></div>
-                    <div class='divPts'>1230</div>
-                  </div>
-                  <div class='divPosted'>
-                    answered...
-                  </div>
-                </div>
-                <div class='col-xs-4 col-sm-12 col-lg-12 vote-panel'>
-                  <a class="btn btn-success btn-sm" href="#"><i class='icon-large icon-thumbs-up'></i></a>
-                  <a class="btn btn-danger btn-sm" href="#"><i class='icon-large icon-thumbs-down'></i></a>
-                </div>
+          <div class='bubble'>
+          </div>
+          <div class='mtm ptxl mbm'>
+            <div class='row contentTitle'>
+              <div class='col-lg-12'>
+                <h1 class='mbn'>Answers</h1>
               </div>
             </div>
-            <div class='col-xs-12 col-sm-11 col-lg-11 entity-container'>
-              <div class='callout even'>
-                <div class='arrow-container'>
-                  <div class='arrow-left'></div>
-                  <div class='arrow-up'></div>
-                </div>
-                <div class='row'>
+          </div>
+          <!-- Answer List -->
+          <div id='answerLoadingProgress' class='progress progress-striped active'>
+            <div class='progress-bar'  role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width: 100%'>
+            </div>
+          </div>
+          <div class='answer-list ptl hide'>
+            {{#each answer in answers}}
+              <div class='answer'>
+                <div class='row time-row'>
                   <div class='col-xs-12 col-sm-12 col-lg-12'>
-                    <div class='border-bottom-dashed question-desc pbxl'>
-                      <p>
-                        I have JQuery dialog box for inserting new row in table. And everything works good. Few days ago when I inserted FlexiGrid for Table started a problem for me. When I insert new row dialog dissapear but when I open dialog for new insert data that is inserted before is still in dialog.
-                      </p>
-                      <p>
-                        How to reset dialog fields after I finish with it's usage.
-                      </p>
-                      <p>
-                        The code for dialog is this:
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div class='comment-container mbm border-bottom-dashed'>
-                  <div class='comment'>
-                    <div class='row'>
-                      <div class='col-lg-12'>
-                        <span class='comment-text'><code>How to reset dialog fields after I finish with it's usage</code> can you explain in more detail</span> - <a href='#' class='commentor'>Amar Palsapure</a><span class='divTime'>22 minutes ago</span>
+                    <div {{bindAttr name='answer.getfulldate'}} class='time-container'>
+                      <div class='time-date'>
+                        {{getdate answer.__utcdatecreated}}
                       </div>
-                    </div>
-                  </div>
-                  <div class='comment'>
-                    <div class='row'>
-                      <div class='col-lg-12'>
-                        <span class='comment-text'><code>How to reset dialog fields after I finish with it's usage test this one</code> can you explain in more detail</span> - <a href='#' class='commentor'>Amar Palsapure</a><span class='divTime'>22 minutes ago</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class='comment'>
-                    <div class='row'>
-                      <div class='col-lg-12'>
-                         <span class='comment-text'>This looks great.</span> - <a href='#' class='commentor'>Amar Palsapure</a><span class='divTime'>22 minutes ago</span>
+                      <div class='time-details'>
+                        <div class='time-day'>
+                          {{getday answer.__utcdatecreated}}
+                        </div>
+                        <div class='time-month'>
+                          {{getmonth answer.__utcdatecreated}} {{getyear answer.__utcdatecreated}}
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class='row comment-add-container'>
-                  <div class='col-lg-12 text-right'>
-                    <a class='comment-add font9' href='javascript:void()'>Add a Comment</a>
+                <div class='row ptni pbni'>
+
+                  <div class='col-xs-12 col-sm-1 col-lg-1'>
+                    <div class='row'>
+                      <div class='col-xs-8 col-sm-12 col-lg-12 user-profile'>
+                        <div class='divPic'><a class='user-img' {{bindAttr href='answer.author.selfurl'}} {{bindAttr title='answer.author.fullname'}}><img src='/images/user-default.png'/></a></div>
+                        <div class='divUserDetails'>
+                          <div class='divUser'><a {{bindAttr href='answer.author.selfurl'}} {{bindAttr title='answer.author.fullname'}}>{{answer.author.fullname}}</a></div>
+                          <div class='divPts'>1230</div>
+                        </div>
+                        <div class='divPosted'>
+                          answered...
+                        </div>
+                      </div>
+                      <div class='col-xs-4 col-sm-12 col-lg-12 vote-panel'>
+                        <a class='btn btn-success btn-sm' href='#'><i class='icon-large icon-thumbs-up'></i></a>
+                        <a class='btn btn-danger btn-sm' href='#'><i class='icon-large icon-thumbs-down'></i></a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class='col-xs-12 col-sm-11 col-lg-11 entity-container'>
+                    <div class='callout odd'>
+                      <div class='arrow-container'>
+                        <div class='arrow-left'></div>
+                        <div class='arrow-up'></div>
+                      </div>
+                      <!-- Answer text goes here -->
+                      <div class='row'>
+                        <div class='col-xs-12 col-sm-12 col-lg-12'>
+                          <div class='border-bottom-dashed question-desc pbxl'>
+                            {{markdown answer.text}}
+                          </div>
+                        </div>
+                      </div>
+                      <div class='comment-container mbm border-bottom-dashed'>
+                        {{#each comment in answer.comments}}
+                          <div class='comment'>
+                            <div class='row'>
+                              <div class='col-lg-12'>
+                                  <span class='comment-text'>{{markdown comment.text}}</span> - 
+                                  <a {{bindAttr href='comment.author.selfurl'}} {{bindAttr title='comment.author.fullname'}} class='commentor'>{{comment.author.fullname}}</a> <span class='divTime'>{{sincetime comment.__utcdatecreated}}</span>
+                              </div>
+                            </div>
+                          </div>
+                        {{/each}}
+                      </div>
+                      <div class='row comment-add-container'>
+                        <div class='col-lg-12 text-right'>
+                          <a class='comment-add font9' href='javascript:void()'>Add a Comment</a>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
+              <div class='row pbxli bubble-container'>
+                <div class='col-xs-12 col-sm-12 col-lg-12'>
+                  <div class='bubble'>
+                  </div>
+                </div>
+              </div>
+            {{/each}}
+          </div>
+        </div>
+        </div>
+        <div class='col-xs-12 col-sm-12 col-lg-3'>
+          <div class='sideSection'>
+            <div class='row'>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div class='col-xs-12 col-sm-12 col-lg-3'>
-    <div class='sideSection'>
-      <div class='row'>
-      </div>
-    </div>
-  </div>
-</div>
+
+  {{view Deific.FooterView}} 
+</script>

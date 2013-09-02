@@ -109,6 +109,9 @@ body {
 	border-left: solid 3px #eee;
 	width: 96.2%;
 }
+.answer .entity-container {
+	padding-bottom: 50px !important;
+}
 .bubble {
 	border: solid 15px #eee;
 	border-radius: 15px;
@@ -137,7 +140,7 @@ body {
 	min-height: 480px;
 	margin-bottom: 48px;
 	background-color: #fff;
-	padding: 15px 20px;
+	padding: 15px 20px 60px;
 }
 .question-list .question {
 	padding: 18px 0 18px !important;
@@ -264,6 +267,7 @@ body {
 	padding: 4px 8px;
 	float: left;
 }
+.tag-container div {display: inline;}
 .time-date, .time-month, .time-day {
 	color: #777;
 }
@@ -310,22 +314,28 @@ body {
 
 .comment {
 	padding: 6px 0 4px;
-	border-bottom: solid 1px #ddd;
+	border-bottom: dashed 1px #ccc;
 	font-size: 0.95em;
 	color:#777;
 }
+.comment .row {
+	padding: 2px 0 0;
+}
+.comment p {
+	padding: 0px;
+	display: inline;
+}
 .comment-container {
 	margin-top: -6px;
-	padding: 4px 4px 0;
 }
 .comment-container .comment {
-	padding: 4px 8px;
+	padding: 4px 8px 7px;
 }
 .comment-container .comment:hover {
 	background-color: #f6f6f6;
 }
-.comment-container .comment:last-child {
-	border-bottom: none;
+.comment-container > .comment:first-child {
+	border-top: dashed 1px #ccc;
 }
 
 @media screen and (max-width: 1200px) {
