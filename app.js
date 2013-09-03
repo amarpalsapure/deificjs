@@ -11,7 +11,7 @@ var questions = require('./server/site/routes/questions');
 var http = require('http');
 var path = require('path');
 process.config = require('./server/shared/configuration').load();
-var googlebot = require("./server/googlebot.js");
+//var googlebot = require("./server/googlebot.js");
 
 // api
 var questionApi = require('./server/service/question.js');
@@ -25,7 +25,7 @@ app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/server/site/views');
 app.set('view engine', 'ejs');
 app.engine('ejs', engine);
-app.use(googlebot());
+//app.use(googlebot());
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());

@@ -4,7 +4,7 @@
  * MIT license  : http://www.apache.org/licenses/LICENSE-2.0.html
  * Project      : https://github.com/chiragsanghvi/JavascriptSDK
  * Contact      : support@appacitive.com | csanghvi@appacitive.com
- * Build time 	: Sun Aug 25 12:00:33 IST 2013
+ * Build time 	: Sat Aug 31 10:43:57 IST 2013
  */
 
 // Add ECMA262-5 method binding if not supported natively
@@ -341,7 +341,7 @@ var global = {};
   			var response = xdr.responseText;
 			try {
 				var contentType = xdr.contentType;
-				if (contentType.toLowerCase() == 'application/json' ||  contentType .toLowerCase() == 'application/javascript') { 
+				if (contentType.toLowerCase() == 'application/json' ||  contentType.toLowerCase() == 'application/javascript' || contentType.toLowerCase() == 'application/json; charset=utf-8' || contentType.toLowerCase() == 'application/json; charset=utf-8;') { 
 					var jData = response;
 					if (!global.Appacitive.runtime.isBrowser) {
 						if (jData[0] != "{") {
@@ -379,7 +379,7 @@ var global = {};
 		request.headers.forEach(function(r){
 			if (r.key.toLowerCase() == 'content-type') {
 				doNotStringify = true;
-				if (r.value.toLowerCase() == 'application/json' || r.value.toLowerCase() == "application/javascript") {
+				if (r.value.toLowerCase() == 'application/json' || r.value.toLowerCase() == "application/javascript" || r.value.toLowerCase() == 'application/json; charset=utf-8' || r.value.toLowerCase() == 'application/json; charset=utf-8;') {
 					doNotStringify = false;
 				}
 			}
@@ -411,7 +411,7 @@ var global = {};
 						var response = this.responseText;
 						try {
 							var contentType = this.getResponseHeader('content-type') || this.getResponseHeader('Content-Type');
-							if (contentType.toLowerCase() == 'application/json' ||  contentType .toLowerCase() == 'application/javascript') { 
+							if (contentType.toLowerCase() == 'application/json' ||  contentType.toLowerCase() == 'application/javascript' || contentType.toLowerCase() == 'application/json; charset=utf-8' || contentType.toLowerCase() == 'application/json; charset=utf-8;') { 
 								var jData = response;
 								if (!global.Appacitive.runtime.isBrowser) {
 									if (jData[0] != "{") {
@@ -2070,7 +2070,7 @@ Depends on  NOTHING
 				_pageQuery.pageNumber(arguments[0]);
 				return this;
 			}
-			return _pageQuery.pageNumber; 
+			return _pageQuery.pageNumber(); 
 		};
 
 		//define getter and setter for pageSize
@@ -2079,19 +2079,19 @@ Depends on  NOTHING
 				_pageQuery.pageSize(arguments[0]);
 				return this;
 			}
-			return _pageQuery.pageSize; 
+			return _pageQuery.pageSize(); 
 		};
 
 		//define getter for sortquery
 		this.sortQuery = function() { return _sortQuery; };
 
 		//define getter and setter for orderby
-		this.orderby =  function() { 
+		this.orderBy =  function() { 
 			if (arguments.length == 1) {
 				_sortQuery.orderby(arguments[0]);
 				return this;
 			}
-			return _sortQuery.orderby; 
+			return _sortQuery.orderby(); 
 		};
 
 		//define getter and setter for isAscending
@@ -2100,7 +2100,7 @@ Depends on  NOTHING
 				_sortQuery.isAscending(arguments[0]);
 				return this;
 			}
-			return _sortQuery.isAscending; 
+			return _sortQuery.isAscending(); 
 		};
 
 		//define getter and setter for filter
@@ -3636,9 +3636,9 @@ Depends on  NOTHING
 			return _a;
 		};
 
-		this.map = function() { return _articles.map.apply(this, arguments); };
-		this.forEach = function() { return _articles.forEach.apply(this, arguments); };
-		this.filter = function() { return _articles.filter.apply(this, arguments); };
+		this.map = function(delegate, context) { return _articles.map.apply(delegate, context || this); };
+		this.forEach = function(delegate, context) { return _articles.forEach(delegate, context); };
+		this.filter = function(delegate, context) { return _articles.filter.apply(delegate, context || this); };
 
 	};
 
@@ -3914,10 +3914,9 @@ Depends on  NOTHING
 			return _a;
 		};
 
-		this.map = function() { return _connections.map.apply(this, arguments); };
-		this.forEach = function() { return _connections.forEach.apply(this, arguments); };
-		this.filter = function() { return _connections.filter.apply(this, arguments); };
-
+		this.map = function(delegate, context) { return _connections.map.apply(delegate, context || this); };
+		this.forEach = function(delegate, context) { return _connections.forEach(delegate, context); };
+		this.filter = function(delegate, context) { return _connections.filter.apply(delegate, context || this); };
 	};
 
 	global.Appacitive.ConnectionCollection = _ConnectionCollection;
@@ -3992,6 +3991,28 @@ Depends on  NOTHING
 
 		if (this.get('__schematype').toLowerCase() == 'user') this.getFacebookProfile = _getFacebookProfile;
 
+		this.toJSON = function(recursive) {
+			if (recursive) {
+				var parseChildren = function(root) {
+					var articles = [];
+					root.forEach(function(obj) {
+						var tmp = obj.getObject();
+						if (obj.children && !Object.isEmpty(obj.children)) {
+							tmp.children = {};
+							for (var c in obj.children) {
+								tmp.children[c] = parseChildren(obj.children[c]);
+							}
+						}
+						if (obj.connection) tmp.__connection = obj.connection.toJSON();
+						articles.push(tmp);
+					});
+					return articles;
+				};
+				return parseChildren([this])[0];
+			} else {
+				return this.getObject();
+			}
+		};
 		return this;
 	};
 

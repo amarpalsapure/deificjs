@@ -1,8 +1,13 @@
 (function() {
 	Deific.AppacitiveSerializer = DS.RESTSerializer.extend({
+		//primary key is '__id' in appacitive, overriding default behaviour
 		primaryKey: function(type){
 			return	'__id';
-		}
+		},
+		//serialize id as string not number
+		serializeId: function(id) {
+    		return id;    		
+  		}
 	});
 
 	Deific.Store = DS.Store.extend({
@@ -15,7 +20,7 @@
 	});
 
 	
-
+	
 	DS.JSONTransforms.array = {
   		serialize: function(value) {
     		return Em.isNone(value) ? [] : value ;

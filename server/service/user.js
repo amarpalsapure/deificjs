@@ -1,7 +1,4 @@
 exports.findById = function(req, res) {
-	var t = {"user": {"__id": "35557311733959061", "__schematype": "user", "__attributes": {}, "__tags": [], "__createdby": "Amar Palsapure", "__lastmodifiedby": "Amar Palsapure", "__schemaid": "35005530646905140", "__revision": "1", "__utcdatecreated": "2013-08-28T11:28:14.9929811Z", "__utclastupdateddate": "2013-08-28T11:28:14.9929811Z", "username": "jane.doe", "location": "", "email": "", "firstname": "Jane", "lastname": "Doe", "isemailverified": "false", "isenabled": "true", "isonline": "false", "connectionid": ""} };
-	return res.json(t);
-
 	var response = {
 		user: {}
 	};
