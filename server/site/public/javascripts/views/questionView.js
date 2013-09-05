@@ -3,7 +3,7 @@
 		didInsertElement: function(){
 			//remove loader
 			$('#rootProgress').remove();
-			
+
 			//set page title
 			var model = this.controller.get('model');
 			var title = model.get('title') + " - " + $(document).attr('title');
@@ -25,43 +25,27 @@
 
 			//question data is loaded and will be render immediately,
 			//running asyncPrettyPrint for any code in question
+			var model = this.controller.get('model');
+			model.addObserver('description', this, function(){
+				asyncPrettyPrint();	
+			});
+
 			asyncPrettyPrint();
-
-			var answers = this.controller.content.get('answers');
-			if(answers && answers.loadingRecordsCount > 0){
-
-				answers.toArray()[0].addObserver('text', null,  function(){
-					//remove answer loader
-					setTimeout(function(){
-						$('#answerLoadingProgress').hide();
-						$('.answer-list').removeClass('hide');	
-					}, 10);					
-
-					//run asyncPrettyPrint for any code in answer 
-					asyncPrettyPrint();
-
-					//remove the duplicate dates so that answers given on same day get merged
-					setTimeout(function(){
-						var pName = '';
-						$('.answer .time-container').each(function(i,ele){ 
-							var cName = $(ele).attr('name');
-							if(pName != cName) {
-								pName = cName;
-								return;
-							}
-							$(ele).closest('.answer').prevAll('.answer').next('.bubble-container').remove();
-							$(ele).closest('.time-row').remove();
-						});
-					}, 10);
-				});
-			}
 		}
 	});
 
-	Deific.TagView = Ember.View.extend({
-		templateName: 'tag',
-		selfurl: function(){
-			return '/questions/tagged/' + this.get('tag');
-		}.property('tag')
+	Deific.QuestionLoginView = Ember.View.extend({
+		templateName: "question/login",
+
+		didInsertElement:function(){
+			var that = this;
+			$('#loginModal')
+				.removeClass('hide')
+				.modal()
+				.on('hidden.bs.modal', function(){
+					that.get('controller').transitionTo('question');
+				});
+		}
+
 	});
 }).call(this);

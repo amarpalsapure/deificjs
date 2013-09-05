@@ -1,6 +1,6 @@
 (function() {
 	Deific.LocalUser = Ember.Object.extend({
-		id: DS.attr('string'),
+		userid: DS.attr('string'),
 		firstname: DS.attr('string'),
 		lastname: DS.attr('string')
 	});
@@ -8,6 +8,7 @@
 	Deific.User = DS.Model.extend({
 		firstname: DS.attr('string'),
 		lastname: DS.attr('string'),
+		reputation: DS.attr('number'),
 
 		fullname: function(){
 			if(!this.get('firstname') && !this.get('lastname')) return '...';

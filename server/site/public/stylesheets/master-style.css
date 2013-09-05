@@ -59,6 +59,10 @@
 .border-bottom {border-bottom: solid 1px #ddd;}
 .border-bottom-dark {border-bottom: solid 1px #aaa;}
 .border-bottom-dashed{border-bottom: dashed 1px #ccc;}
+.alert-dismiss-container .close {
+	padding-left: 12px;
+	margin-right: -6px;
+}
 .arrow-left {
 	width: 0; 
 	height: 0; 
@@ -72,4 +76,20 @@
 	border-left: 10px solid transparent;
 	border-right: 10px solid transparent;
 	border-bottom: 10px solid black;
+}
+pre, .comment {	max-height: 550px;}
+pre::-webkit-scrollbar-thumb, .comment::-webkit-scrollbar-thumb {
+	background: #ddd;
+	-webkit-border-radius: 8px;
+	border-radius: 8px;
+	border: solid 4px #f3f6fb;
+}
+pre:hover::-webkit-scrollbar-thumb, .comment:hover::-webkit-scrollbar-thumb {
+	background: #999;
+	-webkit-box-shadow: inset 2px 2px 3px rgba(0,0,0,.2);
+	box-shadow: inset 2px 2px 3px rgba(0,0,0,.2);
+}
+pre::-webkit-scrollbar, .comment::-webkit-scrollbar {
+	width: 15px;
+	height: 15px;
 }

@@ -17,6 +17,7 @@ process.config = require('./server/shared/configuration').load();
 var questionApi = require('./server/service/question.js');
 var answerApi = require('./server/service/answer.js');
 var userApi = require('./server/service/user.js');
+var commentApi = require('./server/service/comment.js');
 
 var app = express();
 
@@ -30,7 +31,7 @@ app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
-app.use(express.cookieParser('your secret here'));
+app.use(express.cookieParser('9b7c1f44590b46e509db'));
 app.use(express.session());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'server/site/public')));
@@ -45,10 +46,13 @@ if ('development' == app.get('env')) {
 app.get('/service/questions', questionApi.findAll);
 app.get('/service/questions/:id', questionApi.findById);
 // ** answer api
-app.get('/service/answers', answerApi.findAll);
 app.get('/service/answers/:id', answerApi.findById);
 // ** user api
 app.get('/service/users/:id', userApi.findById);
+app.post('/service/users/auth', userApi.auth);
+app.post('/service/users/logout', userApi.logout);
+// ** comment api
+app.post('/service/comments', commentApi.save)
 
 // site route
 app.get('/', routes.index);

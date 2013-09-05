@@ -1,8 +1,7 @@
-
-/*
- * GET home page.
- */
-
 exports.index = function(req, res){
-  res.render('questions', { title: 'appacitive' });
+	//initialize the app
+  	var app = require('../../shared/app.init');
+	var state = app.init(req);
+
+	res.render('questions', state);
 };

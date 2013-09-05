@@ -4,7 +4,13 @@
 		__createdby: DS.attr('string'),
 		__tags: DS.attr('array'),
 		title: DS.attr('string'),
-		description: DS.attr('string'),
+		text: DS.attr('string'),
+		answersMeta: DS.attr('array'),
+		answercount: DS.attr('number', { defaultValue: 0 }),
+		upvotecount: DS.attr('number', { defaultValue: 0 }),
+		downvotecount: DS.attr('number', { defaultValue: 0 }),
+		viewcount: DS.attr('number', { defaultValue: 0 }),
+		isanswered: DS.attr('boolean'),
 
 		selfurl: function(){
 			//TODO: Handling error in question get
@@ -18,10 +24,19 @@
 			}
 			url += subUrl.toLowerCase();
 			return url;
-		}.property('title', 'lastName'),
+		}.property('title'),
+
+		loginurl: function(){
+			return  '/users/login?returnurl=' + window.location.pathname;
+		}.property('title'),
+
+		votecount: function(){
+			if(this.get('upvotecount') && this.get('downvotecount')) return this.get('upvotecount') - this.get('downvotecount');
+			else return 0;
+		}.property('upvotecount', 'downvotecount'),
 
 		comments: DS.hasMany('Deific.Comment'),
 		author: DS.belongsTo('Deific.User'),
-		answers: DS.hasMany('Deific.Answer')
+		tags: DS.hasMany('Deific.Tag')
 	});
 }).call(this);

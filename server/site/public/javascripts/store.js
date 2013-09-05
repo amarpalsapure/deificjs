@@ -13,12 +13,10 @@
 	Deific.Store = DS.Store.extend({
 	  	revision: 12,
 	  	adapter: DS.RESTAdapter.extend({
-    		url: 'http://localhost:3000',
     		namespace: 'service',
     		serializer: Deific.AppacitiveSerializer
 		}),
 	});
-
 	
 	
 	DS.JSONTransforms.array = {
@@ -33,11 +31,13 @@
 
 	Deific.localDataSource = Ember.Object.create({
 		getCurrentUser: function() {
-			if (true) {
+			
+			if (window.init && window.init.user) {
+				var user = window.init.user;
 				return Deific.LocalUser.create({
-					username: 'john.doe',
-				  	firstname: 'Amar',
-				  	lastname: 'Palsapure'
+					userid: user.id,
+					firstname: user.fname,
+					lastname: user.lname
 				});
 			} else {
 				return null;

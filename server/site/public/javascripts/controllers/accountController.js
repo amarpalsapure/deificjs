@@ -1,8 +1,7 @@
 (function() {
-  Deific.accountController = Ember.ArrayController.create({
+  Deific.AccountController = Ember.ArrayController.create({
     init: function() {
       this.setUser();
-      return this;
     },
     user: null,
     fbLogin: function(callback) {
@@ -35,23 +34,30 @@
         _this = this;
 
       errorMessage = '';
-      if (login.username === null || login.username.length === 0) {
+      if (!login.email || login.email.length === 0) {
         errorMessage = 'Please enter your email address';
       }
-      if (login.password === null || login.password.length === 0) {
+      if (!login.password || login.password.length === 0) {
         errorMessage = 'Please enter your password';
       }
       if (errorMessage.length === 0) {
-        return Neptune.parseDataSource.login(login.username, login.password, function(data, error) {
-          if (!error) {
+        Ember.$.post('/service/users/auth', login).then(function(response, error) {
+          if (response && response.success) {
+            //syncing local store
+            window.init = {};
+            window.init.user = response.user;
+            
+            //load logged in user in store
+            Deific.User.find(response.user.id);
+
             _this.setUser();
             return callback(_this.user, null);
           } else {
-            return callback(null, Neptune.parseDataSource.getError(-1, 'Email or password is incorrect', 'ERROR', 'Neptune.AccountController-login'));
+            return callback(null,'Email or password is incorrect');
           }
         });
       } else {
-        return callback(null, Neptune.parseDataSource.getError(-1, errorMessage, 'ERROR', 'Neptune.AccountController-login'));
+        return callback(null, errorMessage);
       }
     },
     logout: function() {

@@ -97,7 +97,6 @@ samp {
 }
 
 pre {
-  white-space: pre-wrap;
 }
 
 q {
@@ -719,8 +718,7 @@ pre {
   font-size: 13px;
   line-height: 1.428571429;
   color: #333333;
-  word-break: break-all;
-  word-wrap: break-word;
+  overflow: auto;
 }
 
 pre.prettyprint {
@@ -731,7 +729,6 @@ pre code {
   padding: 0;
   font-size: inherit;
   color: inherit;
-  white-space: pre-wrap;
   background-color: transparent;
   border: 0;
 }
@@ -5637,7 +5634,6 @@ body.modal-open,
   background-color: #ffffff;
   border: 1px solid #999999;
   border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 6px;
   outline: none;
   -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
           box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
@@ -5677,6 +5673,7 @@ body.modal-open,
 .modal-title {
   margin: 0;
   line-height: 1.428571429;
+  color: #777777;
 }
 
 .modal-body {

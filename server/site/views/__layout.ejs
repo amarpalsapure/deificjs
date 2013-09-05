@@ -1,7 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
     <title><%= title %></title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
     <link type='text/css' rel='stylesheet' href='/stylesheets/bootstrap.css' />
     <link type='text/css' rel='stylesheet' href='/stylesheets/bootstrap-theme.css' />
     <link type='text/css' rel='stylesheet' href='/stylesheets/prettify.css' />
@@ -10,6 +15,9 @@
     <link type='text/css' rel='stylesheet' href='/stylesheets/master-style.css' />
     <link type='text/css' rel='stylesheet' href='/stylesheets/style.css' />
 
+    <script type="text/javascript">
+      <%= user %>  
+    </script>
 
   </head>
   <body>
@@ -34,19 +42,16 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
           <div class='collapse navbar-collapse navbar-ex1-collapse'>
             <ul id='ulLogin' class='nav navbar-nav navbar-right'>
-              <li><a {{bindAttr class="view.hideLogin"}} href='#'>Login</a></li>
-              <li><a {{bindAttr class="view.hideLogin"}} href='#'>Signup</a></li>
-              <li {{bindAttr class="dropdown view.hideLogout"}}>
-
+              <li><a class="<%= hidelogin %>" {{bindAttr href='loginurl'}}>Login</a></li>
+              <li><a class="<%= hidelogin %>" {{bindAttr href='loginurl'}}>Signup</a></li>
+              <li class="dropdown <%= hidelogout %>">
                 <a href='#' class='dropdown-toggle' data-toggle='dropdown'>
-                    {{view.fullname}}
+                    <%= fullname %>
                    <b class='caret'></b>
                 </a>
                 <ul class='dropdown-menu'>
-                  <li><a href='#'>Action</a></li>
-                  <li><a href='#'>Another action</a></li>
-                  <li><a href='#'>Something else here</a></li>
-                  <li><a href='#'>Separated link</a></li>
+                  <li><a href='#'>My Profile</a></li>
+                  <li><a href='#'>Logout</a></li>
                 </ul>
               </li>
             </ul>
@@ -114,19 +119,49 @@
       </div>
     </script>
 
+    <script type="text/x-handlebars" data-template-name="question/login">
+    <div id='loginModal' class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form class='form-inline' {{action login on='submit'}}>
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h3 class="modal-title">Log In</h3>
+            </div>
+            <div class="modal-body text-center">
+              <div id='loginProgress' class="progress progress-striped active hide">
+                <div class="progress-bar"  role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                </div>
+              </div>
+              <div class='ptm'>
+                {{input value=email type='text' class='login-input' placeholder='Email'}}
+              </div>
+              <div class='ptm'>
+                {{input value=password type='password' class='login-input' placeholder='Password'}}
+              </div>
+            </div>
+            <div class="modal-footer">
+              {{input class='btn btn-primary' type='submit' value='Log In'}}
+            </div>
+          </form>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    </script>
+
 
     <script type='text/javascript' src='/javascripts/infra/jquery.js'></script>
+    <script type='text/javascript' src='/javascripts/infra/md5.js'></script>
     <script type='text/javascript' src='/javascripts/infra/bootstrap.js'></script>
     <script type='text/javascript' src="/javascripts/infra/handlebars.js"></script>
     <script type='text/javascript' src="/javascripts/infra/ember.js"></script>
-    <script type="text/javascript" src="http://builds.emberjs.com/ember-states/latest/ember-states.js"></script>
+    <script type="text/javascript" src="/javascripts/infra/ember-states.js"></script>
     <script type='text/javascript' src="/javascripts/infra/ember-data.js"></script>
     <script type='text/javascript' src="/javascripts/infra/showdown.js"></script>
     <script type='text/javascript' src="/javascripts/infra/moment.js"></script>
 
     <script type='text/javascript' src="/javascripts/app.js"></script>
-
-    <%- scripts %>
 
     <!-- store -->
     <script type='text/javascript' src="/javascripts/store.js"></script>
@@ -134,14 +169,14 @@
     <!-- models -->
     <script type='text/javascript' src="/javascripts/models/question.js"></script>
     <script type='text/javascript' src="/javascripts/models/answer.js"></script>
+    <script type='text/javascript' src="/javascripts/models/tag.js"></script>
     <script type='text/javascript' src="/javascripts/models/comment.js"></script>
     <script type='text/javascript' src="/javascripts/models/user.js"></script>
+
+    <%- scripts %>    
 
     <!-- views -->
     <script type='text/javascript' src="/javascripts/views/headerView.js"></script>
     <script type='text/javascript' src="/javascripts/views/footerView.js"></script>
-
-    <!-- controllers -->
-    <script type='text/javascript' src="/javascripts/controllers/accountController.js"></script>    
   </body>
 </html>

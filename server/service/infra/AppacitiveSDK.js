@@ -4,7 +4,7 @@
  * MIT license  : http://www.apache.org/licenses/LICENSE-2.0.html
  * Project      : https://github.com/chiragsanghvi/JavascriptSDK
  * Contact      : support@appacitive.com | csanghvi@appacitive.com
- * Build time 	: Sat Aug 31 10:43:57 IST 2013
+ * Build time 	: Tue Sep  3 17:25:54 IST 2013
  */
 
 // Add ECMA262-5 method binding if not supported natively
@@ -782,8 +782,12 @@ var global = {};
             getUserByUsernameUrl: function(username) {
                 return String.format("{0}/{1}?useridtype=username", this.userServiceUrl, username);
             },
-            getUpdateUrl: function (userId, fields) {
-                return String.format("{0}/{1}?fields={2}", this.userServiceUrl, userId, _getFields(fields));
+            getUpdateUrl: function (userId, fields, revision) {
+                if (!revision) {
+                    return String.format("{0}/{1}?fields={2}", this.userServiceUrl, userId, _getFields(fields));
+                } else {
+                    return String.format("{0}/{1}?fields={2}&revision={3}", this.userServiceUrl, userId, _getFields(fields), revision);
+                }
             },
             getDeleteUrl: function (userId) {
                 return String.format("{0}/{1}", this.userServiceUrl, userId);
@@ -829,8 +833,12 @@ var global = {};
             getGetUrl: function (deviceId, fields) {
                 return String.format("{0}/{1}?fields={2}", this.deviceServiceUrl, deviceId, _getFields(fields));
             },
-            getUpdateUrl: function (deviceId, fields) {
-                return String.format("{0}/{1}?fields={2}", this.deviceServiceUrl, deviceId, _getFields(fields));
+            getUpdateUrl: function (deviceId, fields, revision) {
+                if (!revision) {
+                    return String.format("{0}/{1}?fields={2}", this.deviceServiceUrl, deviceId, _getFields(fields));
+                } else {
+                    return String.format("{0}/{1}?fields={2}&revision={3}", this.deviceServiceUrl, deviceId, _getFields(fields), revision);
+                }
             },
             getDeleteUrl: function (deviceId) {
                 return String.format("{0}/{1}", this.deviceServiceUrl, deviceId);
@@ -871,8 +879,12 @@ var global = {};
             getGetUrl: function (schemaName, articleId, fields) {
                 return String.format('{0}/{1}/{2}?fields={3}', this.articleServiceUrl, schemaName, articleId, _getFields(fields));
             },
-            getUpdateUrl: function (schemaName, articleId, fields) {
-                return String.format('{0}/{1}/{2}?fields={3}', this.articleServiceUrl, schemaName, articleId, _getFields(fields));
+            getUpdateUrl: function (schemaName, articleId, fields, revision) {
+                if (!revision) {
+                    return String.format('{0}/{1}/{2}?fields={3}', this.articleServiceUrl, schemaName, articleId, _getFields(fields));
+                } else {
+                    return String.format('{0}/{1}/{2}?fields={3}&revision={4}', this.articleServiceUrl, schemaName, articleId, _getFields(fields), revision);
+                }
             },
             getDeleteUrl: function (schemaName, articleId) {
                 return String.format('{0}/{1}/{2}', this.articleServiceUrl, schemaName, articleId);
@@ -894,8 +906,12 @@ var global = {};
             getCreateUrl: function (relationName, fields) {
                 return String.format('{0}/{1}?fields={2}', this.connectionServiceUrl, relationName, _getFields(fields));
             },
-            getUpdateUrl: function (relationName, connectionId, fields) {
-                return String.format('{0}/{1}/{2}?fields={3}', this.connectionServiceUrl, relationName, connectionId, _getFields(fields));
+            getUpdateUrl: function (relationName, connectionId, fields, revision) {
+                if (!revision) {
+                    return String.format('{0}/{1}/{2}?fields={3}', this.connectionServiceUrl, relationName, connectionId, _getFields(fields));
+                } else {
+                    return String.format('{0}/{1}/{2}?fields={3}&revision={4}', this.connectionServiceUrl, relationName, connectionId, _getFields(fields), revision);
+                }
             },
             getDeleteUrl: function (relationName, connectionId) {
                 return String.format('{0}/{1}/{2}', this.connectionServiceUrl, relationName, connectionId);
@@ -2729,6 +2745,8 @@ Depends on  NOTHING
 			}
 		};
 
+		var that = this;
+
 		var raw = {};
 		_copy(objectOptions, raw);
 		var article = raw;
@@ -2835,12 +2853,12 @@ Depends on  NOTHING
 		this.getChangedAttributes = _getChangedAttributes;
 
 		// accessor function for the article's aggregates
-		this.aggregates = function() {
+		this.aggregate = function() {
 			var aggregates = {};
 			for (var key in article) {
 				if (!article.hasOwnProperty(key)) return;
 				if (key[0] == '$') {
-					aggregates[key] = article[key];
+					aggregates[key.substring(1)] = article[key];
 				}
 			}
 			if (arguments.length === 0) return aggregates;
@@ -3011,8 +3029,7 @@ Depends on  NOTHING
 					if (!isNaN(res)) return res;
 				}
 				return value;
-			}, 
-			"decimal": function(value) { 
+			}, "decimal": function(value) { 
 				if (value) {
 					var res = parseFloat(value);
 					if (!isNaN(res)) return res;
@@ -3113,12 +3130,32 @@ Depends on  NOTHING
 			return this;
 		};
 
+		var _atomicProps = [];
+
+		var _atomic = function(key, amount, multiplier) {
+			if (!key || typeof key != 'string' ||  key.length == 0 || key.indexOf('__') == 0) return this;
+
+			if (!amount || isNaN(parseInt(amount))) amount = multiplier;
+			else amount = parseInt(amount) * multiplier;
+
+			_atomicProps.push({ key: key.toLowerCase(), amount: amount });
+			return that;
+		};
+
+		this.increment = function(key, amount) {
+			return _atomic(key, amount, 1);
+		};
+
+		this.decrement = function(key, amount) {
+			return _atomic(key, amount, -1);
+		};
+
 		/* crud operations  */
 
 		/* save
 		   if the object has an id, then it has been created -> update
 		   else create */
-		this.save = function(onSuccess, onError) {
+		this.save = function() {
 			if (article.__id) _update.apply(this, arguments);
 			else _create.apply(this, arguments);
 			return this;
@@ -3188,58 +3225,94 @@ Depends on  NOTHING
 			onSuccess = onSuccess || function(){};
 			onError = onError || function(){};
 
-			var changeSet = _getChanged(true);
-			var that = this;
-			if (changeSet) {
-
-				if (typeof fields == 'string') _fields = value;
-				else if (typeof fields == 'object' && fields.length) fields = fields.join(',');
-				else fields = _fields;
-
-				var _updateRequest = new global.Appacitive.HttpRequest();
-				var url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory[this.type].getUpdateUrl(article.__schematype || article.__relationtype, (_snapshot.__id) ? _snapshot.__id : article.__id, fields);
-				
-				// for User and Device articles
-				if (article && article.__schematype &&  ( article.__schematype.toLowerCase() == 'user' ||  article.__schematype.toLowerCase() == 'device')) 
-					url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory[article.__schematype.toLowerCase()].getUpdateUrl(_snapshot.__id);
-				
-				_updateRequest.url = url;
-				_updateRequest.method = 'post';
-				_updateRequest.data = changeSet;
-				_updateRequest.onSuccess = function(data) {
-					if (data && (data.article || data.connection || data.user || data.device)) {
-						_snapshot = data.article || data.connection || data.user || data.device;
-						_copy(_snapshot, article);
-						_removeTags = [];
-						global.Appacitive.eventManager.fire((that.schema || that.relation)  + '.' + that.type + "." + article.__id +  '.updated', that, { object : that });
-						if (typeof onSuccess == 'function') onSuccess(that);
-					} else {
-						data = data || {};
-						data.status =  data.status || {};
-						data.status = _getOutpuStatus(data.status);
-						global.Appacitive.eventManager.fire((that.schema || that.relation)  + '.' + that.type + "." + article.__id +  '.updateFailed', that, { object : data.status });
-						if (typeof onError == 'function') onError(data.status, that);
-					}
-				};
-				_updateRequest.onError = function(err) {
-					err = err || {};
-					err.message = err.message || 'Server error';
-					err.code = err.code || '500';
-					if (typeof onError == 'function') onError(err, that);
+			var cb = function(revision) {
+				var changeSet = _getChanged(true);
+				for (var p in changeSet) {
+					if (p[0] == '$') delete changeSet[p];
 				}
-				global.Appacitive.http.send(_updateRequest);
-			} else {
-				if (typeof onSuccess == 'function') onSuccess(that);
+
+				if (changeSet) {
+
+					if (typeof fields == 'string') _fields = value;
+					else if (typeof fields == 'object' && fields.length) fields = fields.join(',');
+					else fields = _fields;
+
+					var _updateRequest = new global.Appacitive.HttpRequest();
+					var url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory[that.type].getUpdateUrl(article.__schematype || article.__relationtype, (_snapshot.__id) ? _snapshot.__id : article.__id, fields, revision);
+					
+					var type = that.type;
+
+					// for User and Device articles
+					if (article && article.__schematype &&  ( article.__schematype.toLowerCase() == 'user' ||  article.__schematype.toLowerCase() == 'device')) { 
+						type = article.__schematype.toLowerCase();
+						url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory[article.__schematype.toLowerCase()].getUpdateUrl(_snapshot.__id, fields, revision);
+					}
+					_updateRequest.url = url;
+					_updateRequest.method = 'post';
+					_updateRequest.data = changeSet;
+					_updateRequest.onSuccess = function(data) {
+						if (data && data[type]) {
+							_atomicProps.length = 0;
+							_snapshot = data[that.type];
+							_copy(_snapshot, article);
+							_removeTags = [];
+							global.Appacitive.eventManager.fire((that.schema || that.relation)  + '.' + type + "." + article.__id +  '.updated', that, { object : that });
+							if (typeof onSuccess == 'function') onSuccess(that);
+						} else {
+							data = data || {};
+							data.status =  data.status || {};
+							data.status = _getOutpuStatus(data.status);
+							if (data.status.code == '7008' && _atomicProps.length > 0) {
+								_update(onSuccess, onError, fields);
+							}  else {
+								global.Appacitive.eventManager.fire((that.schema || that.relation)  + '.' + type + "." + article.__id +  '.updateFailed', that, { object : data.status });
+								if (typeof onError == 'function') onError(data.status, that);
+							}
+						}
+					};
+					_updateRequest.onError = function(err) {
+						err = err || {};
+						err.message = err.message || 'Server error';
+						err.code = err.code || '500';
+						if (err.code == '7008' && _atomicProps.length > 0) {
+							_update(onSuccess, onError, fields);
+						} else {
+							if (typeof onError == 'function') onError(err, that);
+						}
+					}
+					global.Appacitive.http.send(_updateRequest);
+				} else {
+					if (typeof onSuccess == 'function') onSuccess(that);
+				}
 			}
+
+			if (_atomicProps.length > 0) {
+				var props = ['__revision'];
+				_atomicProps.forEach(function(p) { 
+					props.push(p.key); 
+				});
+
+				_fetch(function(obj) {
+					var tmp = {};
+
+					_atomicProps.forEach(function(p) {
+						var value = _types['integer'](obj[p.key]);
+						if (!value) value = 0
+						that.set(p.key, value + p.amount);
+					});
+
+					cb(obj.__revision);
+				}, onError, props, true);
+			} else cb();
+
 			return this;
 		};
 
-		// fetch ( by id )
-		this.fetch = function(onSuccess, onError, fields) {
+		var _fetch = function (onSuccess, onError, fields, isVersion) {
 			onSuccess = onSuccess || function() {};
 			onError = onError || function() {};
 			if (!article.__id) {
-				if (typeof onError == 'function') onError( {code:'400', message: 'Please specify id for get operation'} ,this);
+				if (typeof onError == 'function') onError( {code:'400', message: 'Please specify id for get operation'}, that);
 				return;
 			}
 
@@ -3248,22 +3321,25 @@ Depends on  NOTHING
 			else fields = _fields;
 
 			// get this article by id
-			var that = this;
-			var url = global.Appacitive.config.apiBaseUrl  + global.Appacitive.storage.urlFactory[this.type].getGetUrl(article.__schematype || article.__relationtype, article.__id, fields);
+			var url = global.Appacitive.config.apiBaseUrl  + global.Appacitive.storage.urlFactory[that.type].getGetUrl(article.__schematype || article.__relationtype, article.__id, fields);
 			var _getRequest = new global.Appacitive.HttpRequest();
 			_getRequest.url = url;
 			_getRequest.method = 'get';
 			_getRequest.onSuccess = function(data) {
-				if (data && (data.article || data.connection || data.user || data.device)) {
-					_snapshot = data.article || data.connection || data.user || data.device;
-					_copy(_snapshot, article);
-					if (data.connection) {
-						if (!that.endpoints && (!that.endpointA || !that.endpointB)) {
-							that.setupConnection(article.__endpointa, article.__endpointb);
+				if (data && data[that.type]) {
+					if (!isVersion) {
+						_snapshot = data[that.type];
+						_copy(_snapshot, article);
+						if (data.connection) {
+							if (!that.endpoints && (!that.endpointA || !that.endpointB)) {
+								that.setupConnection(article.__endpointa, article.__endpointb);
+							}
 						}
+						if (that.___collection && ( that.___collection.collectionType == 'article')) that.___collection.addToCollection(that);
+						if (typeof onSuccess == 'function') onSuccess(that);
+					} else {
+						if (typeof onSuccess == 'function') onSuccess(data[that.type]);
 					}
-					if (that.___collection && ( that.___collection.collectionType == 'article')) that.___collection.addToCollection(that);
-					if (typeof onSuccess == 'function') onSuccess(that);
 				} else {
 					data = data || {};
 					data.status =  data.status || {};
@@ -3276,7 +3352,12 @@ Depends on  NOTHING
 				if (typeof onError == 'function') onError(err, that);
 			}
 			global.Appacitive.http.send(_getRequest);
-			return this;
+			return that;
+		};
+
+		// fetch ( by id )
+		this.fetch = function(onSuccess, onError, fields) {
+			_fetch(onSuccess, onError, fields);
 		};
 
 		// delete the article

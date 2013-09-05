@@ -1,8 +1,7 @@
-
-/*
- * GET home page.
- */
-
 exports.index = function(req, res){
-  res.render('index', { title: process.config.brand });
+	//initialize the app
+  	var app = require('../../shared/app.init');
+	var state = app.init(req);
+	
+	res.render('index', state);
 };
