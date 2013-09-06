@@ -33,32 +33,21 @@
       var errorMessage,
         _this = this;
 
-      errorMessage = '';
-      if (!login.email || login.email.length === 0) {
-        errorMessage = 'Please enter your email address';
-      }
-      if (!login.password || login.password.length === 0) {
-        errorMessage = 'Please enter your password';
-      }
-      if (errorMessage.length === 0) {
-        Ember.$.post('/service/users/auth', login).then(function(response, error) {
-          if (response && response.success) {
-            //syncing local store
-            window.init = {};
-            window.init.user = response.user;
-            
-            //load logged in user in store
-            Deific.User.find(response.user.id);
+      Ember.$.post('/service/users/auth', login).then(function(response, error) {
+        if (response && response.success) {
+          //syncing local store
+          window.init = {};
+          window.init.user = response.user;
+          
+          //load logged in user in store
+          Deific.User.find(response.user.id);
 
-            _this.setUser();
-            return callback(_this.user, null);
-          } else {
-            return callback(null,'Email or password is incorrect');
-          }
-        });
-      } else {
-        return callback(null, errorMessage);
-      }
+          _this.setUser();
+          return callback(_this.user, null);
+        } else {
+          return callback(null, Deific.localDataSource.getError(-1, 'Email or password is incorrect', 'ERROR', 'Deific.AccountController-login'));
+        }
+      });
     },
     logout: function() {
       Neptune.parseDataSource.logout();

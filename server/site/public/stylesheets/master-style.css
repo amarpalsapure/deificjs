@@ -59,6 +59,8 @@
 .border-bottom {border-bottom: solid 1px #ddd;}
 .border-bottom-dark {border-bottom: solid 1px #aaa;}
 .border-bottom-dashed{border-bottom: dashed 1px #ccc;}
+.alert-sm { padding: 8px; }
+.alert-error { border: solid 1px #b94a48; }
 .alert-dismiss-container .close {
 	padding-left: 12px;
 	margin-right: -6px;

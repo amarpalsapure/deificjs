@@ -53,23 +53,6 @@
 		}
 	});
 
-	Deific.QuestionLoginController = Ember.Controller.extend({
-		login: function(){
-			$('#loginProgress').removeClass('hide');
-			var loginInfo = this.getProperties('email', 'password');
-			var _this = this;
-
-			return Deific.AccountController.login(loginInfo, function(data, error) {
-				if (!error) {
-				  return $("#signIn").modal("hide");
-				} else {
-				  $(".signin-group").addClass("error");
-				  return _this.set("login.error", error.message);
-				}
-			});
-		}
-	});
-
 	Deific.AnswerController = Deific.QuestionController.extend({
 		createComment: function() { this.__saveComment('answer'); }
 	});

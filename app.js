@@ -59,8 +59,10 @@ app.get('/', routes.index);
 app.get('/questions/:id', questions.index);
 app.get('/questions/:id/:title', questions.index);
 app.get('/questions/tagged/:tag', questions.index);
+app.get('/users/login',users.login);
 app.get('/users/:id', users.index);
 app.get('/users/:id/:title', users.index);
+
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

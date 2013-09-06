@@ -42,6 +42,17 @@
 			} else {
 				return null;
 			}
+		},
+		getError: function(code, message, severity, location, callback) {
+			if (true) {
+				console.log('Neptune - ' + severity + ' - Code: ' + code + ' Message: ' + message + ' Location: ' + location);
+			}
+			return {
+				code: code,
+				message: message,
+				severity: severity,
+				location: location
+			};
 		}
 	});
 }).call(this);
