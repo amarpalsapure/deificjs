@@ -39,7 +39,7 @@
 					var key = 'returnurl';
 					var regex = new RegExp("[\\?&]"+key+"=([^&#]*)");
 					var qs = regex.exec(window.location.href);
-					if(qs == null) window.location = window.location.host;
+					if(qs == null) window.location = window.host;
 					else window.location = qs[1];
 				} else {
 					$(".login-error").addClass('has-error').removeClass('hide');

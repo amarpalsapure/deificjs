@@ -44,8 +44,8 @@
 			}
 		},
 		getError: function(code, message, severity, location, callback) {
-			if (true) {
-				console.log('Neptune - ' + severity + ' - Code: ' + code + ' Message: ' + message + ' Location: ' + location);
+			if (Deific.ApplicationController.debug) {
+				console.debug('Deific - ' + severity + ' - Code: ' + code + ' Message: ' + message + ' Location: ' + location);
 			}
 			return {
 				code: code,

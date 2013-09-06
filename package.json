@@ -12,6 +12,7 @@
     "xmlhttprequest": "1.x",
     "facebook-node-sdk": "0.2",
     "phantom": "*",
-    "node-phantom": "*"
+    "node-phantom": "*",
+    "MD5": "*"
   }
 }

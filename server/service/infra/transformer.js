@@ -2,14 +2,17 @@ var _toUser = function(user) {
 	if(!user) return {};
 
 	var config = require('../../shared/configuration').load();
+	var md5 = require('MD5');
 
 	var response = {
 		'__id': user.id(),
-		'email': user.get('email'),
 		'firstname': user.get('firstname'),
 		'lastname': user.get('lastname'),
+		'gravtarurl': null,
 		'reputation': 0
 	};
+	if(user.get('email'))
+		response.gravtarurl = 'http://www.gravatar.com/avatar/' + md5(user.get('email'));
 
 	var answerdowncount = 0,
 		answerupcount = 0,

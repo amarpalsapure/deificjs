@@ -6,15 +6,13 @@ exports.findById = function(req, res) {
   	var sdk = require('./appacitive.init');
 	var Appacitive = sdk.init();
 	
+	var transformer = require('./infra/transformer');
+
 	var user = new Appacitive.User({__id: req.param('id')})
 	user.fetch(function () {
 		//tranform		
-		var transform = function (user) {
-			response.user = user.toJSON();
-			return response;
-		}
-
-		res.json(transform(user));
+		response.user = transformer.toUser(user);
+		res.json(response);
 	}, function (status) {
 		res.json(response);
 	});	

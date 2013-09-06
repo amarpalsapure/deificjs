@@ -11,7 +11,16 @@
 		downvotecount: DS.attr('number', { defaultValue: 0 }),
 		viewcount: DS.attr('number', { defaultValue: 0 }),
 		isanswered: DS.attr('boolean'),
+		voted: DS.attr('number'),
 
+		hasupvoted: function(){
+			if(this.get('voted') == 1) return 'btn btn-warning btn-sm';
+			else return 'btn btn-success btn-sm';
+		}.property('voted'),
+		hasdownvoted: function(){
+			if(this.get('voted') == -1) return 'btn btn-warning btn-sm';
+			else return 'btn btn-danger btn-sm';
+		}.property('voted'),
 		selfurl: function(){
 			//TODO: Handling error in question get
 
@@ -31,8 +40,7 @@
 		}.property('title'),
 
 		votecount: function(){
-			if(this.get('upvotecount') && this.get('downvotecount')) return this.get('upvotecount') - this.get('downvotecount');
-			else return 0;
+			return this.get('upvotecount') - this.get('downvotecount');
 		}.property('upvotecount', 'downvotecount'),
 
 		comments: DS.hasMany('Deific.Comment'),

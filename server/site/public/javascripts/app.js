@@ -1,6 +1,10 @@
 (function() {
 	/*global Ember */
-	window.Deific = Ember.Application.create();
+	window.Deific = Ember.Application.create({
+		ApplicationController: Ember.Controller.extend({
+    		debug: true
+  		}),
+	});
 
   	var showdown = new Showdown.converter();
 
