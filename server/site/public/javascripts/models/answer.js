@@ -6,6 +6,17 @@
 		iscorrectanswer: DS.attr('boolean'),
 		upvotecount: DS.attr('number', { defaultValue: 0 }),
 		downvotecount: DS.attr('number', { defaultValue: 0 }),
+		voted: DS.attr('number'),
+
+		hasupvoted: function(){
+			if(this.get('voted') == 1) return 'btn btn-warning btn-sm';
+			else return 'btn btn-success btn-sm';
+		}.property('voted'),
+
+		hasdownvoted: function(){
+			if(this.get('voted') == -1) return 'btn btn-warning btn-sm';
+			else return 'btn btn-danger btn-sm';
+		}.property('voted'),
 
 		//question: DS.belongsTo('Deific.Question'),
 		author: DS.belongsTo('Deific.User'),

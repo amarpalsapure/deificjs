@@ -5,12 +5,10 @@ exports.init = function (userToken) {
 	var Appacitive = require(path);
 	delete require.cache[require.resolve(path)];
 
-	var config = require('../shared/configuration').load();
-
 	Appacitive.initialize({ 
-	    apikey: config.apikey, 
-	    env: config.env,
-	    appId: config.appId,
+	    apikey: process.config.apikey, 
+	    env: process.config.env,
+	    appId: process.config.appId,
 	    userToken: userToken
 	});
 	return Appacitive;

@@ -3,7 +3,8 @@
 		login: {},
 
 		didInsertElement: function(){
-			
+			//remove loader
+			$('#rootProgress').remove();
 		},
 		submitTextField: Ember.TextField.extend({
 			insertNewline: function() {
@@ -36,11 +37,7 @@
 			return Deific.AccountController.login(this.login, function(data, error) {
 				if (!error) {
 					//logged in successfully, take back user to return url (if any)
-					var key = 'returnurl';
-					var regex = new RegExp("[\\?&]"+key+"=([^&#]*)");
-					var qs = regex.exec(window.location.href);
-					if(qs == null) window.location = window.host;
-					else window.location = qs[1];
+					window.location = $.fn.parseParam('returnurl', window.host);
 				} else {
 					$(".login-error").addClass('has-error').removeClass('hide');
 					$('#frmLogin input').removeAttr('disabled');

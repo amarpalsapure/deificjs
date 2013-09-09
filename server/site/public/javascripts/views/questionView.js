@@ -33,19 +33,9 @@
 			asyncPrettyPrint();
 		}
 	});
-
-	Deific.QuestionLoginView = Ember.View.extend({
-		templateName: "question/login",
-
-		didInsertElement:function(){
-			var that = this;
-			$('#loginModal')
-				.removeClass('hide')
-				.modal()
-				.on('hidden.bs.modal', function(){
-					that.get('controller').transitionTo('question');
-				});
+	Deific.TagView = Ember.View.extend({
+		didInsertElement: function() {
+			$(this.get('element')).find('a').popover({trigger: 'hover'});
 		}
-
 	});
 }).call(this);

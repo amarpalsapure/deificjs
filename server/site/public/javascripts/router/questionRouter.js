@@ -2,9 +2,7 @@
 'use strict';
 
 Deific.Router.map(function () {
-	this.resource('question', { path: '/' }, function(){
-		this.route('login')
-	});
+	this.resource('question', { path: '/' });
 });
 Deific.Router.reopen({
 	location: 'none'

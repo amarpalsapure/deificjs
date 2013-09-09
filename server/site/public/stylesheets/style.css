@@ -19,7 +19,12 @@ body { background-color: #eef0f3; }
 .answer .entity-container { padding-bottom: 50px !important; }
 .bubble { border: solid 15px #eee; border-radius: 15px; float: left; margin-top: -8px; }
 .user-profile, .vote-panel { z-index: 1; background-color: #fff; padding-bottom: 8px; }
-.user-profile { padding-top: 2px; margin-top: 18px; }
+.isfavtag, .isfavtag .user-profile, .isfavtag .vote-panel { background-color: #FFF1B5; }
+.answered, .unanswered { width: 24px; height: 18px; display: inline-block; vertical-align: text-bottom;  }
+.answered { background: transparent url(../images/answer.png) left center no-repeat; }
+.unanswered { background: transparent url(../images/unanswer.png) left center no-repeat; }
+.user-profile { padding-top: 2px; }
+.question-page .user-profile { margin-top: 18px; }
 
 .vote-cast { display: inline-block; font-size: 1.8em; margin-bottom: 1px; width: 100%; text-align: center; }
     .vote-cast a, .vote-cast a:hover { text-decoration: none; }
@@ -33,7 +38,7 @@ body { background-color: #eef0f3; }
 
 .content, .question-list { padding: 0px; }
     .content .mainSection, .content .sideSection { min-height: 480px; margin-bottom: 48px; background-color: #fff; padding: 15px 20px 60px; }
-    .question-list .question { padding: 18px 0 18px !important; border-bottom: 1px dashed #d1d1d1; }
+    .question-list .question { padding: 18px 0 18px !important; border-bottom: 1px dashed #ADADAD; }
         .question-list .question .user-img { padding-bottom: 4px; }
     .question-list h4 { padding: 0; margin: 0; font-size: 16px; line-height: 1.4; }
 .question-details span { font-size: 0.9em; color: #777; }
@@ -41,7 +46,7 @@ body { background-color: #eef0f3; }
 .mainSection .row { padding: 2px 0 6px; }
 
 .contentTitle { border-bottom: solid 1px #cdcdcd; }
-    .contentTitle h1 { font-size: 1.5em; font-weight: 700; display: inline-block; }
+    .contentTitle h1 { font-size: 1.5em; font-weight: 700; display: inline-block; margin-bottom: 0px; }
     .contentTitle .btn-group { float: right; }
     .contentTitle .btn { font-size: 13px; border-radius: 2px; }
 
@@ -68,6 +73,8 @@ body { background-color: #eef0f3; }
 .time-container { float: left; height: 50px; box-shadow: 1px 1px 4px #ddd; margin-left: -5px; }
 .time-date, .time-details { border: solid 1px #ddd; display: inline-block; padding: 4px 8px; float: left; }
 .tag-container div { display: inline; }
+.tag-container .popover-title { background-color: #999999; }
+.tag-container .popover-content { color: #444; display: block; line-height: 18px; font-size: 12px; font-weight: normal;}
 .time-date, .time-month, .time-day { color: #777; }
 .time-date { height: 50px; font-size: 26px; font-weight: 700; line-height: 42px; }
 .time-month, .time-day { display: block; height: 20px; }

@@ -10,6 +10,12 @@
 		commentAction: function() {	this.set('isCommenting', !this.get('isCommenting')); },
 		createComment: function() { this.__saveComment('question');	},
 		votedetails: function() { this.set('isVoteOpen', true);	},
+		upvote: function() {
+			alert('not implemented')
+		},
+		downvote: function() {
+			alert('not implemented')
+		},
 
 		//for internal use
 		__saveComment: function(type){

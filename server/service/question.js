@@ -1,24 +1,66 @@
 exports.findAll = function(req, res) {
+	var response = {
+		questions: []
+	};
+	var questionIds = [];
+
 	var sdk = require('./appacitive.init');
 	var Appacitive = sdk.init();
 
-	var query = new Appacitive.Queries.FindAllQuery({
-		schema : 'question',
-		fields: ['title']
-	});
-	query.fetch(function (questions) {
-		var q  =[];
+	var transformer = require('./infra/transformer');
+
+	//First get the question according to the query
+	//then get the question details by making a graph query call
+	var query = null;
+
+	var sort = req.query.sort;
+	sort = (!sort) ? 'popular' : sort.toLowerCase();
+	switch(sort) {
+		case 'popular':
+			query = new Appacitive.Queries.FindAllQuery({
+				schema : 'question',
+				fields : '__id',
+				isAscending: false,
+				orderBy: 'totalvotecount',
+				pageSize: process.config.pagesize
+			});
+			break;
+		case 'latest':
+			query = new Appacitive.Queries.FindAllQuery({
+				schema : 'question',
+				fields : '__id',
+				isAscending: false,
+				pageSize: process.config.pagesize
+			});
+			break;
+		case 'unresolved':
+			query = new Appacitive.Queries.FindAllQuery({
+				schema : 'question',
+				fields : '__id',
+				isAscending: false,
+				filter: '*isanswered==false',
+				pageSize: process.config.pagesize
+			});
+			break;
+	}
+
+	query.fetch(function (questions, pi) {
 		questions.forEach(function (question) {
-			q.push(question.toJSON());
-			//q.push({
-			//	id: question.get('__id'),
-			//	title : question.get('title')
-			//});
+			questionIds.push(question.id());
 		})
 
-		res.json({ questions: q });
+		//Get the quesiton details
+		var query = new Appacitive.Queries.GraphProjectQuery('questions', questionIds);
+		query.fetch(function (gQuestions) {
+			//if no data found
+			if(gQuestions && gQuestions.length > 0) response = transformer.toQuestions(gQuestions);
+			
+			return res.json(response);
+		}, function (status) {
+			return res.json(response);
+		});	
 	}, function (status) {
-		res.json(status);
+		return res.json(response);
 	});	
 };
 
@@ -34,11 +76,18 @@ exports.findById = function(req, res) {
 	// -    vote => -1
 	// not voted =>  0
 	var voted = 0
-
 	var callCount = 3;
+	var isNewVisit = false;
+
+	if(!req.session.visited_questions) req.session.visited_questions = [];
+	if(req.session.visited_questions.indexOf(qId) == -1){
+		isNewVisit = true;
+		req.session.visited_questions.push(qId);
+	}
 
 	var merge = function(){
 		if(--callCount != 0) return;
+		if(isNewVisit) response.question['viewcount'] = parseInt(response.question['viewcount'], 10) + 1;
 		response.question['answers_meta'] = answersMeta;
 		response.question['voted'] = voted;
 		return res.json(response);
@@ -67,7 +116,8 @@ exports.findById = function(req, res) {
 		merge();
 
 		//update the view count, fire and forget save call
-		//question.increment('viewcount').save();
+		if(isNewVisit) question.increment('viewcount').save();
+
 	}, function (status) {
 		merge();
 	});	

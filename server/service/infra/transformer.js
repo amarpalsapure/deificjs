@@ -1,7 +1,6 @@
 var _toUser = function(user) {
 	if(!user) return {};
 
-	var config = require('../../shared/configuration').load();
 	var md5 = require('MD5');
 
 	var response = {
@@ -26,13 +25,17 @@ var _toUser = function(user) {
 	if(user.aggregate('questiondowncount')) questiondowncount = user.aggregate('questiondowncount').all;
 	if(user.aggregate('questionupcount')) questionupcount = user.aggregate('questionupcount').all;
 
-	response.reputation = ((answerupcount + questionupcount) * config.upvotepts) -
-						  ((answerdowncount + questiondowncount) * config.downvotepts) +
-						  (correctanswercount * config.answerpts);
+	response.reputation = ((_toInt(answerupcount) + _toInt(questionupcount)) * process.config.upvotepts) -
+						  ((_toInt(answerdowncount) + _toInt(questiondowncount)) * process.config.downvotepts) +
+						  (_toInt(correctanswercount) * process.config.answerpts);
 
 	return response;
 };
 exports.toUser = _toUser;
+var _toInt = function(number) { 
+	if(isNaN(number)) return 0;
+	return parseInt(number, 10);
+}
 
 var _toComment = function(comment) {
 	if(!comment) return {};
@@ -64,7 +67,8 @@ var _toQuestion = function(question) {
 	var response = {
 		question: {},
 		comments: [],
-		users: []
+		users: [],
+		tags: []
 	};
 
 	if(!question)  return response;
@@ -83,28 +87,59 @@ var _toQuestion = function(question) {
 	}
 
 	//Comments
-	response.comments = [];
-	response.question.comment_ids = [];
-	question.children.comments.forEach(function(comment){
-		response.question.comment_ids.push(comment.id())
-		response.comments.push(_toComment(comment));
-	});
+	if(question.children.comments && question.children.comments.length > 0) {
+		response.question.comment_ids = [];
+		question.children.comments.forEach(function(comment){
+			response.question.comment_ids.push(comment.id())
+			response.comments.push(_toComment(comment));
+		});
+	}
 
 	//Tags
-	response.tags = [];
-	response.question.tag_ids = [];
-	question.children.tags.forEach(function(tag){
-		response.question.tag_ids.push(tag.id())
-		response.tags.push(_toTag(tag));
-	});			
+	if(question.children.tags && question.children.tags.length > 0) {
+		response.question.tag_ids = [];
+		question.children.tags.forEach(function(tag){
+			response.question.tag_ids.push(tag.id())
+			response.tags.push(_toTag(tag));
+		});			
+	}
 	
 	//Question Author
-	var author = _toUser(question.children.author[0]);
-	response.question.author_id = author['__id'];
-	response.users.push(author);
+	if(question.children.author && question.children.author.length > 0) {
+		var author = _toUser(question.children.author[0]);
+		response.question.author_id = author['__id'];
+		response.users.push(author);
+	}
 	return response;
 };
 exports.toQuestion = _toQuestion;
+
+var _toQuestions = function(questions) {
+	var response = {
+		questions: [],
+		comments: [],
+		users: [],
+		tags: []
+	};
+
+	questions.forEach(function(question) {
+		var questionResponse = _toQuestion(question);
+		if(!questionResponse) return;
+		questionResponse.question.text = questionResponse.question.shorttext;
+		response.questions.push(questionResponse.question);
+		
+		for (var i = 0; i < questionResponse.comments.length; i++) 
+			response.comments.push(questionResponse.comments[i]);
+
+		for (var i = 0; i < questionResponse.users.length; i++)
+			response.users.push(questionResponse.users[i]);
+
+		for (var i = 0; i < questionResponse.tags.length; i++)
+			response.tags.push(questionResponse.tags[i]);
+	});
+	return response;
+};
+exports.toQuestions = _toQuestions;
 
 var _toAnswer = function(answer) {
 	var response = {
