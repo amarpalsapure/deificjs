@@ -102,7 +102,7 @@ var _findById = function(req, qId, callback) {
 			delete response.question.correctanswer;
 			answersMeta = newAnswerMeta;
 		}
-		response.question['answers_meta'] = answersMeta;
+		response.question['answersMeta'] = answersMeta;
 		response.question['voted'] = voted;
 		callback(response);
 	};

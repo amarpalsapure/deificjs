@@ -31,8 +31,8 @@
 			return url;
 		}.property('firstname', 'lastName'),
 
-		question: DS.belongsTo('Deific.Question'),
-		answer: DS.belongsTo('Deific.User'),
-		comment: DS.belongsTo('Deific.Comment')
+		question: DS.belongsTo('question'),
+		answer: DS.belongsTo('user'),
+		comment: DS.belongsTo('comment')
 	});
 }).call(this);	

@@ -3,8 +3,8 @@
 		text: DS.attr('string'),
 		__utcdatecreated: DS.attr('date'),
 
-		question: DS.belongsTo('Deific.Question'),
-		answer: DS.belongsTo('Deific.Answer'),
-		author: DS.belongsTo('Deific.User')
+		question: DS.belongsTo('question'),
+		answer: DS.belongsTo('answer'),
+		author: DS.belongsTo('user')
 	});
 }).call(this);

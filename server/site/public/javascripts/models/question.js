@@ -13,10 +13,10 @@
 		isanswered: DS.attr('boolean'),
 		voted: DS.attr('number'),
 
-		answers: DS.hasMany('Deific.Answer'),
-		comments: DS.hasMany('Deific.Comment'),
-		author: DS.belongsTo('Deific.User'),
-		tags: DS.hasMany('Deific.Tag'),
+		answers: DS.hasMany('answer'),
+		comments: DS.hasMany('comment'),
+		author: DS.belongsTo('user'),
+		tags: DS.hasMany('tag'),
 
 
 		hasupvoted: function(){

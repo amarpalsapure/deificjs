@@ -113,6 +113,8 @@ body { background-color: #eef0f3; }
     .comment-container > .comment:first-child { border-top: dashed 1px #ccc; }
 .comment-add-container textarea { resize: vertical; width: 100%; font-size: 0.9em; font-family: Monaco, Menlo, Consolas, "Courier New", monospace; height: 45px; padding: 3px 6px;}
 .comment-cancel { line-height: 21px; vertical-align: bottom; }
+.comment-error { position: relative; }
+.comment-error .alert { position: absolute; right: 0px; z-index: 1; }
 
 .login-input { width: 60%; line-height: 26px; height: 40px; padding: 6px; min-width: 200px; font-size: 1.2em; color: #444;}
 .login-nav li { display: inline; margin: 0 10px; }

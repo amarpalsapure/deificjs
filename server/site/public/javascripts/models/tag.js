@@ -7,6 +7,6 @@
 			return '/questions/tagged/' + this.get('name');
 		}.property('name'),
 
-		question: DS.belongsTo('Deific.Question')
+		question: DS.belongsTo('question')
 	});
 }).call(this);

@@ -42,43 +42,59 @@
 
 		//for internal use
 		__saveComment: function(type){
-			if(!Deific.AccountController.user){
-				this.transitionTo('question.login');
-				return;
-			}
 			var text = this.get('newComment');
 
-			if (!text || !text.trim()) {
-				return;
-			}
-			// Create the new Comment model
-			var comment = Deific.Comment.createRecord({
-				text: text,
-				author: Deific.User.find(Deific.AccountController.user.get('userid'))		
-			});
+			//validation
+			if (!text || !text.trim()) return;
 
-			if(type == 'question') 
-				comment.set('question', this.get('model'));
-			else 
-				comment.set('answer', this.get('model'));
-
-			// Clear the "New Comment" text field
-			this.set('newComment', '');
-			this.set('isCommenting', false);
 			var that = this;
+			this.get('store').find('user', Deific.AccountController.user.userid).then(function(user){
+				// Create the new Comment model
+				var parentId = '';
+				var comment = that.get('store').createRecord('comment');
+				comment.set('text', text);
+				comment.set('author', user);
+				
+				if(type == 'question'){
+					comment.set('question', that.get('model'));
+					parentId = that.get('model').get('id');
+				}
+				else {
+					comment.set('answer', that.get('model').get('content'));
+					parentId = that.get('model').get('content').get('id');
+				}
+
+				// Clear the "New Comment" text field
+				that.set('newComment', '');
+				that.set('isCommenting', false);
+
+				var toggleView = function() {
+					setTimeout(function(){
+						$('#'+ parentId +' .commentProgress').toggleClass('hide');
+						$('#'+ parentId +' .commentAdd').toggleClass('hide');
+					}, 10);
+				}
+
+				toggleView();
+
+				// Save the new model
+				comment.save().then(function(savedObj){
+					var model = null;
+					if(type == 'question') model = that.get('model');
+					else model = that.get('model').get('content');
+					savedObj.set('author', user);
+					model.get('comments').pushObject(savedObj);
+					toggleView();
+				}, function(){
+					//in case of any error roll back the changes
+					//and show an error message
+					var alert = '<div class="alert alert-block alert-danger pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred during saving comment. </div>';
+					$('#'+ parentId +' .commentError').html(alert).alert();
+					toggleView();
+				});
+			})
 			
-			// Save the new model
-			this.get('store').commit();
 			
-			//in case of any error roll back the changes
-			//and show an error message
-			comment.on('becameError', function(){
-				var alert = '<div class="alert alert-block alert-danger pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred during saving comment. </div>';
-				$("#divCommentError").html(alert).alert();
-				var parent = that.get('model');
-				parent.send('becomeDirty');
-				parent.rollback();
-			});
 		}
 	});
 

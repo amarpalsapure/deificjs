@@ -1,9 +1,8 @@
 (function() {
-	Deific.AppacitiveSerializer = DS.RESTSerializer.extend({
+	Deific.AppacitiveRESTSerializer = DS.RESTSerializer.extend({
 		//primary key is '__id' in appacitive, overriding default behaviour
-		primaryKey: function(type){
-			return	'__id';
-		},
+		primaryKey: '__id',
+		
 		//serialize id as string not number
 		serializeId: function(id) {
     		return id;    		
@@ -14,19 +13,19 @@
 	  	revision: 12,
 	  	adapter: DS.RESTAdapter.extend({
     		namespace: 'service',
-    		serializer: Deific.AppacitiveSerializer
+    		defaultSerializer: 'Deific/appacitiveREST'
 		}),
 	});
 	
 	
-	DS.JSONTransforms.array = {
+	Deific.ArrayTransform = DS.Transform.extend({
   		serialize: function(value) {
     		return Em.isNone(value) ? [] : value ;
   		},
 		deserialize: function(value) {
     		return Em.isNone(value) ? [] : value ;
   		}
-	};
+	});
 
 
 	Deific.localDataSource = Ember.Object.create({
@@ -34,11 +33,11 @@
 			
 			if (window.init && window.init.user) {
 				var user = window.init.user;
-				return Deific.LocalUser.create({
-					userid: user.id,
-					firstname: user.fname,
-					lastname: user.lname
-				});
+				var lUser = Deific.LocalUser.create();
+				lUser.userid = user.id;
+				lUser.firstname = user.fname;
+				lUser.lastname = user.lname;
+				return lUser;
 			} else {
 				return null;
 			}

@@ -11,7 +11,7 @@ exports.save = function(req, res) {
 
 	var relation = 'answer_comment';
 	var label = 'answer';
-	var articleid = payload.answer_id;
+	var articleid = payload.answer;
 	var comment = new Appacitive.Article({
 		schema: 'comment',
 		text: payload.text,
@@ -24,10 +24,10 @@ exports.save = function(req, res) {
 
 
 	//check if comment is for question
-	if(payload.question_id){
+	if(payload.question){
 		relation = 'question_comment';	
 		label = 'question';
-		articleid = payload.question_id;
+		articleid = payload.question;
 	}
 
 	var relation = new Appacitive.ConnectionCollection({ relation: relation });
@@ -46,11 +46,11 @@ exports.save = function(req, res) {
 		response.comment = comment.toJSON();
 
 		//Set the author
-		response.comment.author_id = state.userid;
+		response.comment.author = state.userid;
 
 		//Set the parent, either question or answer
-		if(payload.question_id) response.comment.question_id = payload.question_id;
-		else response.comment.answer_id = payload.answer_id;
+		if(payload.question) response.comment.question = payload.question;
+		else response.comment.answer = payload.answer;
 
 		return res.json(response);
 	}, function(status){

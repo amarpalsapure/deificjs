@@ -4,10 +4,13 @@
 			//remove loader
 			var model = this.controller.get('model');
 			if(model){
-				model.addObserver('text', null, function() { 
-					var $loaderEle = $('#' + model.id);
-					$loaderEle.next('.answer').removeClass('hide')
-					$loaderEle.remove();
+				model.addObserver('text', null, function() {
+					setTimeout(function(){
+						$('[name="ElementNameHere"]')
+						var $loaderEle = $('[name="'+ model.get('id') +'"]');
+						$loaderEle.next('.answer').removeClass('hide')
+						$loaderEle.remove();
+					}, 50);
 
 					//running asyncPrettyPrint for any code in answer
 					asyncPrettyPrint();

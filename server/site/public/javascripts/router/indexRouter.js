@@ -11,7 +11,7 @@ Deific.Router.reopen({
 Deific.QuestionsRoute = Ember.Route.extend({
 	model: function(){ 
 		var sort = $.fn.parseParam('sort', 'popular');
-		return Deific.Question.find({
+		return this.get('store').find('question', {
 			sort: sort
 		});
 	},

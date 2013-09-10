@@ -18,9 +18,9 @@
 			else return 'btn btn-danger btn-sm';
 		}.property('voted'),
 
-		question: DS.belongsTo('Deific.Question'),
-		author: DS.belongsTo('Deific.User'),
-		comments: DS.hasMany('Deific.Comment'),
+		question: DS.belongsTo('question'),
+		author: DS.belongsTo('user'),
+		comments: DS.hasMany('comment'),
 
 		getfulldate: function(){
 			return moment(this.get('__utcdatecreated')).format("DDMMMYYYY");
@@ -36,10 +36,11 @@
 		}.property('text'),
 
 		isOwnerLoggedIn: function() {
+			return false;
 			//As there is only one question, all will return the main question			
-			var question = Deific.Question.all().toArray()[0];
-			return Deific.AccountController.user != null 
-					  && Deific.AccountController.user.get('userid') == question.get('author').get('id');
+			//var question = Deific.Question.all().toArray()[0];
+			//return Deific.AccountController.user != null 
+			//		  && Deific.AccountController.user.get('userid') == question.get('author').get('id');
 		}.property('question')
 	});
 }).call(this);

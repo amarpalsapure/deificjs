@@ -43,7 +43,7 @@ var _toComment = function(comment) {
 		'__id': comment.id(),
 		'__utcdatecreated': comment.get('__utcdatecreated'),
 		'text': comment.get('text'),
-		'author_id': comment.get('__createdby')
+		'author': comment.get('__createdby')
 	};
 
 	return response;
@@ -88,18 +88,18 @@ var _toQuestion = function(question) {
 
 	//Comments
 	if(question.children.comments && question.children.comments.length > 0) {
-		response.question.comment_ids = [];
+		response.question.comments = [];
 		question.children.comments.forEach(function(comment){
-			response.question.comment_ids.push(comment.id())
+			response.question.comments.push(comment.id())
 			response.comments.push(_toComment(comment));
 		});
 	}
 
 	//Tags
 	if(question.children.tags && question.children.tags.length > 0) {
-		response.question.tag_ids = [];
+		response.question.tags = [];
 		question.children.tags.forEach(function(tag){
-			response.question.tag_ids.push(tag.id())
+			response.question.tags.push(tag.id())
 			response.tags.push(_toTag(tag));
 		});			
 	}
@@ -107,7 +107,7 @@ var _toQuestion = function(question) {
 	//Question Author
 	if(question.children.author && question.children.author.length > 0) {
 		var author = _toUser(question.children.author[0]);
-		response.question.author_id = author['__id'];
+		response.question.author = author['__id'];
 		response.users.push(author);
 	}
 
@@ -166,15 +166,15 @@ var _toAnswer = function(answer) {
 
 	//Comments
 	response.comments = [];
-	response.answer.comment_ids = [];
+	response.answer.comments = [];
 	answer.children.comments.forEach(function(comment){
-		response.answer.comment_ids.push(comment.id())
+		response.answer.comments.push(comment.id())
 		response.comments.push(_toComment(comment));
 	});
 	
 	//answer author
 	var author = _toUser(answer.children.author[0]);
-	response.answer.author_id = author['__id'];
+	response.answer.author = author['__id'];
 	response.users.push(author);
 				
 	return response;

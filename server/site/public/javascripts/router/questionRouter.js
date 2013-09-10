@@ -9,12 +9,14 @@ Deific.Router.reopen({
 });
 
 Deific.QuestionRoute = Ember.Route.extend({
-	model: function(){
+	model: function(params){
 		//extract the id from url
 		var idMatch = window.location.pathname.match(/\d+\.?\d*/g);
 		if(!idMatch || idMatch.length == 0) window.location = "/error.html";
 		var sort = $.fn.parseParam('sort', 'popular');
 		
+		return this.get('store').find('question', idMatch[0]);
+
 		return Deific.Question.find(idMatch[0], {
 			sort: sort
 		});
@@ -29,8 +31,7 @@ Deific.QuestionRoute = Ember.Route.extend({
 					return g.date === key;
 				});
 
-				var answer = Deific.Answer.find(answersMeta[i].__id);
-				answer.set('question', model);
+				var answer = this.get('store').find('answer', answersMeta[i].__id);
 				if(match && match.length > 0){
 					match[0].answers.push(answer);
 				}else{
