@@ -36,11 +36,13 @@
 		}.property('text'),
 
 		isOwnerLoggedIn: function() {
-			return false;
-			//As there is only one question, all will return the main question			
-			//var question = Deific.Question.all().toArray()[0];
-			//return Deific.AccountController.user != null 
-			//		  && Deific.AccountController.user.get('userid') == question.get('author').get('id');
+			//As are binding to question, when ever answer is fetched,
+			//in the router question will be assigned to question for the answer
+			//which will reflect on view automatically
+			var question = this.get('question');
+			if(!question) return false;
+			return Deific.AccountController.user != null 
+					  && Deific.AccountController.user.userid == question.get('author').get('id');
 		}.property('question')
 	});
 }).call(this);

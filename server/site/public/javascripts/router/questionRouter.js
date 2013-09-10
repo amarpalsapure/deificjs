@@ -32,6 +32,9 @@ Deific.QuestionRoute = Ember.Route.extend({
 				});
 
 				var answer = this.get('store').find('answer', answersMeta[i].__id);
+				answer.then(function(gAnswer){
+					gAnswer.set('question', model);
+				});
 				if(match && match.length > 0){
 					match[0].answers.push(answer);
 				}else{
