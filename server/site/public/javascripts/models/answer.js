@@ -18,7 +18,7 @@
 			else return 'btn btn-danger btn-sm';
 		}.property('voted'),
 
-		//question: DS.belongsTo('Deific.Question'),
+		question: DS.belongsTo('Deific.Question'),
 		author: DS.belongsTo('Deific.User'),
 		comments: DS.hasMany('Deific.Comment'),
 
@@ -33,6 +33,13 @@
 
 		loginurl: function(){
 			return  '/users/login?returnurl=' + window.location.pathname;
-		}.property('text')
+		}.property('text'),
+
+		isOwnerLoggedIn: function() {
+			//As there is only one question, all will return the main question			
+			var question = Deific.Question.all().toArray()[0];
+			return Deific.AccountController.user != null 
+					  && Deific.AccountController.user.get('userid') == question.get('author').get('id');
+		}.property('question')
 	});
 }).call(this);

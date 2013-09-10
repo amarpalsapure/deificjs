@@ -31,7 +31,7 @@
                   <span class='fname'>{{author.firstname}}</span><span class='lname'>{{author.lastname}}</span>
                 </a>
               </div>
-              <div class='divPts'>{{abbreviateNumber author.reputation}}</div>
+              <div class='divPts' {{bindAttr title='author.reputation'}}>{{abbreviateNumber author.reputation}}</div>
             </div>
             <div class='divPosted'>
               answered...
@@ -69,6 +69,20 @@
                 <i class='icon-large icon-thumbs-down'></i>
               </a>
             {{/if}}
+            <div class='correct-answer'>
+              <!-- islogged in and has asked the question -->
+              {{#if isOwnerLoggedIn}}
+                {{#if iscorrectanswer}}                  
+                  <a href='javascript:void(0)' class='checked'></a>
+                {{else}}
+                  <a href='javascript:void(0)' class='unchecked'></a>
+                {{/if}}
+              {{else}}
+                {{#if iscorrectanswer}}
+                  <span class='checked'></span>
+                {{/if}}
+              {{/if}}
+            </div>
           </div>
         </div>
       </div>
@@ -81,7 +95,7 @@
           <!-- Answer text goes here -->
           <div class='row'>
             <div class='col-xs-12 col-sm-12 col-lg-12'>
-              <div class='border-bottom-dashed question-desc pbxl'>
+              <div class='border-bottom-dashed answer-desc pbxl'>
                 {{markdown text}}
               </div>
             </div>
@@ -161,7 +175,7 @@
                             <span class='fname'>{{author.firstname}}</span><span class='lname'>{{author.lastname}}</span>
                           </a>
                           </div>
-                        <div class='divPts'>{{abbreviateNumber author.reputation}}</div>
+                        <div class='divPts' {{bindAttr title='author.reputation'}}>{{abbreviateNumber author.reputation}}</div>
                       </div>
                       <div class='divPosted'>
                         asked...
@@ -199,6 +213,8 @@
                           <i class='icon-large icon-thumbs-down'></i>
                         </a>
                       {{/if}}
+                      <div id='divVoteError' class='alert-dismiss-container'>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -278,8 +294,15 @@
             </div>
             <div class='mtm ptxl mbm'>
               <div class='row contentTitle'>
-                <div class='col-lg-12'>
-                  <h1 class='mbn'>Answers</h1>
+                <div class='col-xs-12 col-sm-7 col-lg-7'>
+                  <h1>{{answercount}} Answers</h1>
+                </div>
+                <div class="col-xs-12 col-sm-5 col-lg-5">
+                  <div class="sortGroup mtm btn-group" >
+                    <a id='aactive' href='/?sort=active' class="btn btn-danger">Active</a>
+                    <a id='avotes' href='/?sort=votes' class="btn btn-danger">Votes</a>
+                    <a id='aoldest' href='/?sort=latest' class="btn btn-danger">Oldest</a>
+                  </div>
                 </div>
               </div>
             </div>

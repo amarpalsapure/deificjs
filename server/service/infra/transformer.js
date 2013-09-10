@@ -110,6 +110,14 @@ var _toQuestion = function(question) {
 		response.question.author_id = author['__id'];
 		response.users.push(author);
 	}
+
+	//Correct Answer
+	if(question.children.answer && question.children.answer.length > 0) {
+		response.question.correctanswer = question.children.answer[0].toJSON();
+		delete response.question.correctanswer.__schematype;
+		delete response.question.correctanswer.__attributes;
+		delete response.question.correctanswer.__tags;
+	}
 	return response;
 };
 exports.toQuestion = _toQuestion;

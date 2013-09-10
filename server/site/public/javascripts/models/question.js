@@ -13,9 +13,11 @@
 		isanswered: DS.attr('boolean'),
 		voted: DS.attr('number'),
 
+		answers: DS.hasMany('Deific.Answer'),
 		comments: DS.hasMany('Deific.Comment'),
 		author: DS.belongsTo('Deific.User'),
 		tags: DS.hasMany('Deific.Tag'),
+
 
 		hasupvoted: function(){
 			if(this.get('voted') == 1) return 'btn btn-warning btn-sm';
@@ -32,7 +34,7 @@
 			if(!this.get('title')) return '';
 			var url = '/questions/';
 			url += this.get('id') + '/' ;
-			var subUrl = this.get('title').replace(/ /g, '-').replace(/[^a-zA-Z/-]/g, '');
+			var subUrl = this.get('title').replace(/ /g, '-').replace(/\//g,'-').replace(/[^a-zA-Z/-]/g, '');
 			while(subUrl.indexOf('--') != -1){
 				subUrl= subUrl.replace(/--/,'-');
 			}

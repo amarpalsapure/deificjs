@@ -11,6 +11,10 @@
 			if(tags && tags.length > 0) title = tags[0] + " - " + title;
 			$(document).attr('title', title);
 
+			//highlight the sort order for the answer
+			var sort = $.fn.parseParam('sort', 'active').toLowerCase();
+			$('.sortGroup #' + 'a' +sort).addClass('active');
+
 			//pretify the code
 			var asyncPrettyPrint = function(){
 				setTimeout(function(){

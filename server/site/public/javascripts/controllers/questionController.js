@@ -11,7 +11,30 @@
 		createComment: function() { this.__saveComment('question');	},
 		votedetails: function() { this.set('isVoteOpen', true);	},
 		upvote: function() {
-			alert('not implemented')
+			var model = this.get('model');
+			//remove the up vote
+			if(model.get('voted') == 1) {
+				model.set('voted', 0);
+				model.set('upvotecount', parseInt(model.get('upvotecount'), 10) - 1);
+			}else {
+			//add up vote
+				model.set('voted', 1);
+				model.set('upvotecount', parseInt(model.get('upvotecount'), 10) + 1);
+			}
+			var that = this;
+			
+			// Save the new model
+			this.get('store').commit();
+
+			//in case of any error roll back the changes
+			//and show an error message
+			model.on('becameError', function(){
+				var alert = '<div class="alert alert-block alert-danger font9 pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred during saving your vote. </div>';
+				$("#divVoteError").html(alert).alert();
+				var parent = that.get('model');
+				parent.get('stateManager').transitionTo('loaded.updated');
+				parent.rollback();
+			});
 		},
 		downvote: function() {
 			alert('not implemented')

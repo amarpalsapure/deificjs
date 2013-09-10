@@ -13,8 +13,11 @@ Deific.QuestionRoute = Ember.Route.extend({
 		//extract the id from url
 		var idMatch = window.location.pathname.match(/\d+\.?\d*/g);
 		if(!idMatch || idMatch.length == 0) window.location = "/error.html";
-
-		return Deific.Question.find(idMatch[0]);
+		var sort = $.fn.parseParam('sort', 'popular');
+		
+		return Deific.Question.find(idMatch[0], {
+			sort: sort
+		});
 	},
 	setupController: function(controller, model){
 		var groupedAnswers = [];
@@ -27,11 +30,10 @@ Deific.QuestionRoute = Ember.Route.extend({
 				});
 
 				var answer = Deific.Answer.find(answersMeta[i].__id);
-
+				answer.set('question', model);
 				if(match && match.length > 0){
 					match[0].answers.push(answer);
 				}else{
-
 					groupedAnswers.push({
 						date: key,
 						__utcdatecreated: answersMeta[i].__utcdatecreated,

@@ -5,8 +5,9 @@
 			$('#rootProgress').remove();
 
 			//enable the the active link
-			var sort = 'a' + $.fn.parseParam('sort', 'popular').toLowerCase();
-			$('.sortGroup #' + sort).addClass('active');
+			var sort = $.fn.parseParam('sort', 'popular').toLowerCase();
+			$('.sortGroup #' + 'a' +sort).addClass('active');
+			$("#h1Sortedby").html(sort + ' questions');
 		}
 	});
 	Deific.TagView = Ember.View.extend({

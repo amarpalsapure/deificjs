@@ -11,38 +11,31 @@ exports.findAll = function(req, res) {
 
 	//First get the question according to the query
 	//then get the question details by making a graph query call
-	var query = null;
+	var orderBy = '__utcdatecreated',
+		filter = '';
+
 
 	var sort = req.query.sort;
 	sort = (!sort) ? 'popular' : sort.toLowerCase();
 	switch(sort) {
-		case 'popular':
-			query = new Appacitive.Queries.FindAllQuery({
-				schema : 'question',
-				fields : '__id',
-				isAscending: false,
-				orderBy: 'totalvotecount',
-				pageSize: process.config.pagesize
-			});
+		case 'popular': 
+			orderBy = 'totalvotecount';
 			break;
 		case 'latest':
-			query = new Appacitive.Queries.FindAllQuery({
-				schema : 'question',
-				fields : '__id',
-				isAscending: false,
-				pageSize: process.config.pagesize
-			});
 			break;
 		case 'unresolved':
-			query = new Appacitive.Queries.FindAllQuery({
-				schema : 'question',
-				fields : '__id',
-				isAscending: false,
-				filter: '*isanswered==false',
-				pageSize: process.config.pagesize
-			});
+			filter = '*isanswered==false';
 			break;
 	}
+
+	var query = new Appacitive.Queries.FindAllQuery({
+					schema : 'question',
+					fields : '__id',
+					isAscending: false,
+					orderBy: orderBy,
+					filter: filter,
+					pageSize: process.config.pagesize
+				});
 
 	query.fetch(function (questions, pi) {
 		questions.forEach(function (question) {
@@ -64,33 +57,54 @@ exports.findAll = function(req, res) {
 	});	
 };
 
-exports.findById = function(req, res) {
+
+var _findById = function(req, qId, callback) {
 	var response = {
 		question: {},
 		comments: [],
 		users: []
 	};
 	var answersMeta = [];
-	var qId = req.param('id');
+	var correctanswerMeta = {
+		__id: '',
+		__utcdatecreated: ''
+	}
+
 	// +    vote => +1
 	// -    vote => -1
 	// not voted =>  0
 	var voted = 0
 	var callCount = 3;
+
+	//to update the view count
 	var isNewVisit = false;
 
+	//if the id of question doesn't exists in session object, increment view count
 	if(!req.session.visited_questions) req.session.visited_questions = [];
 	if(req.session.visited_questions.indexOf(qId) == -1){
 		isNewVisit = true;
 		req.session.visited_questions.push(qId);
 	}
 
+	//merge the responses from the parallel calls
 	var merge = function(){
 		if(--callCount != 0) return;
 		if(isNewVisit) response.question['viewcount'] = parseInt(response.question['viewcount'], 10) + 1;
+		if(response.question.correctanswer) {
+			var newAnswerMeta = [];
+			newAnswerMeta.push(response.question.correctanswer);
+			//remove the correct answer from answersMeta if it's there 
+			//else remove the last item, depending upon the page size
+			for (var i = 0; i < answersMeta.length; i++) {
+				if(answersMeta[i].__id == response.question.correctanswer.__id) continue;
+				newAnswerMeta.push(answersMeta[i]);
+			};
+			delete response.question.correctanswer;
+			answersMeta = newAnswerMeta;
+		}
 		response.question['answers_meta'] = answersMeta;
 		response.question['voted'] = voted;
-		return res.json(response);
+		callback(response);
 	};
 
 	//initialize the SDK
@@ -109,7 +123,7 @@ exports.findById = function(req, res) {
 	var query = new Appacitive.Queries.GraphProjectQuery('question', [qId]);
 	query.fetch(function (questions) {
 		//if no data found
-		if(!questions && questions.length == 0) return res.json(response);
+		if(!questions && questions.length == 0) callback(response);
 		
 		var question = questions[0]
 		response = transformer.toQuestion(question);
@@ -124,11 +138,27 @@ exports.findById = function(req, res) {
 
 	//PARALLEL CALL 2 
 	//Get the answers
+	var orderBy = '__utcdatecreated',
+		isAscending = false;
+	var sort = req.query.sort;
+	sort = (!sort) ? 'active' : sort.toLowerCase();
+	switch(sort) {
+		case 'active': 
+			break;
+		case 'votes':
+			orderBy = 'totalvotecount';
+			break;
+		case 'oldest':
+			isAscending = true;
+			break;
+	}
+
 	var question = new Appacitive.Article({ __id : qId, schema : 'question' });
 	question.fetchConnectedArticles({ 
 	    relation: 'question_answer',
-	    orderBy: 'upvotecount',
-	    pageSize: 10,
+	    orderBy: orderBy,
+	    isAscending: isAscending,
+	    pageSize: process.config.pagesize,
 	    fields: ['__id,__utcdatecreated']
 	}, function(obj, pi) {
 	    question.children['question_answer'].forEach(function(answer){
@@ -161,4 +191,10 @@ exports.findById = function(req, res) {
 	}else {
 		merge();
 	}
+};
+exports.findById = function(req, res) {
+	var qId = req.param('id');
+	_findById(req, qId, function(response){
+		return res.json(response);	
+	});
 };
