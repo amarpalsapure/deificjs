@@ -45,8 +45,10 @@ if ('development' == app.get('env')) {
 // ** question api
 app.get('/service/questions', questionApi.findAll);
 app.get('/service/questions/:id', questionApi.findById);
+app.put('/service/questions/:id', questionApi.update);
 // ** answer api
 app.get('/service/answers/:id', answerApi.findById);
+app.put('/service/answers/:id', answerApi.update);
 // ** user api
 app.get('/service/users/:id', userApi.findById);
 app.post('/service/users/auth', userApi.auth);

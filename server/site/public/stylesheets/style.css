@@ -100,8 +100,8 @@ body { background-color: #eef0f3; }
 .checked, .unchecked { width: 40px; height: 36px; display: inline-block;  }
 .checked { background: transparent url(../images/checked.png) center center no-repeat; }
 .unchecked { background: transparent url(../images/unchecked.png) center center no-repeat; }
-#divVoteError { position: relative; }
-#divVoteError .alert { position: absolute; width: 290px; top: 8px; }
+.voteError { position: relative; }
+.voteError .alert { position: absolute; width: 290px; top: 12px; padding: 8px 14px 6px;}
 
 .comment { padding: 6px 0 4px; border-bottom: dashed 1px #ccc; font-size: 0.95em; color: #777; overflow: auto; }
     .comment .row { padding: 2px 0 0; }

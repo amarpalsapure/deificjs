@@ -1,6 +1,7 @@
 (function() {
 	Deific.QuestionsView =  Ember.View.extend({
 		didInsertElement: function(){
+
 			//remove loader
 			$('#rootProgress').remove();
 

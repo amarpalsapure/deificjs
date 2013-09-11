@@ -69,6 +69,8 @@
                 <i class='icon-large icon-thumbs-down'></i>
               </a>
             {{/if}}
+            <div class='alert-dismiss-container voteError'>
+            </div>
             <div class='correct-answer'>
               <!-- islogged in and has asked the question -->
               {{#if isOwnerLoggedIn}}
@@ -221,7 +223,7 @@
                           <i class='icon-large icon-thumbs-down'></i>
                         </a>
                       {{/if}}
-                      <div id='divVoteError' class='alert-dismiss-container'>
+                      <div class='alert-dismiss-container voteError'>
                       </div>
                     </div>
                   </div>

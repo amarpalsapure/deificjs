@@ -5,39 +5,19 @@
 		isLoggedIn: Deific.AccountController.user != null,
 		isCommenting: false,
 		isVoteOpen: false,
+		updateInProgress: false,
 
-		//action handlers
+			//action handlers
 		commentAction: function() {	this.set('isCommenting', !this.get('isCommenting')); },
 		createComment: function() { this.__saveComment('question');	},
 		votedetails: function() { this.set('isVoteOpen', true);	},
 		upvote: function() {
-			var model = this.get('model');
-			//remove the up vote
-			if(model.get('voted') == 1) {
-				model.set('voted', 0);
-				model.set('upvotecount', parseInt(model.get('upvotecount'), 10) - 1);
-			}else {
-			//add up vote
-				model.set('voted', 1);
-				model.set('upvotecount', parseInt(model.get('upvotecount'), 10) + 1);
-			}
-			var that = this;
-			
-			// Save the new model
-			this.get('store').commit();
-
-			//in case of any error roll back the changes
-			//and show an error message
-			model.on('becameError', function(){
-				var alert = '<div class="alert alert-block alert-danger font9 pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred during saving your vote. </div>';
-				$("#divVoteError").html(alert).alert();
-				var parent = that.get('model');
-				parent.get('stateManager').transitionTo('loaded.updated');
-				parent.rollback();
-			});
+			var model = this.get('content');
+			this.__upvote(model);
 		},
 		downvote: function() {
-			alert('not implemented')
+			var model = this.get('content');
+			this.__downvote(model);
 		},
 
 		//for internal use
@@ -93,12 +73,116 @@
 					toggleView();
 				});
 			})
+		},
+		__upvote: function(model) {
+			if(this.updateInProgress) return;
+			this.set('updateInProgress', true);
+
+			var that = this;
 			
+			//backup
+			var upvotecount = model.get('upvotecount');
+			var downvotecount = model.get('downvotecount');
+			var voted = model.get('voted');
+
+			//remove the up vote
+			if(model.get('voted') == 1) {
+				model.set('action', 'undo:upvote');
+				model.set('voted', 0);
+				model.decrementProperty('upvotecount');
+			}else {
+				//add up vote
+				model.set('action', 'do:upvote');
+				model.set('voted', 1);
+				model.incrementProperty('upvotecount');
+				//if voteconnid is not empty, means user is switching vote
+				if(!model.get('voteconnid') && model.get('voteconnid') != '') {
+					model.decrementProperty('downvotecount');
+				}
+			}
+
+			// Save the new model
+			model.save().then(function(item){
+				that.set('updateInProgress', false);
+				//don't do anything, 
+				//view is already updated
+			}, function(error){
+				that.set('updateInProgress', false);
+				//in case of any error roll back the changes
+				//and show an error message
+				model.rollback();
+				
+				//Hack as roll back is not working
+				model.set('upvotecount', upvotecount);
+				model.set('downvotecount', downvotecount);
+				model.set('voted', voted);
+
+				//show error message
+				that.__showVoteError(model.get('id'));
+			});
+		},
+		__downvote: function(model) {
+			if(this.updateInProgress) return;
+			this.set('updateInProgress', true);
+
+			var that = this;
 			
+			//backup
+			var upvotecount = model.get('upvotecount');
+			var downvotecount = model.get('downvotecount');
+			var voted = model.get('voted');
+
+			//remove the up vote
+			if(model.get('voted') == -1) {
+				model.set('action', 'undo:downvote');
+				model.set('voted', 0);
+				model.decrementProperty('downvotecount');
+			}else {
+				//add up vote
+				model.set('action', 'do:downvote');
+				model.set('voted', -1);
+				model.incrementProperty('downvotecount');
+				//if voteconnid is not empty, means user is switching vote
+				if(!model.get('voteconnid') && model.get('voteconnid') != '') {
+					model.decrementProperty('upvotecount');
+				}
+			}
+			
+			// Save the new model
+			model.save().then(function(item){
+				that.set('updateInProgress', false);
+				//don't do anything, 
+				//view is already updated
+			}, function(error){
+				that.set('updateInProgress', false);
+				//in case of any error roll back the changes
+				//and show an error message
+				model.rollback();
+				
+				//Hack as roll back is not working
+				model.set('upvotecount', upvotecount);
+				model.set('downvotecount', downvotecount);
+				model.set('voted', voted);
+
+				//show error message
+				that.__showVoteError(model.get('id'));
+			});
+		},
+		__showVoteError: function(id) {
+			var alert = '<div class="alert alert-block alert-danger font9 pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred during saving your vote. </div>';
+			$('#'+ id +' .voteError').html(alert).alert();
 		}
 	});
 
 	Deific.AnswerController = Deific.QuestionController.extend({
-		createComment: function() { this.__saveComment('answer'); }
+		createComment: function() { this.__saveComment('answer'); },
+		upvote: function() {
+			var model = this.get('content').get('content');
+			this.__upvote(model);
+		},
+		downvote: function() {
+			var model = this.get('content').get('content');
+			this.__downvote(model);
+		},
 	});
 }).call(this);

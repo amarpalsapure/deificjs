@@ -4,7 +4,7 @@
  * MIT license  : http://www.apache.org/licenses/LICENSE-2.0.html
  * Project      : https://github.com/chiragsanghvi/JavascriptSDK
  * Contact      : support@appacitive.com | csanghvi@appacitive.com
- * Build time 	: Tue Sep  3 17:25:54 IST 2013
+ * Build time 	: Wed Sep 11 18:00:36 IST 2013
  */
 
 // Add ECMA262-5 method binding if not supported natively
@@ -2104,10 +2104,10 @@ Depends on  NOTHING
 		//define getter and setter for orderby
 		this.orderBy =  function() { 
 			if (arguments.length == 1) {
-				_sortQuery.orderby(arguments[0]);
+				_sortQuery.orderBy(arguments[0]);
 				return this;
 			}
-			return _sortQuery.orderby(); 
+			return _sortQuery.orderBy(); 
 		};
 
 		//define getter and setter for isAscending
@@ -2965,7 +2965,11 @@ Depends on  NOTHING
 			}
 			else delete changeSet["__attributes"];
 
-			if (isDirty) return changeSet;
+			for (var p in changeSet) {
+				if (p[0] == '$') delete changeSet[p];
+			}
+
+			if (isDirty && !Object.isEmpty(changeSet)) return changeSet;
 			return false;
 		};
 
@@ -3036,7 +3040,7 @@ Depends on  NOTHING
 				}
 				return value;
 			}, "boolean": function(value) { 
-				if (value == 'true' || value == true || value > 0) return true;
+				if (value != undefined && value != null && (value.toString().toLowerCase() == 'true' || value == true || value > 0)) return true;
 				return false;
 			}, "date": function(value) { 
 				if (value) {
@@ -3178,6 +3182,10 @@ Depends on  NOTHING
 			if (article.__schematype &&  ( article.__schematype.toLowerCase() == 'user' ||  article.__schematype.toLowerCase() == 'device')) 
 				url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory[article.__schematype.toLowerCase()].getCreateUrl();
 
+			for (var p in article) {
+				if (p[0] == '$') delete article[p];
+			}
+
 			var _saveRequest = new global.Appacitive.HttpRequest();
 			_saveRequest.url = url;
 			_saveRequest.method = 'put';
@@ -3231,7 +3239,7 @@ Depends on  NOTHING
 					if (p[0] == '$') delete changeSet[p];
 				}
 
-				if (changeSet) {
+				if (!Object.isEmpty(changeSet)) {
 
 					if (typeof fields == 'string') _fields = value;
 					else if (typeof fields == 'object' && fields.length) fields = fields.join(',');

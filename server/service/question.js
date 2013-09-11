@@ -42,7 +42,7 @@ exports.findAll = function(req, res) {
 			questionIds.push(question.id());
 		})
 
-		//Get the quesiton details
+		//Get the question details
 		var query = new Appacitive.Queries.GraphProjectQuery('questions', questionIds);
 		query.fetch(function (gQuestions) {
 			//if no data found
@@ -74,6 +74,7 @@ var _findById = function(req, qId, callback) {
 	// -    vote => -1
 	// not voted =>  0
 	var voted = 0
+	var voteconnid = '';
 	var callCount = 3;
 
 	//to update the view count
@@ -103,6 +104,7 @@ var _findById = function(req, qId, callback) {
 			answersMeta = newAnswerMeta;
 		}
 		response.question['answersMeta'] = answersMeta;
+		response.question['voteconnid'] = voteconnid;
 		response.question['voted'] = voted;
 		callback(response);
 	};
@@ -119,7 +121,7 @@ var _findById = function(req, qId, callback) {
 	var state = app.init(req);
 
 	//PARALLEL CALL 1 
-	//Get the quesiton details
+	//Get the question details
 	var query = new Appacitive.Queries.GraphProjectQuery('question', [qId]);
 	query.fetch(function (questions) {
 		//if no data found
@@ -181,8 +183,9 @@ var _findById = function(req, qId, callback) {
 			articleBId : qId // id of question
 		}, function(connection) {
 			if(connection){
-				if(connection.get('isupvote')) voted = 1;
+				if(connection.get('isupvote', 'boolean')) voted = 1;
 				else voted = -1;
+				voteconnid = connection.id();
 			}
 			merge();
 		}, function(err) {
@@ -195,6 +198,167 @@ var _findById = function(req, qId, callback) {
 exports.findById = function(req, res) {
 	var qId = req.param('id');
 	_findById(req, qId, function(response){
-		return res.json(response);	
+		return res.json(response);
 	});
+};
+
+exports.update = function(req, res) {
+	var question = req.body.question;
+	if(!question || !question.action) throw Error();
+
+	//set question id, froam param
+	question.id = question.__id = req.param('id');
+
+	//initialize appacitive sdk
+	var sdk = require('./appacitive.init');
+	var Appacitive = sdk.init();
+
+	//get the transformer
+	var transformer = require('./infra/transformer');
+
+	//get the state of app
+	//to check if user is logged in or not
+	var app = require('../shared/app.init');
+	var state = app.init(req);
+
+	if(!state.userid) throw Error('Session expired');
+
+	var aQuestion = transformer.toAppacitiveQuestion(Appacitive, question);
+
+	//creates 'question_vote' relation between user and question 
+	var question_vote_Create = function(isupvote, onsuccess, onfailure) {
+		var relation = new Appacitive.ConnectionCollection({ relation: 'question_vote' });
+		var connection = relation.createNewConnection({ 
+		  endpoints: [{
+		      articleid: question.id,
+		      label: 'question'
+		  }, {
+		      articleid: state.userid,
+		      label: 'user'
+		  }],
+		  isupvote: isupvote
+		});
+		connection.save(function(){
+			question.voteconnid = connection.id();
+			onsuccess();
+		}, onfailure);
+	}
+
+	//updates 'question_vote' relation between user and question 
+	var question_vote_Update = function(isupvote, onsuccess, onfailure) {
+		var relation = new Appacitive.Connection({ relation: 'question_vote', __id: question.voteconnid });
+		relation.set('isupvote', isupvote);
+		relation.save(onsuccess, onfailure);
+	}
+
+	//deletes 'question_vote' relation between user and question 
+	var question_vote_Delete = function(onsuccess, onfailure) {
+		var relation = new Appacitive.Connection({ relation: 'question_vote', __id: question.voteconnid });
+		relation.del(function() {
+			question.voteconnid = '';
+			onsuccess();
+		}, onfailure);
+	}
+
+	//saves the question object on appacitive api
+	var save = function() {
+		aQuestion.save(function(){
+			//transform the object
+			delete question.id;
+			var response = transformer.toQuestion(aQuestion);
+			response.question.answercount = question.answercount;
+			response.question.author = question.author;
+			response.question.comments = question.comments;
+			response.question.tags = question.tags;
+			response.question.voted = question.voted;
+			response.question.voteconnid = question.voteconnid;
+			return res.json(response);
+		}, function(status) {
+			throw Error(status.message);
+		});
+	};
+
+	//depending upon the action, perform the update
+	switch(question.action) {
+		case 'do:upvote':
+			//Step 1.0: check if connectionid exists, if yes means user has switched vote
+			//Step 1.1: update the connection, and increment upvotecount and decrement downvotecount
+			//Step 2.0: else create 'question_vote' connection between user and question
+			//Step 2.1: decrement upvotecount
+			if(question.voteconnid != ''){
+				question_vote_Update(true, function(){
+					aQuestion.increment('upvotecount');
+					aQuestion.decrement('downvotecount');
+					aQuestion.increment('totalvotecount', 2);
+					save();
+				}, function(status){
+					throw Error('Failed to register downvote');
+				});
+			}else {
+				question_vote_Create(true, function(){
+					aQuestion.increment('upvotecount');
+					aQuestion.increment('totalvotecount');
+					save();
+				}, function(status){
+					throw Error('Failed to register upvote');
+				});
+			}
+			//has voted true
+			question.voted = 1;
+			break;
+		case 'undo:upvote':
+			//Step 1: delete 'question_vote' connection between user and question
+			//Step 2: decrement upvotecount
+			question_vote_Delete(function(){
+				aQuestion.decrement('upvotecount');
+				aQuestion.decrement('totalvotecount');
+				save();
+			}, function(status){
+				throw Error('Failed to undo register upvote');
+			});
+			//has removed vote
+			question.voted = 0;
+			break;
+		case 'do:downvote':
+			//Step 1.0: check if connectionid exists, if yes means user has switched vote
+			//Step 1.1: update the connection, and decrement upvotecount and increment downvotecount
+			//Step 2.0: else create 'question_vote' connection between user and question
+			//Step 2.1: decrement upvotecount
+			if(question.voteconnid != ''){
+				question_vote_Update(false, function(){
+					aQuestion.decrement('upvotecount');
+					aQuestion.increment('downvotecount');
+					aQuestion.decrement('totalvotecount', 2);
+					save();
+				}, function(status){
+					throw Error('Failed to register downvote');
+				});
+			}else {
+				question_vote_Create(false, function(){
+					aQuestion.increment('downvotecount');
+					aQuestion.decrement('totalvotecount');
+					save();
+				}, function(status){
+					throw Error('Failed to register downvote');
+				});
+			}
+			//has voted false
+			question.voted = -1;
+			break;
+		case 'undo:downvote':
+			//Step 1: delete 'question_vote' connection between user and question
+			//Step 2: increment upvotecount
+			question_vote_Delete(function(){
+				aQuestion.decrement('downvotecount');
+				aQuestion.increment('totalvotecount');
+				save();
+			}, function(status){
+				throw Error('Failed to undo register downvote');
+			});
+			//has remove vote
+			question.voted = 0;
+			break;
+		default:
+			throw Error('Invalid action provided');
+	}
 };

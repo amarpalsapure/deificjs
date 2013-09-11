@@ -30,7 +30,7 @@
 			//question data is loaded and will be render immediately,
 			//running asyncPrettyPrint for any code in question
 			var model = this.controller.get('model');
-			model.addObserver('description', this, function(){
+			model.addObserver('text', this, function(){
 				asyncPrettyPrint();	
 			});
 

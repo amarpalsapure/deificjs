@@ -7,11 +7,13 @@
 		text: DS.attr('string'),
 		answersMeta: DS.attr('array'),
 		answercount: DS.attr('number', { defaultValue: 0 }),
+		voteconnid: DS.attr('string'),
 		upvotecount: DS.attr('number', { defaultValue: 0 }),
 		downvotecount: DS.attr('number', { defaultValue: 0 }),
 		viewcount: DS.attr('number', { defaultValue: 0 }),
 		isanswered: DS.attr('boolean'),
 		voted: DS.attr('number'),
+		action: DS.attr('string'),
 
 		answers: DS.hasMany('answer'),
 		comments: DS.hasMany('comment'),

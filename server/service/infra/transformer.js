@@ -33,7 +33,7 @@ var _toUser = function(user) {
 };
 exports.toUser = _toUser;
 var _toInt = function(number) { 
-	if(isNaN(number)) return 0;
+	if(!number || number == '' || isNaN(number)) return 0;
 	return parseInt(number, 10);
 }
 
@@ -77,6 +77,8 @@ var _toQuestion = function(question) {
 	delete response.question.__schematype;
 	delete response.question.__attributes;
 	delete response.question.__tags;
+	//UI will set action, when question is updated
+	question.action = '';
 
 	//get the answer count
 	response.question.answercount = 0;
@@ -160,23 +162,44 @@ var _toAnswer = function(answer) {
 	delete answerJ.__schematype;
 	delete answerJ.__attributes;
 	delete answerJ.__tags;
+	//UI will set action, when question is updated
+	answerJ.action = '';
 	response.answer.iscorrect = answer.get('score') == 1;
 	delete answerJ.score;
 	response.answer = answerJ;
 
 	//Comments
-	response.comments = [];
-	response.answer.comments = [];
-	answer.children.comments.forEach(function(comment){
-		response.answer.comments.push(comment.id())
-		response.comments.push(_toComment(comment));
-	});
+	if(answer.children.comments && answer.children.comments.length > 0) {
+		response.answer.comments = [];
+		answer.children.comments.forEach(function(comment){
+			response.answer.comments.push(comment.id())
+			response.comments.push(_toComment(comment));
+		});
+	}
 	
 	//answer author
-	var author = _toUser(answer.children.author[0]);
-	response.answer.author = author['__id'];
-	response.users.push(author);
+	if(answer.children.author && answer.children.author.length > 0) {
+		var author = _toUser(answer.children.author[0]);
+		response.answer.author = author['__id'];
+		response.users.push(author);
+	}
 				
 	return response;
 };
 exports.toAnswer = _toAnswer;
+
+var _to_Appacitive_Question = function(Appacitive, question) {
+	return new Appacitive.Article({
+		__id: question.id,
+		__schematype: 'question'
+	});
+};
+exports.toAppacitiveQuestion = _to_Appacitive_Question;
+
+var _to_Appacitive_Answer = function(Appacitive, answer) {
+	return new Appacitive.Article({
+		__id: answer.id,
+		__schematype: 'answer'
+	});
+};
+exports.toAppacitiveAnswer = _to_Appacitive_Answer;

@@ -4,9 +4,11 @@
 		__utcdatecreated: DS.attr('date'),
 		__createdby: DS.attr('string'),
 		iscorrectanswer: DS.attr('boolean'),
+		voteconnid: DS.attr('string'),
 		upvotecount: DS.attr('number', { defaultValue: 0 }),
 		downvotecount: DS.attr('number', { defaultValue: 0 }),
 		voted: DS.attr('number'),
+		action: DS.attr('string'),
 
 		hasupvoted: function(){
 			if(this.get('voted') == 1) return 'btn btn-warning btn-sm';
@@ -43,6 +45,10 @@
 			if(!question) return false;
 			return Deific.AccountController.user != null 
 					  && Deific.AccountController.user.userid == question.get('author').get('id');
-		}.property('question')
+		}.property('question'),
+
+		votecount: function(){
+			return this.get('upvotecount') - this.get('downvotecount');
+		}.property('upvotecount', 'downvotecount')
 	});
 }).call(this);
