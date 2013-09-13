@@ -7,14 +7,13 @@
 <% script('/javascripts/views/questionView.js') -%>
 <% script('/javascripts/views/answerView.js') -%>
 
-
 <script type='text/x-handlebars', data-template-name='tag'>
   <span class='label label-default mrs'>
     <a data-toggle='popover' {{bindAttr data-content='description'}} {{bindAttr data-original-title='name'}} {{bindAttr href='selfurl'}}>{{name}}</a>
   </span>
 </script>
 
-<script type="text/x-handlebars", data-template-name='answer'>
+<script type='text/x-handlebars', data-template-name='answer'>
   <div {{bindAttr name='id'}} class='progress progress-striped active mtl mbl'>
     <div class='progress-bar'  role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width: 100%'>
     </div>
@@ -71,6 +70,10 @@
             {{/if}}
             <div class='alert-dismiss-container voteError'>
             </div>
+            <div class='progress progress-striped active mtm voteProgress hide'>
+              <div class='progress-bar'  role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width: 100%'>
+              </div>
+            </div>
             <div class='correct-answer'>
               <!-- islogged in and has asked the question -->
               {{#if isOwnerLoggedIn}}
@@ -115,8 +118,8 @@
             {{/each}}
           </div>
           <div class='row comment-add-container'>
-            <div class="progress progress-striped active mts hide commentProgress">
-              <div class="progress-bar"  role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+            <div class='progress progress-striped active mts hide commentProgress'>
+              <div class='progress-bar'  role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width: 100%'>
               </div>
             </div>
             <div class='alert-dismiss-container comment-error commentError'>
@@ -225,6 +228,10 @@
                       {{/if}}
                       <div class='alert-dismiss-container voteError'>
                       </div>
+                      <div class='progress progress-striped active mtm voteProgress hide'>
+                        <div class='progress-bar'  role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width: 100%'>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -277,8 +284,8 @@
                   </div>
                   <!-- Question add comment goes here -->
                   <div class='row comment-add-container'>
-                      <div class="progress progress-striped active mts hide commentProgress">
-                        <div class="progress-bar"  role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                      <div class='progress progress-striped active mts hide commentProgress'>
+                        <div class='progress-bar'  role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width: 100%'>
                         </div>
                       </div>
                       <div class='alert-dismiss-container comment-error commentError'>
@@ -313,11 +320,11 @@
                 <div class='col-xs-12 col-sm-7 col-lg-7'>
                   <h1>{{answercount}} Answers</h1>
                 </div>
-                <div class="col-xs-12 col-sm-5 col-lg-5">
-                  <div class="sortGroup mtm btn-group" >
-                    <a id='aactive' href='/?sort=active' class="btn btn-danger">Active</a>
-                    <a id='avotes' href='/?sort=votes' class="btn btn-danger">Votes</a>
-                    <a id='aoldest' href='/?sort=latest' class="btn btn-danger">Oldest</a>
+                <div class='col-xs-12 col-sm-5 col-lg-5'>
+                  <div class='sortGroup mtm btn-group' >
+                    <a id='aactive' href='/?sort=active' class='btn btn-danger'>Active</a>
+                    <a id='avotes' href='/?sort=votes' class='btn btn-danger'>Votes</a>
+                    <a id='aoldest' href='/?sort=latest' class='btn btn-danger'>Oldest</a>
                   </div>
                 </div>
               </div>
@@ -344,7 +351,7 @@
                   </div>
                   <!-- Load answer here -->
                   {{#each answer in group.answers}}
-                    {{render "answer" answer}}
+                    {{render 'answer' answer}}
                   {{/each}}
                   <div class='row bubble-container pbxli'>
                     <div class='col-xs-12 col-sm-12 col-lg-12'>
@@ -353,6 +360,44 @@
                     </div>
                   </div>                
               {{/each}}
+            </div>
+            <!-- Provide Answer -->
+            <div class='answer-input mtl mbl'>
+              <div class='row contentTitle'>
+                <div class='col-xs-12 col-sm-12 col-lg-12'>
+                  <h1>Your Answer</h1>
+                </div>
+              </div>
+              <div class='row'>
+                <div class='col-xs-12 col-sm-12 col-lg-10 col-lg-offset-1'>
+                  <div id='wmd-button-bar'>
+                  </div>
+                </div>
+              </div>
+              <div class='row'>
+                <div class='col-xs-12 col-sm-12 col-lg-10 col-lg-offset-1'>
+                  {{view Ember.TextArea class='resizable' id='wmd-input' name='wmd-input' placeholder='You can use Markdown language to write your answer. Click on help for more information.' valueBinding='newAnswer'}}
+                </div>
+              </div>
+              <div class='row mts'>
+                <div class='col-xs-12 col-sm-12 col-lg-10 col-lg-offset-1'>
+                  <small class='muted'>Watch the preview of your answer here.</small>
+                  <div id='wmd-preview'></div>
+                </div>
+              </div>
+              <div class='row hide'>
+                <div class='col-xs-12 col-sm-12 col-lg-10 col-lg-offset-1'>
+                  <div id='wmd-output'>
+                  </div>
+                </div>
+              </div>
+              <div class='row mtm'>
+                <div class='col-xs-12 col-sm-12 col-lg-10 col-lg-offset-1'>
+                  <button id='btnSubmitAnswer' disabled='disabled' class='btn btn-large btn-primary mrm' data-loading-text='Submitting Your Answer' href='javascript:void(0)' {{action 'createAnswer'}}>Submit Your Answer</button>
+                  <div class='alert-dismiss-container answerError'>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

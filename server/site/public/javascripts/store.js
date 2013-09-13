@@ -3,10 +3,16 @@
 		//primary key is '__id' in appacitive, overriding default behaviour
 		primaryKey: '__id',
 		
-		//serialize id as string not number
-		serializeId: function(id) {
-    		return id;    		
-  		}
+		serializeHasMany: function(record, json, relationship) {
+			var key = relationship.key;
+
+			var relationshipType = DS.RelationshipChange.determineRelationshipType(record.constructor, relationship);
+
+			if (relationshipType === 'manyToNone' || relationshipType === 'manyToMany' || relationshipType === 'manyToOne') {
+				json[key] = record.get(key).mapBy('id');
+			// TODO support for polymorphic manyToNone and manyToMany relationships
+			}
+		}
 	});
 
 	Deific.Store = DS.Store.extend({

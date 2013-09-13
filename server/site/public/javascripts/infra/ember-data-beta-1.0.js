@@ -1,5 +1,14 @@
-// Version: v1.0.0-beta.1-167-g54915f4
-// Last commit: 54915f4 (2013-09-10 09:14:14 -0700)
+// ==========================================================================
+// Project:   Ember Data
+// Copyright: ©2011-2012 Tilde Inc. and contributors.
+//            Portions ©2011 Living Social Inc. and contributors.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+
+
+// Version: v1.0.0-beta.1-176-gddaa5fa
+// Last commit: ddaa5fa (2013-09-11 19:29:55 -0700)
 
 
 (function() {
@@ -149,13 +158,16 @@ DS.JSONSerializer = Ember.Object.extend({
 
     var belongsTo = get(record, key);
 
-    if (isNone(belongsTo)) { return; }
-
     key = this.keyForRelationship ? this.keyForRelationship(key, "belongsTo") : key;
-    json[key] = get(belongsTo, 'id');
+
+    if (isNone(belongsTo)) {
+      json[key] = belongsTo;
+    } else {
+      json[key] = get(belongsTo, 'id');
+    }
 
     if (relationship.options.polymorphic) {
-      json[key + "_type"] = belongsTo.constructor.typeKey;
+      this.serializePolymorphicType(record, json, relationship);
     }
   },
 
@@ -164,11 +176,16 @@ DS.JSONSerializer = Ember.Object.extend({
 
     var relationshipType = DS.RelationshipChange.determineRelationshipType(record.constructor, relationship);
 
-    if (relationshipType === 'manyToNone' || relationshipType === 'manyToMany' || relationshipType === 'manyToOne') {
+    if (relationshipType === 'manyToNone' || relationshipType === 'manyToMany') {
       json[key] = get(record, key).mapBy('id');
       // TODO support for polymorphic manyToNone and manyToMany relationships
     }
   },
+
+  /**
+    You can use this method to customize how polymorphic objects are serialized.
+  */
+  serializePolymorphicType: Ember.K,
 
   // EXTRACT
 
@@ -4680,7 +4697,10 @@ function hasRelationship(type, options) {
 }
 
 DS.hasMany = function(type, options) {
-  Ember.assert("The type passed to DS.hasMany must be defined", !!type);
+  if (typeof type === 'object') {
+    options = type;
+    type = undefined;
+  }
   return hasRelationship(type, options);
 };
 
@@ -5014,6 +5034,9 @@ DS.Model.reopenClass({
         meta.key = name;
         type = meta.type;
 
+        if (!type) {
+          type = Ember.String.singularize(name);
+        }
         if (typeof type === 'string') {
           meta.type = this.store.modelFor(type);
         }
@@ -6555,8 +6578,45 @@ DS.RESTSerializer = DS.JSONSerializer.extend({
     return this._super.apply(this, arguments);
   },
 
+  /**
+    You can use this method to customize the root keys serialized into the JSON.
+    By default the REST Serializer sends camelized root keys.
+    For example, your server may expect underscored root objects.
+
+    ```js
+    App.ApplicationSerializer = DS.RESTSerializer.extend({
+      serializeIntoHash: function(data, type, record, options) {
+        var root = Ember.String.decamelize(type.typeKey);
+        data[root] = this.serialize(record, options);
+      }
+    });
+    ```
+
+    @method serializeIntoHash
+    @param {Object} hash
+    @param {subclass of DS.Model} type
+    @param {DS.Model} record
+    @param {Object} options
+  */
   serializeIntoHash: function(hash, type, record, options) {
     hash[type.typeKey] = this.serialize(record, options);
+  },
+
+  /**
+    You can use this method to customize how polymorphic objects are serialized.
+    By default the JSON Serializer creates the key by appending `_type` to
+    the attribute and value from the model's camelcased model name.
+
+    @method serializePolymorphicType
+    @param {DS.Model} record
+    @param {Object} json
+    @param relationship
+  */
+  serializePolymorphicType: function(record, json, relationship) {
+    var key = relationship.key,
+        belongsTo = get(record, key);
+    key = this.keyForAttribute ? this.keyForAttribute(key) : key;
+    json[key + "_type"] = belongsTo.constructor.typeKey;
   }
 });
 

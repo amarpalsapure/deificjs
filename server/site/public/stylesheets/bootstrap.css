@@ -5122,7 +5122,7 @@ a.thumbnail:focus {
 .progress-bar {
   float: left;
   width: 0;
-  height: 10px;
+  height: 8px;
   font-size: 12px;
   color: #ffffff;
   text-align: center;

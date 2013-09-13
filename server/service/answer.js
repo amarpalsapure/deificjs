@@ -71,10 +71,17 @@ exports.findById = function(req, res) {
 
 exports.update = function(req, res) {
 	var answer = req.body.answer;
-	if(!answer || !answer.action) throw Error();
+	if(!answer || !answer.action) return res.status(400).json(req.body.answer);
 
 	//set answer id, froam param
 	answer.id = answer.__id = req.param('id');
+
+	//get the state of app
+	//to check if user is logged in or not
+	var app = require('../shared/app.init');
+	var state = app.init(req);
+
+	if(!state.userid) return res.status(401).json(req.body.answer);
 
 	//initialize appacitive sdk
 	var sdk = require('./appacitive.init');
@@ -82,13 +89,6 @@ exports.update = function(req, res) {
 
 	//get the transformer
 	var transformer = require('./infra/transformer');
-
-	//get the state of app
-	//to check if user is logged in or not
-	var app = require('../shared/app.init');
-	var state = app.init(req);
-
-	if(!state.userid) throw Error('Session expired');
 
 	var aAnswer = transformer.toAppacitiveAnswer(Appacitive, answer);
 
@@ -140,7 +140,7 @@ exports.update = function(req, res) {
 			response.answer.voteconnid = answer.voteconnid;
 			return res.json(response);
 		}, function(status) {
-			throw Error(status.message);
+			return res.status(424).json(req.body.answer);
 		});
 	};
 
@@ -227,4 +227,66 @@ exports.update = function(req, res) {
 		default:
 			throw Error('Invalid action provided');
 	}
+};
+
+//Step 1: Save the Answer and connect user to answer
+//Step 2: Create connection of Answer with question
+exports.save = function(req, res) {
+	var answer = req.body.answer;
+	if(!answer || !answer.action) return res.status(400).json(req.body.answer);
+
+	//get the state of app
+	//to check if user is logged in or not
+	var app = require('../shared/app.init');
+	var state = app.init(req);
+
+	if(!state.userid) return res.status(401).json(req.body.answer);
+
+	//initialize appacitive sdk
+	var sdk = require('./appacitive.init');
+	var Appacitive = sdk.init();
+
+	//get the transformer
+	var transformer = require('./infra/transformer');
+
+	//perform a basic transform
+	var aAnswer = transformer.toAppacitiveAnswer(Appacitive, answer);
+	aAnswer.set('text', answer.text);
+
+	//STEP 1: Save the Answer and connect user to answer
+	var userRelation = new Appacitive.ConnectionCollection({ relation: 'answer_user' });
+	var userConnection = userRelation.createNewConnection({ 
+	  endpoints: [{
+	      article: aAnswer,
+	      label: 'answer'
+	  }, {
+	      articleid: state.userid,
+	      label: 'user'
+	  }]
+	});
+	userConnection.save(function(){
+		//STEP 2: Create connection of Answer with question
+		var questionRelation = new Appacitive.ConnectionCollection({ relation: 'question_answer' });
+		var questionConnection = questionRelation.createNewConnection({ 
+		  endpoints: [{
+		      articleid: answer.question,
+		      label: 'question'
+		  }, {
+	       	  article: aAnswer,
+		      label: 'answer'
+		  }]
+		});
+		questionConnection.save(function(){
+			var response = transformer.toAnswer(aAnswer);
+			response.answer.author = state.userid;
+			response.answer.question = answer.question;
+			return res.json(response);
+		}, function(status){
+			//Rollback the answer
+			aAnswer.del(function(){}, function(){}, true);
+			return res.status(500).json({ message: 'Unable to save answer' });
+		})
+	}, function(status){
+		return res.status(500).json({ message: 'Unable to save answer' });
+	});
 };

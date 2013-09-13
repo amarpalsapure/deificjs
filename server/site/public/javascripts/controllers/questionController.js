@@ -19,6 +19,78 @@
 			var model = this.get('content');
 			this.__downvote(model);
 		},
+		createAnswer: function() {
+			var text = this.get('newAnswer');
+
+			//validation
+			if (!text || !text.trim()) return;
+
+			var that = this;
+			this.get('store').find('user', Deific.AccountController.user.userid).then(function(user){
+				// Create the new Comment model
+				var questionModel = that.get('model');
+				var parentId = questionModel.get('id');
+				var answer = that.get('store').createRecord('answer');
+				answer.set('text', text);
+				answer.set('author', user);
+				answer.set('question', questionModel);
+				answer.set('action', 'do:answer');
+
+				//change the button state to loading (Bootstrap)
+				$('#btnSubmitAnswer').button('loading');
+
+				var reset = function() {
+					answer.set('action', '');
+					//reset button state to loading (Bootstrap)
+					$('#btnSubmitAnswer').button('reset');
+				};
+
+				// Save the new model
+				answer.save().then(function(savedObj){
+					var model = that.get('model');
+					savedObj.set('author', user);
+					savedObj.set('question', model);
+					model.get('answersMeta').pushObject({
+						__id: savedObj.get('id'),
+						__utcdatecreated: savedObj.get('__utcdatecreated')
+					});
+
+					var groupedAnswers = that.get('groupedAnswers');
+					
+					if(groupedAnswers){
+						var key = moment(savedObj.get('__utcdatecreated')).format('DDMMMYYYY');
+						var match = $.grep(groupedAnswers, function(g){
+							return g.date === key;
+						});
+
+						var answer = that.get('store').find('answer', savedObj.get('id'));
+						if(match && match.length > 0){
+							match[0].answers.pushObject(answer);
+						}else{
+							groupedAnswers.pushObject({
+								date: key,
+								__utcdatecreated: answersMeta[i].__utcdatecreated,
+								answers: [
+								 	answer
+								]
+							});
+						}
+					}
+
+					$('#wmd-input').val('');
+					$('#wmd-input').trigger('focus');
+					//TODO: Set the location to # of answer
+					reset();
+				}, function(){
+					//in case of any error roll back the changes (if any)
+					//and show an error message
+					var alert = '<div class="alert alert-block alert-danger font9"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred during saving answer. </div>';
+					$('.answerError').html(alert).alert();
+
+					reset();
+				});
+			});
+		},
 
 		//for internal use
 		__saveComment: function(type){
@@ -72,11 +144,13 @@
 					$('#'+ parentId +' .commentError').html(alert).alert();
 					toggleView();
 				});
-			})
+			});
 		},
 		__upvote: function(model) {
+			if(this.__validateVoteUser(model)) return;
 			if(this.updateInProgress) return;
 			this.set('updateInProgress', true);
+			this.__toggleVoteLoader(model.get('id'));
 
 			var that = this;
 			
@@ -96,18 +170,24 @@
 				model.set('voted', 1);
 				model.incrementProperty('upvotecount');
 				//if voteconnid is not empty, means user is switching vote
-				if(!model.get('voteconnid') && model.get('voteconnid') != '') {
+				if(model.get('voteconnid') && model.get('voteconnid') != '') {
 					model.decrementProperty('downvotecount');
 				}
 			}
 
+			var reset = function() {
+				that.__toggleVoteLoader(model.get('id'));
+				that.set('updateInProgress', false);
+				model.set('action', '');
+			};
+
 			// Save the new model
 			model.save().then(function(item){
-				that.set('updateInProgress', false);
+				reset();
 				//don't do anything, 
 				//view is already updated
 			}, function(error){
-				that.set('updateInProgress', false);
+				reset();				
 				//in case of any error roll back the changes
 				//and show an error message
 				model.rollback();
@@ -122,8 +202,10 @@
 			});
 		},
 		__downvote: function(model) {
+			if(this.__validateVoteUser(model)) return;
 			if(this.updateInProgress) return;
 			this.set('updateInProgress', true);
+			this.__toggleVoteLoader(model.get('id'));
 
 			var that = this;
 			
@@ -143,18 +225,24 @@
 				model.set('voted', -1);
 				model.incrementProperty('downvotecount');
 				//if voteconnid is not empty, means user is switching vote
-				if(!model.get('voteconnid') && model.get('voteconnid') != '') {
+				if(model.get('voteconnid') && model.get('voteconnid') != '') {
 					model.decrementProperty('upvotecount');
 				}
 			}
 			
+			var reset = function() {
+				that.__toggleVoteLoader(model.get('id'));
+				that.set('updateInProgress', false);
+				model.set('action', '');
+			};
+
 			// Save the new model
 			model.save().then(function(item){
-				that.set('updateInProgress', false);
+				reset()
 				//don't do anything, 
 				//view is already updated
 			}, function(error){
-				that.set('updateInProgress', false);
+				reset();
 				//in case of any error roll back the changes
 				//and show an error message
 				model.rollback();
@@ -168,9 +256,20 @@
 				that.__showVoteError(model.get('id'));
 			});
 		},
+		//check if user who has questioned or answered is not upvoting his/her own answer
+		__validateVoteUser: function(model) {
+			if(Deific.AccountController.user.userid != model.get('author').get('id')) return false;
+			//show error
+			var alert = '<div class="alert alert-block alert-danger font9 pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> You can\'t vote on your own post. </div>';
+			$('#'+ model.get('id') +' .voteError').html(alert).alert();
+			return true;
+		},
 		__showVoteError: function(id) {
 			var alert = '<div class="alert alert-block alert-danger font9 pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred during saving your vote. </div>';
 			$('#'+ id +' .voteError').html(alert).alert();
+		},
+		__toggleVoteLoader: function(id) {
+			$('#'+ id +' .voteProgress').toggleClass('hide');
 		}
 	});
 

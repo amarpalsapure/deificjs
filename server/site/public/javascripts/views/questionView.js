@@ -35,6 +35,22 @@
 			});
 
 			asyncPrettyPrint();
+
+			//check the length of answer
+			//must be more than 20 characters
+			$(window).on('deificloaded', function(){
+				$('#wmd-input').keyup(function() {
+			        if($.trim($('#wmd-input').val()).length > 20) $('#btnSubmitAnswer').removeAttr('disabled');
+			        else $('#btnSubmitAnswer').attr('disabled', 'disabled');
+			    });
+			});
+
+			//initialize the markdown editor
+			//by raising the event, event listener is in markdown-editor.js
+			setTimeout(function(){
+				$(window).trigger('deificloaded');
+			}, 100);
+
 		}
 	});
 	Deific.TagView = Ember.View.extend({

@@ -42,18 +42,36 @@ if ('development' == app.get('env')) {
 }
 
 // service route
-// ** question api
+
+// ################# question api ####################
+// get all question
 app.get('/service/questions', questionApi.findAll);
+// get question by id
 app.get('/service/questions/:id', questionApi.findById);
+// update question
 app.put('/service/questions/:id', questionApi.update);
-// ** answer api
+
+
+// ################# answer api ####################
+// get answer
 app.get('/service/answers/:id', answerApi.findById);
+// update answer
 app.put('/service/answers/:id', answerApi.update);
-// ** user api
+// save answer
+app.post('/service/answers', answerApi.save);
+
+
+// ################# user api ####################
+// get user
 app.get('/service/users/:id', userApi.findById);
+// authenticate user
 app.post('/service/users/auth', userApi.auth);
+// logout user
 app.post('/service/users/logout', userApi.logout);
-// ** comment api
+
+
+// ################# comment api ####################
+// save comment
 app.post('/service/comments', commentApi.save)
 
 // site route
