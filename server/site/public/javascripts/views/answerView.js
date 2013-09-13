@@ -37,7 +37,7 @@
 					//running asyncPrettyPrint for any code in answer
 					asyncPrettyPrint();
 				});
-				if(model.text && model.text != '') {
+				if(model.get('text') && model.get('text') != '') {
 					//show answer
 					asyncShowAnswer();
 					//running asyncPrettyPrint for any code in answer
