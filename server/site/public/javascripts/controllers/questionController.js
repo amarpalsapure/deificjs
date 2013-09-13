@@ -69,7 +69,7 @@
 						}else{
 							groupedAnswers.pushObject({
 								date: key,
-								__utcdatecreated: answersMeta[i].__utcdatecreated,
+								__utcdatecreated: savedObj.get('__utcdatecreated'),
 								answers: [
 								 	answer
 								]

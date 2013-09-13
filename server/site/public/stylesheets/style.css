@@ -86,6 +86,7 @@ body { background-color: #eef0f3; }
 .question-page .user-panel .row { padding: 0 0 2px; }
 .question-page .question-desc { min-height: 150px; }
 .question-page .answer-desc { min-height: 250px; }
+.question-page .answer-desc p { word-wrap: break-word;}
 .question-page .user-img { width: 36px; height: 36px; margin-top: 3px; margin-right: 4px; display: inline-block; }
 
 .answer-list .odd, .answer-list .even { padding: 8px 12px; }
@@ -124,7 +125,7 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
 
 #wmd-input { height: 250px; background-color: #FFFFFF; border: 1px solid #DDD; padding: 10px; margin: auto; }
 
-#wmd-preview { border: dashed 2px #DDD;width: 100%;padding: 8px 12px;min-height: 100px;}
+#wmd-preview { border: dashed 2px #DDD;width: 100%;padding: 8px 12px;min-height: 100px;word-wrap: break-word;}
 #wmd-preview pre { background-color: #f3f3f3; border: 1px solid #e1e1e8; }
 #wmd-preview img { border: 1px solid #BAB5B5; }
 
