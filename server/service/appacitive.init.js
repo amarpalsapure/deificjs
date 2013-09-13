@@ -11,5 +11,7 @@ exports.init = function (userToken) {
 	    appId: process.config.appId,
 	    userToken: userToken
 	});
+
+	Appacitive.config.apiBaseUrl = "http://apis.appacitive.com/";
 	return Appacitive;
 };
