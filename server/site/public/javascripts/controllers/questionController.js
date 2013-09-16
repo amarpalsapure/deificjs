@@ -13,11 +13,11 @@
 		votedetails: function() { this.set('isVoteOpen', true);	},
 		upvote: function() {
 			var model = this.get('content');
-			this.__upvote(model);
+			this.__upvote('question', model);
 		},
 		downvote: function() {
 			var model = this.get('content');
-			this.__downvote(model);
+			this.__downvote('quesiton', model);
 		},
 		createAnswer: function() {
 			var text = this.get('newAnswer');
@@ -122,8 +122,8 @@
 
 				var toggleView = function() {
 					setTimeout(function(){
-						$('#'+ parentId +' .commentProgress').toggleClass('hide');
-						$('#'+ parentId +' .commentAdd').toggleClass('hide');
+						$('#'+ type + '-' + parentId +' .commentProgress').toggleClass('hide');
+						$('#'+ type + '-' + parentId +' .commentAdd').toggleClass('hide');
 					}, 10);
 				}
 
@@ -146,11 +146,11 @@
 				});
 			});
 		},
-		__upvote: function(model) {
-			if(this.__validateVoteUser(model)) return;
+		__upvote: function(type, model) {
+			if(this.__validateVoteUser(type, model)) return;
 			if(this.updateInProgress) return;
 			this.set('updateInProgress', true);
-			this.__toggleVoteLoader(model.get('id'));
+			this.__toggleVoteLoader(type, model.get('id'));
 
 			var that = this;
 			
@@ -176,7 +176,7 @@
 			}
 
 			var reset = function() {
-				that.__toggleVoteLoader(model.get('id'));
+				that.__toggleVoteLoader(type, model.get('id'));
 				that.set('updateInProgress', false);
 				model.set('action', '');
 			};
@@ -198,14 +198,14 @@
 				model.set('voted', voted);
 
 				//show error message
-				that.__showVoteError(model.get('id'));
+				that.__showVoteError(type, model.get('id'));
 			});
 		},
-		__downvote: function(model) {
-			if(this.__validateVoteUser(model)) return;
+		__downvote: function(type, model) {
+			if(this.__validateVoteUser(type, model)) return;
 			if(this.updateInProgress) return;
 			this.set('updateInProgress', true);
-			this.__toggleVoteLoader(model.get('id'));
+			this.__toggleVoteLoader(type, model.get('id'));
 
 			var that = this;
 			
@@ -231,7 +231,7 @@
 			}
 			
 			var reset = function() {
-				that.__toggleVoteLoader(model.get('id'));
+				that.__toggleVoteLoader(type, model.get('id'));
 				that.set('updateInProgress', false);
 				model.set('action', '');
 			};
@@ -253,23 +253,23 @@
 				model.set('voted', voted);
 
 				//show error message
-				that.__showVoteError(model.get('id'));
+				that.__showVoteError(type, model.get(type, 'id'));
 			});
 		},
 		//check if user who has questioned or answered is not upvoting his/her own answer
-		__validateVoteUser: function(model) {
+		__validateVoteUser: function(type, model) {
 			if(Deific.AccountController.user.userid != model.get('author').get('id')) return false;
 			//show error
 			var alert = '<div class="alert alert-block alert-danger font9 pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> You can\'t vote on your own post. </div>';
-			$('#'+ model.get('id') +' .voteError').html(alert).alert();
+			$('#'+ type + '-' + model.get('id') +' .voteError').html(alert).alert();
 			return true;
 		},
-		__showVoteError: function(id) {
+		__showVoteError: function(type, id) {
 			var alert = '<div class="alert alert-block alert-danger font9 pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred during saving your vote. </div>';
-			$('#'+ id +' .voteError').html(alert).alert();
+			$('#'+ type + '-' + id +' .voteError').html(alert).alert();
 		},
-		__toggleVoteLoader: function(id) {
-			$('#'+ id +' .voteProgress').toggleClass('hide');
+		__toggleVoteLoader: function(type, id) {
+			$('#'+ type + '-' + id +' .voteProgress').toggleClass('hide');
 		}
 	});
 
@@ -277,11 +277,11 @@
 		createComment: function() { this.__saveComment('answer'); },
 		upvote: function() {
 			var model = this.get('content').get('content');
-			this.__upvote(model);
+			this.__upvote('answer', model);
 		},
 		downvote: function() {
 			var model = this.get('content').get('content');
-			this.__downvote(model);
+			this.__downvote('amswer', model);
 		},
 	});
 }).call(this);

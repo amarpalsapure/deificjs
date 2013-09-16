@@ -8,10 +8,18 @@ var _toUser = function(user) {
 		'firstname': user.get('firstname'),
 		'lastname': user.get('lastname'),
 		'gravtarurl': null,
-		'reputation': 0
+		'reputation': 0,
+		'url': ''
 	};
 	if(user.get('email'))
 		response.gravtarurl = 'http://www.gravatar.com/avatar/' + md5(user.get('email'));
+
+	//generate the url
+	var url = '/users/' + user.id() + '/',
+		subUrl = '';
+	if(user.get('lastname') == '') url += _urlEncode(user.get('firstname'));
+	else url += _urlEncode(user.get('firstname') + '-' + user.get('lastname'));
+	response.url = process.config.host + url;
 
 	var answerdowncount = 0,
 		answerupcount = 0,
@@ -32,10 +40,7 @@ var _toUser = function(user) {
 	return response;
 };
 exports.toUser = _toUser;
-var _toInt = function(number) { 
-	if(!number || number == '' || isNaN(number)) return 0;
-	return parseInt(number, 10);
-}
+
 
 var _toComment = function(comment) {
 	if(!comment) return {};
@@ -79,6 +84,11 @@ var _toQuestion = function(question) {
 	delete response.question.__tags;
 	//UI will set action, when question is updated
 	question.action = '';
+
+	//generate the url
+	var url = '/questions/' + question.id() + '/' + _urlEncode(question.get('title'));
+	response.question.url = process.config.host + url;
+	response.question.murl = process.config.host + '/q/'+ question.id();
 
 	//get the answer count
 	response.question.answercount = 0;
@@ -203,3 +213,20 @@ var _to_Appacitive_Answer = function(Appacitive, answer) {
 	});
 };
 exports.toAppacitiveAnswer = _to_Appacitive_Answer;
+
+
+
+//private functions (for local use)
+var _toInt = function(number) { 
+	if(!number || number == '' || isNaN(number)) return 0;
+	return parseInt(number, 10);
+}
+
+var _urlEncode = function(text) {
+	if(!text) return '';
+	text = text.replace(/ /g, '-').replace(/\//g,'-').replace(/[^a-zA-Z/-]/g, '');
+	while(text.indexOf('--') != -1){
+		text = text.replace(/--/,'-');
+	}
+	return text.toLowerCase();
+};

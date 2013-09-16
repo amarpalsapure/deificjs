@@ -8,7 +8,7 @@
 
 <script type='text/x-handlebars', data-template-name='tag'>
   <span class='label label-default mrs'>
-    <a data-toggle='popover' {{bindAttr data-content='description'}} {{bindAttr data-original-title='name'}} {{bindAttr href='selfurl'}}>{{name}}</a>
+    <a data-toggle='popover' {{bindAttr data-content='description'}} {{bindAttr data-original-title='name'}} {{bindAttr href='url'}}>{{name}}</a>
   </span>
 </script>
 
@@ -41,10 +41,10 @@
               <div class='question row'>
               {{/if}}
                 <div class='col-xs-12 col-sm-1 col-lg-1 user-profile'>
-                  <div class='divPic'><a class='user-img' {{bindAttr href='author.selfurl'}} {{bindAttr title='author.fullname'}}><img {{bindAttr src='author.smallimgurl'}}/></a></div>
+                  <div class='divPic'><a class='user-img' {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}><img {{bindAttr src='author.smallimgurl'}}/></a></div>
                   <div class='divUserDetails'>
                     <div class='divUser'>
-                      <a {{bindAttr href='author.selfurl'}} {{bindAttr title='author.fullname'}}>
+                      <a {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}>
                         <span class='fname'>{{author.firstname}}</span><span class='lname'>{{author.lastname}}</span>
                       </a>
                       </div>
@@ -63,13 +63,13 @@
                         {{else}}
                           <span class='unanswered' title='none of the answers was accepted as answer'></span>
                         {{/if}}
-                        <a {{bindAttr title='text'}} {{bindAttr href='selfurl'}}>{{title}}</a>
+                        <a {{bindAttr title='text'}} {{bindAttr href='url'}}>{{title}}</a>
                       </h4>
                     </div>
                   </div>
                   <div class='row'>
                     <div class='col-xs-12 col-sm-12 col-lg-12 font9'>
-                      {{text}}... <a {{bindAttr href='selfurl' title='Click to read more'}}>more</a>
+                      {{text}}... <a {{bindAttr href='url' title='Click to read more'}}>more</a>
                     </div>
                     </div>
                   <div class='row'>

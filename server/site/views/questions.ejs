@@ -9,24 +9,25 @@
 
 <script type='text/x-handlebars', data-template-name='tag'>
   <span class='label label-default mrs'>
-    <a data-toggle='popover' {{bindAttr data-content='description'}} {{bindAttr data-original-title='name'}} {{bindAttr href='selfurl'}}>{{name}}</a>
+    <a data-toggle='popover' {{bindAttr data-content='description'}} {{bindAttr data-original-title='name'}} {{bindAttr href='url'}}>{{name}}</a>
   </span>
 </script>
 
 <script type='text/x-handlebars', data-template-name='answer'>
-  <div {{bindAttr name='id'}} class='progress progress-striped active mtl mbl'>
+  <a {{bindAttr id='id'}}></a>
+  <div {{bindAttr id='loaderid'}} class='progress progress-striped active mtl mbl'>
     <div class='progress-bar'  role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width: 100%'>
     </div>
   </div>
-  <div {{bindAttr id='id'}} class='answer hide'>
+  <div {{bindAttr id='entityid'}} class='answer hide'>
     <div class='row ptni pbni'>
       <div class='col-xs-12 col-sm-1 col-lg-1'>
         <div class='row'>
           <div class='col-xs-8 col-sm-12 col-lg-12 user-profile'>
-            <div class='divPic'><a class='user-img' {{bindAttr href='author.selfurl'}} {{bindAttr title='author.fullname'}}><img {{bindAttr src='author.smallimgurl'}}/></a></div>
+            <div class='divPic'><a class='user-img' {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}><img {{bindAttr src='author.smallimgurl'}}/></a></div>
             <div class='divUserDetails'>
               <div class='divUser'>
-                <a {{bindAttr href='author.selfurl'}} {{bindAttr title='author.fullname'}}>
+                <a {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}>
                   <span class='fname'>{{author.firstname}}</span><span class='lname'>{{author.lastname}}</span>
                 </a>
               </div>
@@ -111,7 +112,7 @@
                 <div class='row'>
                   <div class='col-lg-12'>
                       <span class='comment-text'>{{markdown comment.text}}</span> - 
-                      <a {{bindAttr href='comment.author.selfurl'}} {{bindAttr title='comment.author.fullname'}} class='commentor'>{{comment.author.fullname}}</a> <span class='divTime'>{{sincetime comment.__utcdatecreated}}</span>
+                      <a {{bindAttr href='comment.author.url'}} {{bindAttr title='comment.author.fullname'}} class='commentor'>{{comment.author.fullname}}</a> <span class='divTime'>{{sincetime comment.__utcdatecreated}}</span>
                   </div>
                 </div>
               </div>
@@ -158,7 +159,7 @@
       <div class='row question-page'>
         <div class='col-xs-12 col-sm-12 col-lg-9'>
           <div class='mainSection'>
-            <div {{bindAttr id='id'}} class='question pts'>
+            <div {{bindAttr id='entityid'}} class='question pts'>
               <div class='row time-row'>
                 <div class='col-xs-12 col-sm-12 col-lg-12'>
                   <div class='time-container'>
@@ -181,10 +182,10 @@
                 <div class='col-xs-12 col-sm-1 col-lg-1'>
                   <div class='row'>
                     <div class='col-xs-7 col-sm-12 col-lg-12 user-profile'>
-                      <div class='divPic'><a class='user-img' {{bindAttr href='author.selfurl'}} {{bindAttr title='author.fullname'}}><img {{bindAttr src='author.smallimgurl'}}/></a></div>
+                      <div class='divPic'><a class='user-img' {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}><img {{bindAttr src='author.smallimgurl'}}/></a></div>
                       <div class='divUserDetails'>
                         <div class='divUser'>
-                          <a {{bindAttr href='author.selfurl'}} {{bindAttr title='author.fullname'}}>
+                          <a {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}>
                             <span class='fname'>{{author.firstname}}</span><span class='lname'>{{author.lastname}}</span>
                           </a>
                           </div>
@@ -240,7 +241,7 @@
                   <div class='row'>
                     <div class='col-xs-12 col-sm-12 col-lg-12'>
                       <h4 class='question-title'>
-                        <a class='font120' {{bindAttr href='selfurl'}}>{{ title }}</a>
+                        <a class='font120' {{bindAttr href='url'}}>{{ title }}</a>
                       </h4>
                     </div>
                   </div>
@@ -276,7 +277,7 @@
                         <div class='row'>
                           <div class='col-lg-12'>
                               <span class='comment-text'>{{markdown comment.text}}</span> - 
-                              <a {{bindAttr href='comment.author.selfurl'}} {{bindAttr title='comment.author.fullname'}} class='commentor'>{{comment.author.fullname}}</a> <span class='divTime'>{{sincetime comment.__utcdatecreated}}</span>
+                              <a {{bindAttr href='comment.author.url'}} {{bindAttr title='comment.author.fullname'}} class='commentor'>{{comment.author.fullname}}</a> <span class='divTime'>{{sincetime comment.__utcdatecreated}}</span>
                           </div>
                         </div>
                       </div>

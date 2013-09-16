@@ -2,9 +2,11 @@
 	Deific.Question = DS.Model.extend({
 		__utcdatecreated: DS.attr('date'),
 		__createdby: DS.attr('string'),
-		__tags: DS.attr('array'),
+
 		title: DS.attr('string'),
 		text: DS.attr('string'),
+		url: DS.attr('string'),
+		murl: DS.attr('string'),
 		answersMeta: DS.attr('array'),
 		answercount: DS.attr('number', { defaultValue: 0 }),
 		voteconnid: DS.attr('string'),
@@ -15,12 +17,21 @@
 		voted: DS.attr('number'),
 		action: DS.attr('string'),
 
+		//relationship property
 		answers: DS.hasMany('answer'),
 		comments: DS.hasMany('comment'),
 		author: DS.belongsTo('user'),
 		tags: DS.hasMany('tag'),
 
+		//observing functions
+		entityid: function() {
+			return 'answer-' + this.get('id');
+		}.property('id'),
 
+		loaderid: function() {
+			return 'answer-loader-' + this.get('id');
+		}.property('id'),
+		
 		hasupvoted: function(){
 			if(this.get('voted') == 1) return 'btn btn-warning btn-sm';
 			else return 'btn btn-success btn-sm';
@@ -30,19 +41,6 @@
 			if(this.get('voted') == -1) return 'btn btn-warning btn-sm';
 			else return 'btn btn-danger btn-sm';
 		}.property('voted'),
-
-		selfurl: function(){
-			//TODO: Handling error in question get
-			if(!this.get('title')) return '';
-			var url = '/questions/';
-			url += this.get('id') + '/' ;
-			var subUrl = this.get('title').replace(/ /g, '-').replace(/\//g,'-').replace(/[^a-zA-Z/-]/g, '');
-			while(subUrl.indexOf('--') != -1){
-				subUrl= subUrl.replace(/--/,'-');
-			}
-			url += subUrl.toLowerCase();
-			return url;
-		}.property('title'),
 
 		isfavtag: function() {
 			//TODO: depending upon user favorites tags highlight the question

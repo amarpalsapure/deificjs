@@ -22,9 +22,12 @@ Deific.QuestionRoute = Ember.Route.extend({
 		});
 	},
 	setupController: function(controller, model){
+		var loadedanswercount = 0;
 		var groupedAnswers = [];
+
 		var answersMeta = model.get('answersMeta');
 		if(answersMeta){
+			loadedanswercount = model.get('answercount');
 			for (var i = 0; i <= answersMeta.length - 1; i++) {
 				var key = moment(answersMeta[i].__utcdatecreated).format('DDMMMYYYY');
 				var match = $.grep(groupedAnswers, function(g){
@@ -34,6 +37,8 @@ Deific.QuestionRoute = Ember.Route.extend({
 				var answer = this.get('store').find('answer', answersMeta[i].__id);
 				answer.then(function(gAnswer){
 					gAnswer.set('question', model);
+					//if url has hash (in case of answer id), then reload the page
+					if(--loadedanswercount == 0 && window.location.hash != '') window.location = window.location.href;
 				});
 				if(match && match.length > 0){
 					match[0].answers.push(answer);

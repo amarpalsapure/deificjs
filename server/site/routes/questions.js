@@ -5,3 +5,29 @@ exports.index = function(req, res){
 
 	res.render('questions', state);
 };
+
+exports.miniindex = function(req, res) {
+	//get the question and answer id (if any) from request
+	var questionId = req.param('qid');
+	var answerId = req.param('aid');
+
+	//initialize the sdk
+	var sdk = require('../../service/appacitive.init');
+	var Appacitive = sdk.init();
+
+	//get the transformer
+	var transformer = require('../../service/infra/transformer');
+
+	// get the question from api and the redirect user to question page
+	Appacitive.Article.get({ 
+	    schema: 'question', //mandatory
+	    id: questionId, //mandatory
+	    fields: ["title"] //optional
+	}, function(question) {
+		var lQuestion = transformer.toQuestion(question).question;		
+		if(answerId && isNaN(answerId) == false) lQuestion.url += '#' + answerId;
+		res.redirect(lQuestion.url);
+	}, function(err, obj) {
+	    res.redirect('404', '/error.html');
+	});
+};

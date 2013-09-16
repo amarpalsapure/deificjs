@@ -41,7 +41,9 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-// service route
+// ***************************************************
+// ****************** Service route ******************
+// ***************************************************
 
 // ################# question api ####################
 // get all question
@@ -74,13 +76,39 @@ app.post('/service/users/logout', userApi.logout);
 // save comment
 app.post('/service/comments', commentApi.save)
 
-// site route
+
+
+// *************************************************
+// ***************** site route ********************
+// *************************************************
+
+// ################ question #######################
+// index page
 app.get('/', routes.index);
+
+// question page without title in url
 app.get('/questions/:id', questions.index);
+
+// question page with title in url
 app.get('/questions/:id/:title', questions.index);
+
+// question list page by tag
 app.get('/questions/tagged/:tag', questions.index);
+
+// short url for question
+app.get('/q/:qid', questions.miniindex);
+
+//short url for answer
+app.get('/a/:qid/:aid', questions.miniindex);
+
+// ################ user #######################
+// user login page
 app.get('/users/login',users.login);
+
+// get user by id withour name in url
 app.get('/users/:id', users.index);
+
+// get user by id with name in url
 app.get('/users/:id/:title', users.index);
 
 

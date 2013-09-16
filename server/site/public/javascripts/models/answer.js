@@ -1,8 +1,11 @@
 (function() {
 	Deific.Answer = DS.Model.extend({
-		text: DS.attr('string'),
 		__utcdatecreated: DS.attr('date'),
 		__createdby: DS.attr('string'),
+		
+		text: DS.attr('string'),
+		url: DS.attr('string'),
+		murl: DS.attr('string'),
 		iscorrectanswer: DS.attr('boolean'),
 		voteconnid: DS.attr('string'),
 		upvotecount: DS.attr('number', { defaultValue: 0 }),
@@ -10,6 +13,20 @@
 		voted: DS.attr('number'),
 		action: DS.attr('string'),
 
+		//relation ship properties
+		question: DS.belongsTo('question'),
+		author: DS.belongsTo('user'),
+		comments: DS.hasMany('comment'),
+
+		//observing functions
+		entityid: function() {
+			return 'answer-' + this.get('id');
+		}.property('id'),
+
+		loaderid: function() {
+			return 'answer-loader-' + this.get('id');
+		}.property('id'),
+		
 		hasupvoted: function(){
 			if(this.get('voted') == 1) return 'btn btn-warning btn-sm';
 			else return 'btn btn-success btn-sm';
@@ -20,10 +37,7 @@
 			else return 'btn btn-danger btn-sm';
 		}.property('voted'),
 
-		question: DS.belongsTo('question'),
-		author: DS.belongsTo('user'),
-		comments: DS.hasMany('comment'),
-
+		
 		getfulldate: function(){
 			return moment(this.get('__utcdatecreated')).format("DDMMMYYYY");
 		}.property('__utcdatecreated'),

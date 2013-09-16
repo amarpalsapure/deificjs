@@ -4,8 +4,7 @@
 			//remove loader and show answer
 			var asyncShowAnswer = function() {
 				setTimeout(function(){
-					$('[name="ElementNameHere"]')
-					var $loaderEle = $('[name="'+ model.get('id') +'"]');
+					var $loaderEle = $('#answer-loader-'+ model.get('id'));
 					//show answer
 					$loaderEle.next('.answer').removeClass('hide')
 					//remove loader
