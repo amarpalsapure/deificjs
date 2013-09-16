@@ -30,9 +30,22 @@
 			//question data is loaded and will be render immediately,
 			//running asyncPrettyPrint for any code in question
 			var model = this.controller.get('model');
-			model.addObserver('text', this, function(){
-				asyncPrettyPrint();	
-			});
+
+			if(model) {
+				model.addObserver('text', this, function(){
+					asyncPrettyPrint();	
+				});
+
+				//remove show more if there are no hidden comments
+				setTimeout(function(){
+					var hiddenComments = model.get('comments').filter(function(comment) {
+						return comment.get('ishidden');
+					});
+					if(hiddenComments && hiddenComments.get('length') > 0) return;
+					var $ele = $('#question-' + model.get('id'));
+					$ele.find('.showMore').parent().remove();			
+				}, 50);
+			}			
 
 			asyncPrettyPrint();
 
@@ -51,11 +64,24 @@
 				$(window).trigger('deificloaded');
 			}, 100);
 
+			
+		},
+		
+		showAllComment: function() {
+			var model = this.controller.get('model');
+			var $ele = $('#question-' + model.get('id'));
+			$ele.find('.comment').removeClass('hide');
+			$ele.find('.showMore').parent().remove();
 		}
 	});
 	Deific.TagView = Ember.View.extend({
 		didInsertElement: function() {
 			$(this.get('element')).find('a').popover({trigger: 'hover'});
+		}
+	});
+	Deific.CommentView = Ember.View.extend({
+		didInsertElement: function() {
+			
 		}
 	});
 }).call(this);

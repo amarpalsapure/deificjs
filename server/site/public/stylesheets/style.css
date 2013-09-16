@@ -107,17 +107,17 @@ body { background-color: #eef0f3; }
 .voteError .alert { position: absolute; width: 290px; top: 12px; padding: 8px 14px 6px;}
 .answerError .alert { position: absolute; padding: 8px 14px 6px; top: 10px; }
 
-.comment { padding: 6px 0 4px; border-bottom: dashed 1px #ccc; font-size: 0.95em; color: #777; overflow: auto; }
+.comment { border-bottom: solid 1px #eee; font-size: 0.95em; color: #777; overflow: auto; }
     .comment .row { padding: 2px 0 0; }
     .comment p { padding: 0px; display: inline; }
 
 .comment-container { margin-top: -6px; }
     .comment-container .comment { padding: 6px 8px 10px; overflow-x: hidden;}
         .comment-container .comment:hover { background-color: #f6f6f6; }
-    .comment-container > .comment:first-child { border-top: dashed 1px #ccc; }
 .comment-cancel { /* line-height: 21px; */ /* vertical-align: bottom; */ }
 .comment-error { position: relative; }
 .comment-error .alert { position: absolute; right: 0px; z-index: 1; }
+.showMore, .showMore:hover { padding: 0px 12px 8px; background-color: #ddd; font-weight: bold; font-size: 1.2em; color: #222; line-height: 8px; display: inline-block; text-decoration: none; }
 
 div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll center 2px; border-color: #DDDDDD; border-style: solid; border-width: 0pt 1px 1px; cursor: s-resize; height: 9px; overflow: hidden; }
 

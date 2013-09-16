@@ -48,7 +48,8 @@ var _toComment = function(comment) {
 		'__id': comment.id(),
 		'__utcdatecreated': comment.get('__utcdatecreated'),
 		'text': comment.get('text'),
-		'author': comment.get('__createdby')
+		'author': comment.get('__createdby'),
+		'ishidden': false
 	};
 
 	return response;
@@ -101,10 +102,13 @@ var _toQuestion = function(question) {
 	//Comments
 	if(question.children.comments && question.children.comments.length > 0) {
 		response.question.comments = [];
-		question.children.comments.forEach(function(comment){
+		for (var i = 0; i < question.children.comments.length; i++) {
+			var comment = question.children.comments[i];
 			response.question.comments.push(comment.id())
-			response.comments.push(_toComment(comment));
-		});
+			var commentJ = _toComment(comment);
+			if(i >= process.config.comments) commentJ.ishidden = true;
+			response.comments.push(commentJ);
+		};
 	}
 
 	//Tags
@@ -172,7 +176,7 @@ var _toAnswer = function(answer) {
 	delete answerJ.__schematype;
 	delete answerJ.__attributes;
 	delete answerJ.__tags;
-	//UI will set action, when question is updated
+	//UI will set action, when answer is updated
 	answerJ.action = '';
 	response.answer.iscorrect = answer.get('score') == 1;
 	delete answerJ.score;
@@ -181,10 +185,13 @@ var _toAnswer = function(answer) {
 	//Comments
 	if(answer.children.comments && answer.children.comments.length > 0) {
 		response.answer.comments = [];
-		answer.children.comments.forEach(function(comment){
+		for (var i = 0; i < answer.children.comments.length; i++) {
+			var comment = answer.children.comments[i];
 			response.answer.comments.push(comment.id())
-			response.comments.push(_toComment(comment));
-		});
+			var commentJ = _toComment(comment);
+			if(i >= process.config.comments) commentJ.ishidden = true;
+			response.comments.push(commentJ);
+		};
 	}
 	
 	//answer author

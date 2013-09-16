@@ -24,14 +24,16 @@
 		tags: DS.hasMany('tag'),
 
 		//observing functions
+		commentsArray: function() {
+			return this.get('comments').map(function(i, idx) {
+				return {comment: i, index: idx, ishidden: idx > 5};
+			});
+		}.property('comments@each'),
+
 		entityid: function() {
-			return 'answer-' + this.get('id');
+			return 'question-' + this.get('id');
 		}.property('id'),
 
-		loaderid: function() {
-			return 'answer-loader-' + this.get('id');
-		}.property('id'),
-		
 		hasupvoted: function(){
 			if(this.get('voted') == 1) return 'btn btn-warning btn-sm';
 			else return 'btn btn-success btn-sm';

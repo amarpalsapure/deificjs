@@ -106,17 +106,22 @@
               </div>
             </div>
           </div>
-          <div class='comment-container mbm border-bottom-dashed'>
+          <div class='comment-container mbm'>
             {{#each comment in comments}}
-              <div class='comment'>
+              <div {{bindAttr class='comment.ishidden:hide :comment'}}>
                 <div class='row'>
                   <div class='col-lg-12'>
                       <span class='comment-text'>{{markdown comment.text}}</span> - 
-                      <a {{bindAttr href='comment.author.url'}} {{bindAttr title='comment.author.fullname'}} class='commentor'>{{comment.author.fullname}}</a> <span class='divTime'>{{sincetime comment.__utcdatecreated}}</span>
+                      <a {{bindAttr href='comment.author.url'}} {{bindAttr title='comment.author.fullname'}} class='commentor'>
+                        {{comment.author.fullname}}
+                      </a> <span class='divTime'>{{sincetime comment.__utcdatecreated}}</span>
                   </div>
                 </div>
               </div>
             {{/each}}
+            <div class='mts pts pbs mbm border-bottom-dashed'>
+              <a href='javascript:void(0)' title='Show more Comments' class='showMore' {{action showAllComment target=view}}>...</a>
+            </div>
           </div>
           <div class='row comment-add-container'>
             <div class='progress progress-striped active mts hide commentProgress'>
@@ -273,15 +278,20 @@
                   <!-- Question comments goes here -->
                   <div class='comment-container mbm'>
                     {{#each comment in comments}}
-                      <div class='comment'>
+                      <div {{bindAttr class='comment.ishidden:hide :comment'}}>
                         <div class='row'>
                           <div class='col-lg-12'>
                               <span class='comment-text'>{{markdown comment.text}}</span> - 
-                              <a {{bindAttr href='comment.author.url'}} {{bindAttr title='comment.author.fullname'}} class='commentor'>{{comment.author.fullname}}</a> <span class='divTime'>{{sincetime comment.__utcdatecreated}}</span>
+                              <a {{bindAttr href='comment.author.url'}} {{bindAttr title='comment.author.fullname'}} class='commentor'>
+                                {{comment.author.fullname}}
+                              </a> <span class='divTime'>{{sincetime comment.__utcdatecreated}}</span>
                           </div>
                         </div>
                       </div>
                     {{/each}}
+                    <div class='mts pts pbs mbm border-bottom-dashed'>
+                      <a href='javascript:void(0)' title='Show more Comments' class='showMore' {{action showAllComment target=view}}>...</a>
+                    </div>
                   </div>
                   <!-- Question add comment goes here -->
                   <div class='row comment-add-container'>

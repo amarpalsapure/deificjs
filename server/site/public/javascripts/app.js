@@ -45,5 +45,4 @@
 		}
 		return abbreviateNumber(value);
 	});
-	
 }).call(this);

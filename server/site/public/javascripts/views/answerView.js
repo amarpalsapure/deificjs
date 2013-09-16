@@ -33,8 +33,19 @@
 				model.addObserver('text', null, function() {
 					//show answer
 					asyncShowAnswer();
+					
 					//running asyncPrettyPrint for any code in answer
 					asyncPrettyPrint();
+
+					//remove show more if there are no hidden comments
+					setTimeout(function(){
+						var hiddenComments = model.get('comments').filter(function(comment) {
+							return comment.get('ishidden');
+						});
+						if(hiddenComments && hiddenComments.get('length') > 0) return;
+						var $ele = $('#answer-' + model.get('id'));
+						$ele.find('.showMore').parent().remove();			
+					}, 50);
 				});
 				if(model.get('text') && model.get('text') != '') {
 					//show answer
@@ -43,8 +54,13 @@
 					asyncPrettyPrint();
 				}
 			}
-			
-			
+		},
+
+		showAllComment: function() {
+			var model = this.controller.get('model');
+			var $ele = $('#answer-' + model.get('id'));
+			$ele.find('.comment').removeClass('hide');
+			$ele.find('.showMore').parent().remove();
 		}
 	});
 }).call(this);
