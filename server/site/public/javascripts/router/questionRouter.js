@@ -15,13 +15,15 @@ Deific.QuestionRoute = Ember.Route.extend({
 		if(!idMatch || idMatch.length == 0) window.location = "/error.html";
 		var sort = $.fn.parseParam('sort', 'popular');
 		
-		return this.get('store').find('question', idMatch[0]);
-
-		return Deific.Question.find(idMatch[0], {
+		//this search will set question collection as model
+		//change this in setupcontroller as we are looking for only one question
+		return this.get('store').find('question', {
+			qId: idMatch[0],
 			sort: sort
 		});
 	},
-	setupController: function(controller, model){
+	setupController: function(c, m){
+		var model = m.get('firstObject');
 		var loadedanswercount = 0;
 		var groupedAnswers = [];
 
@@ -53,7 +55,8 @@ Deific.QuestionRoute = Ember.Route.extend({
 				}
 			};
 		}
-		controller.set('groupedAnswers', groupedAnswers);
-		controller.set('model', model);
+		c.set('groupedAnswers', groupedAnswers);
+		//change the model to single question
+		c.set('model', model);
 	}
 });

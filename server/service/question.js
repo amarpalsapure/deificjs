@@ -2,59 +2,83 @@ exports.findAll = function(req, res) {
 	var response = {
 		questions: []
 	};
-	var questionIds = [];
 
-	var sdk = require('./appacitive.init');
-	var Appacitive = sdk.init();
-
-	var transformer = require('./infra/transformer');
-
-	//First get the question according to the query
-	//then get the question details by making a graph query call
-	var orderBy = '__utcdatecreated',
-		filter = '';
-
-
-	var sort = req.query.sort;
-	sort = (!sort) ? 'popular' : sort.toLowerCase();
-	switch(sort) {
-		case 'popular': 
-			orderBy = 'totalvotecount';
-			break;
-		case 'latest':
-			break;
-		case 'unresolved':
-			filter = '*isanswered==false';
-			break;
-	}
-
-	var query = new Appacitive.Queries.FindAllQuery({
-					schema : 'question',
-					fields : '__id',
-					isAscending: false,
-					orderBy: orderBy,
-					filter: filter,
-					pageSize: process.config.pagesize
-				});
-
-	query.fetch(function (questions, pi) {
-		questions.forEach(function (question) {
-			questionIds.push(question.id());
-		})
-
-		//Get the question details
-		var query = new Appacitive.Queries.GraphProjectQuery('questions', questionIds);
-		query.fetch(function (gQuestions) {
-			//if no data found
-			if(gQuestions && gQuestions.length > 0) response = transformer.toQuestions(gQuestions);
+	//IMPORTANT
+	//Check if question id is there in param,
+	//if yes, it means user has done get question
+	//and not search
+	var questionId = req.param('qId');
+	if(questionId) {
+		_findById(req, questionId, function(questionRes){
+			//dump the question response object in current response object
 			
+			//push the question to array of question, client expects an array of question
+			response.questions.push(questionRes.question);
+
+			//following stuff is side loaded, so add it to root
+			//comments, tags and users
+			response.comments = questionRes.comments;
+			response.tags = questionRes.tags;
+			response.users = questionRes.users;
+
 			return res.json(response);
+		});
+
+	} else {
+		var questionIds = [];
+
+		var sdk = require('./appacitive.init');
+		var Appacitive = sdk.init();
+
+		var transformer = require('./infra/transformer');
+
+		//First get the question according to the query
+		//then get the question details by making a graph query call
+		var orderBy = '__utcdatecreated',
+			filter = '';
+
+
+		var sort = req.query.sort;
+		sort = (!sort) ? 'popular' : sort.toLowerCase();
+		switch(sort) {
+			case 'popular': 
+				orderBy = 'totalvotecount';
+				break;
+			case 'latest':
+				break;
+			case 'unresolved':
+				filter = '*isanswered==false';
+				break;
+		}
+
+		var query = new Appacitive.Queries.FindAllQuery({
+						schema : 'question',
+						fields : '__id',
+						isAscending: false,
+						orderBy: orderBy,
+						filter: filter,
+						pageSize: process.config.pagesize
+					});
+
+		query.fetch(function (questions, pi) {
+			questions.forEach(function (question) {
+				questionIds.push(question.id());
+			})
+
+			//Get the question details
+			var query = new Appacitive.Queries.GraphProjectQuery('questions', questionIds);
+			query.fetch(function (gQuestions) {
+				//if no data found
+				if(gQuestions && gQuestions.length > 0) response = transformer.toQuestions(gQuestions);
+				
+				return res.json(response);
+			}, function (status) {
+				return res.json(response);
+			});	
 		}, function (status) {
 			return res.json(response);
-		});	
-	}, function (status) {
-		return res.json(response);
-	});	
+		});
+	}
 };
 
 
@@ -145,7 +169,8 @@ var _findById = function(req, qId, callback) {
 	var sort = req.query.sort;
 	sort = (!sort) ? 'active' : sort.toLowerCase();
 	switch(sort) {
-		case 'active': 
+		case 'active':
+			orderBy: '__utclastupdateddate';
 			break;
 		case 'votes':
 			orderBy = 'totalvotecount';
@@ -195,6 +220,8 @@ var _findById = function(req, qId, callback) {
 		merge();
 	}
 };
+
+//deprecated
 exports.findById = function(req, res) {
 	var qId = req.param('id');
 	_findById(req, qId, function(response){
