@@ -18,6 +18,7 @@ var questionApi = require('./server/service/question.js');
 var answerApi = require('./server/service/answer.js');
 var userApi = require('./server/service/user.js');
 var commentApi = require('./server/service/comment.js');
+var tagApi = require('./server/service/tag.js');
 
 var app = express();
 
@@ -52,6 +53,8 @@ app.get('/service/questions', questionApi.findAll);
 app.get('/service/questions/:id', questionApi.findById);
 // update question
 app.put('/service/questions/:id', questionApi.update);
+// create question
+app.post('/service/questions', questionApi.create)
 
 
 // ################# answer api ####################
@@ -76,6 +79,9 @@ app.post('/service/users/logout', userApi.logout);
 // save comment
 app.post('/service/comments', commentApi.save)
 
+// ################# tag api ####################
+// find tag
+app.get('/service/tags', tagApi.find)
 
 
 // *************************************************
@@ -85,6 +91,9 @@ app.post('/service/comments', commentApi.save)
 // ################ question #######################
 // index page
 app.get('/', routes.index);
+
+//ask a question
+app.get('/questions/ask', questions.ask);
 
 // question page without title in url
 app.get('/questions/:id', questions.index);

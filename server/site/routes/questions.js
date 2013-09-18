@@ -31,3 +31,23 @@ exports.miniindex = function(req, res) {
 	    res.redirect('404', '/error.html');
 	});
 };
+
+exports.ask = function(req, res) {
+	//initialize the app
+  	var app = require('../../shared/app.init');
+	var state = app.init(req);
+
+	//initialize the sdk
+	var sdk = require('../../service/appacitive.init');
+	var Appacitive = sdk.init();
+	state.title = 'Ask a Question - ' + state.title;
+
+	//validate the user token, to do this get user by token
+	Appacitive.Users.getUserByToken(state.token, function(user) {
+	    res.render('new-question', state);
+	}, function(err) {
+		//delete the cookie, and redirect user to login page
+		res.clearCookie('u');
+	    res.redirect('/users/login?returnurl=/questions/ask&s=1');
+	});
+};

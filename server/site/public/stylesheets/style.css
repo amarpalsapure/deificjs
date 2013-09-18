@@ -26,7 +26,8 @@ body { background-color: #eef0f3; }
 .unanswered { background: transparent url(../images/unanswer.png) left center no-repeat; }
 .user-profile { padding-top: 2px; }
 .question-page .user-profile { margin-top: 18px; }
-.question-page textarea { resize: vertical; width: 100%; font-size: 0.9em; font-family: Monaco, Menlo, Consolas, "Courier New", monospace; height: 45px; padding: 3px 6px;}
+.question-page textarea, .question-new-page textarea { resize: vertical; width: 100%; font-size: 0.9em; font-family: Monaco, Menlo, Consolas, "Courier New", monospace;}
+.question-new-page textarea { height: 200px !important; }
 
 .vote-cast { display: inline-block; font-size: 1.4em; margin-bottom: 2px; width: 100%; text-align: center; margin-top: 3px;}
     .vote-cast a, .vote-cast a:hover { text-decoration: none; }
@@ -36,7 +37,6 @@ body { background-color: #eef0f3; }
 .vote-separator { display: none; }
 .vote-panel { padding-top: 4px; }
     .vote-panel a:first-child { margin-bottom: 3px; }
-
 
 .content, .question-list { padding: 0px; }
     .content .mainSection, .content .sideSection { min-height: 480px; margin-bottom: 48px; background-color: #fff; padding: 15px 20px 60px; }
@@ -103,9 +103,10 @@ body { background-color: #eef0f3; }
 .checked, .unchecked { width: 40px; height: 36px; display: inline-block;  }
 .checked { background: transparent url(../images/checked.png) center center no-repeat; }
 .unchecked { background: transparent url(../images/unchecked.png) center center no-repeat; }
-.voteError, .answerError { position: relative; }
+.voteError, .answerError, .tagError { position: relative; }
 .voteError .alert { position: absolute; width: 290px; top: 12px; padding: 8px 14px 6px;}
-.answerError .alert { position: absolute; padding: 8px 14px 6px; top: 10px; }
+.answerError .alert, .tagError .alert { position: absolute; padding: 8px 14px 6px; top: 10px; z-index: 1; }
+.tagError .alert { top: 6px; }
 
 .comment { border-bottom: solid 1px #eee; font-size: 0.95em; color: #777; overflow: auto; }
     .comment .row { padding: 2px 0 0; }
@@ -163,6 +164,9 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
 #wmd-output { display: none; }
 #wmd-output pre { white-space: pre-wrap; /* css-3 */ white-space: -moz-pre-wrap !important; /* Mozilla, since 1999 */ white-space: -pre-wrap; /* Opera 4-6 */ white-space: -o-pre-wrap; /* Opera 7 */ word-wrap: break-word; /* Internet Explorer 5.5+ */ }
 
+.tag-name, .tag-qcount { display: inline-block; }
+.tag-qcount { color: #aaa; }
+#selectedTags .select2-choices { border: none; background: none; }
 
 .login-input { width: 60%; line-height: 26px; height: 40px; padding: 6px; min-width: 200px; font-size: 1.2em; color: #444;}
 .login-nav li { display: inline; margin: 0 10px; }

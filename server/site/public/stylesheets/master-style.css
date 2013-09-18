@@ -5,6 +5,7 @@
 .font9 { font-size: 0.9em;}
 .font85 { font-size: 0.85em;}
 .font8 { font-size: 0.8em;}
+.font-bold { font-weight: bold; }
 .no-padding {padding: 0px;}
 .no-padding-left {padding-left: 0px;}
 .ptxs {padding-top: 3px;}
@@ -19,6 +20,7 @@
 .pbxli {padding-bottom: 20px !important;}
 .clear {clear:both;}
 .ptn, .pvn, .pan { padding-top: 0px; }
+.paxs { padding: 3px;}
 .ptni, .pvni, .pani { padding-top: 0px !important; }
 .pts, .pvs, .pas { padding-top: 5px; }
 .ptm, .pvm, .pam { padding-top: 10px; }
@@ -59,7 +61,11 @@
 .border-bottom {border-bottom: solid 1px #ddd;}
 .border-bottom-dark {border-bottom: solid 1px #aaa;}
 .border-bottom-dashed{border-bottom: dashed 1px #ccc;}
+.border-all-dashed {border: dashed 1px #ccc;}
 .muted { color: #bbb; font-style: italic; }
+.no-radius { border-radius: 0px; }
+.width-100p { width: 100%; }
+.input-large { padding: 3px 5px; line-height: 1.6em; height: 34px; }
 .alert-sm { padding: 8px; }
 .alert-error { border: solid 1px #b94a48; }
 .alert-dismiss-container .close {

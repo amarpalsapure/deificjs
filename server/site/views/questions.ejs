@@ -326,51 +326,53 @@
             </div>
             <div class='bubble'>
             </div>
-            <div class='mtm ptxl mbm'>
-              <div class='row contentTitle'>
-                <div class='col-xs-12 col-sm-7 col-lg-7'>
-                  <h1>{{answercount}} Answers</h1>
-                </div>
-                <div class='col-xs-12 col-sm-5 col-lg-5'>
-                  <div class='sortGroup mtm btn-group' >
-                    <a id='aactive' href='?sort=active' class='btn btn-danger'>Active</a>
-                    <a id='avotes' href='?sort=votes' class='btn btn-danger'>Votes</a>
-                    <a id='aoldest' href='?sort=oldest' class='btn btn-danger'>Oldest</a>
+            <div class='answer-section'>
+              <div class='mtm ptxl mbm'>
+                <div class='row contentTitle'>
+                  <div class='col-xs-12 col-sm-7 col-lg-7'>
+                    <h1>{{answercount}} Answers</h1>
+                  </div>
+                  <div class='col-xs-12 col-sm-5 col-lg-5'>
+                    <div class='sortGroup mtm btn-group' >
+                      <a id='aactive' href='?sort=active' class='btn btn-danger'>Active</a>
+                      <a id='avotes' href='?sort=votes' class='btn btn-danger'>Votes</a>
+                      <a id='aoldest' href='?sort=oldest' class='btn btn-danger'>Oldest</a>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <!-- Answer List -->
-            <div class='answer-list ptl'>
-              {{#each group in groupedAnswers}}
-                  <div class='row time-row'>
-                    <div class='col-xs-12 col-sm-12 col-lg-12'>
-                      <div {{bindAttr name='getfulldate'}} class='time-container'>
-                        <div class='time-date'>
-                          {{getdate group.__utcdatecreated}}
-                        </div>
-                        <div class='time-details'>
-                          <div class='time-day'>
-                            {{getday group.__utcdatecreated}}
+              <!-- Answer List -->
+              <div class='answer-list ptl'>
+                {{#each group in groupedAnswers}}
+                    <div class='row time-row'>
+                      <div class='col-xs-12 col-sm-12 col-lg-12'>
+                        <div {{bindAttr name='getfulldate'}} class='time-container'>
+                          <div class='time-date'>
+                            {{getdate group.__utcdatecreated}}
                           </div>
-                          <div class='time-month'>
-                            {{getmonth group.__utcdatecreated}} {{getyear group.__utcdatecreated}}
+                          <div class='time-details'>
+                            <div class='time-day'>
+                              {{getday group.__utcdatecreated}}
+                            </div>
+                            <div class='time-month'>
+                              {{getmonth group.__utcdatecreated}} {{getyear group.__utcdatecreated}}
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <!-- Load answer here -->
-                  {{#each answer in group.answers}}
-                    {{render 'answer' answer}}
-                  {{/each}}
-                  <div class='row bubble-container pbxli'>
-                    <div class='col-xs-12 col-sm-12 col-lg-12'>
-                      <div class='bubble'>
+                    <!-- Load answer here -->
+                    {{#each answer in group.answers}}
+                      {{render 'answer' answer}}
+                    {{/each}}
+                    <div class='row bubble-container pbxli'>
+                      <div class='col-xs-12 col-sm-12 col-lg-12'>
+                        <div class='bubble'>
+                        </div>
                       </div>
-                    </div>
-                  </div>                
-              {{/each}}
+                    </div>                
+                {{/each}}
+              </div>
             </div>
             <!-- Provide Answer -->
             <div class='answer-input mtl mbl'>

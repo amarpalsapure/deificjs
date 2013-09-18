@@ -4,7 +4,7 @@
  * MIT license  : http://www.apache.org/licenses/LICENSE-2.0.html
  * Project      : https://github.com/chiragsanghvi/JavascriptSDK
  * Contact      : support@appacitive.com | csanghvi@appacitive.com
- * Build time 	: Wed Sep 11 18:00:36 IST 2013
+ * Build time 	: Wed Sep 18 10:43:12 IST 2013
  */
 
 // Add ECMA262-5 method binding if not supported natively
@@ -777,7 +777,7 @@ var global = {};
                 return String.format("{0}/{1}?fields={2}", this.userServiceUrl, userId, _getFields(fields));
             },
             getUserByTokenUrl: function(userToken) {
-                return String.format("{0}/me?useridtype=token&token=", this.userServiceUrl, userToken);
+                return String.format("{0}/me?useridtype=token&token={1}", this.userServiceUrl, userToken);
             },
             getUserByUsernameUrl: function(username) {
                 return String.format("{0}/{1}?useridtype=username", this.userServiceUrl, username);
@@ -1711,7 +1711,7 @@ Depends on  NOTHING
         
         this.getValue = function() {
             if (typeof this.value == 'object' && this.value instanceof Date) return "date('" + Appacitive.Date.toISODate(this.value) + "')";
-            else return "date('" + this.value + "'')";
+            else return "date('" + this.value + "')";
         };
     };
 
@@ -1720,7 +1720,7 @@ Depends on  NOTHING
         
         this.getValue = function() {
             if (typeof this.value == 'object' && this.value instanceof Date) return "time('" + Appacitive.Date.toISOTime(this.value) + "')";
-            else return "time('" + this.value + "'')";
+            else return "time('" + this.value + "')";
         };
     };
 
@@ -1729,7 +1729,7 @@ Depends on  NOTHING
         
         this.getValue = function() {
             if (typeof this.value == 'object' && this.value instanceof Date) return "datetime('" + Appacitive.Date.toISOString(this.value) + "')";
-            else return "datetime('" + this.value + "'')";
+            else return "datetime('" + this.value + "')";
         };
     };
 
@@ -2320,6 +2320,7 @@ Depends on  NOTHING
 		if (!options.articleId) throw new Error('Specify articleId for connected articles query');
 		if (!options.schema) throw new Error('Specify schema of article id for connected articles query');
 		
+
 		var schema = options.schema;
 		delete options.schema;
 
@@ -2331,7 +2332,10 @@ Depends on  NOTHING
 		this.relation = options.relation;
 		this.schema = schema;
 		this.prev = options.prev;
-
+		
+		this.returnEdge = true;
+		if (options.returnEdge != undefined || options.returnEdge != null && !options.returnEdge && !this.prev) this.returnEdge = false;
+		
 		this.label = '';
 		var that = this;
 
@@ -2346,28 +2350,32 @@ Depends on  NOTHING
 
 		this.toUrl = function() {
 			return global.Appacitive.config.apiBaseUrl + 'connection/' + this.relation + '/' + this.schema + '/' + this.articleId + '/find?' +
-				this.getQueryString() + this.label;
+				this.getQueryString() + this.label + '&returnEdge=' + this.returnEdge;
 		};
 
 
 		var parseNodes = function(nodes, endpointA) {
 			var articles = [];
 			nodes.forEach(function(o) {
-				var edge = o.__edge;
-				delete o.__edge;
+				var tmpArticle = null;
+				if (o.__edge) {
+					var edge = o.__edge;
+					delete o.__edge;
 
-				edge.__endpointa = endpointA;
-				edge.__endpointb = {
-					articleid: o.__id,
-					label: edge.__label,
-					type: o.__schematype
-				};
-				delete edge.label;
+					edge.__endpointa = endpointA;
+					edge.__endpointb = {
+						articleid: o.__id,
+						label: edge.__label,
+						type: o.__schematype
+					};
+					delete edge.label;
 
-				var connection = new global.Appacitive.Connection(edge, true);
-				var tmpArticle = new global.Appacitive.Article(o, true);
-				tmpArticle.connection = connection;
-				
+					var connection = new global.Appacitive.Connection(edge, true);
+					tmpArticle = new global.Appacitive.Article(o, true);
+					tmpArticle.connection = connection;
+				} else {
+					tmpArticle = new global.Appacitive.Article(o, true);
+				}
 				articles.push(tmpArticle);
 			});
 			return articles;
@@ -4323,8 +4331,8 @@ Depends on  NOTHING
 		this.parseConnection = function() {
 			
 			var typeA = 'A', typeB ='B';
-			if ( options.__endpointa.label == this.get('__endpointb').label ) {
-				if ((options.__endpointa.label != options.__endpointb.label) && (options.__endpointa.articleid == this.get('__endpointb').articleid || !options.__endpointa.articleid)) {
+			if ( options.__endpointa.label.toLowerCase() == this.get('__endpointb').label.toLowerCase() ) {
+				if ((options.__endpointa.label.toLowerCase() != options.__endpointb.label.toLowerCase()) && (options.__endpointa.articleid == this.get('__endpointb').articleid || !options.__endpointa.articleid)) {
 				 	typeA = 'B', typeB = 'A';
 				}
 			}
@@ -4944,7 +4952,7 @@ Depends on  NOTHING
 			global.Appacitive.http.send(request); 
 		};
 
-		var _getUserByIdType = function(url, onSuccess, onError){
+		var _getUserByIdType = function(url, onSuccess, onError) {
 			onSuccess = onSuccess || function(){};
 			onError = onError || function(){};
 
@@ -4963,6 +4971,7 @@ Depends on  NOTHING
 		this.getUserByToken = function(token, onSuccess, onError) {
 			if (!token || typeof token != 'string' || token.length == 0) throw new Error("Please specify valid token");
 			var url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory.user.getUserByTokenUrl(token);
+			global.Appacitive.Session.setUserAuthHeader(token, 0, true);
 			_getUserByIdType(url, onSuccess, onError);
 		};
 

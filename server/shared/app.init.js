@@ -2,6 +2,7 @@ exports.init = function (req) {
 	var config = require('../shared/configuration').load();
 
 	var state =  {
+		brand: process.config.brand,
 		title: process.config.brand,
 		hidelogin: '',
 		hidelogout: 'hide',

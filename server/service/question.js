@@ -35,7 +35,7 @@ exports.findAll = function(req, res) {
 		//First get the question according to the query
 		//then get the question details by making a graph query call
 		var orderBy = '__utcdatecreated',
-			filter = '';
+			filter = '*issearchable==true';
 
 
 		var sort = req.query.sort;
@@ -47,7 +47,7 @@ exports.findAll = function(req, res) {
 			case 'latest':
 				break;
 			case 'unresolved':
-				filter = '*isanswered==false';
+				filter += ' and *isanswered==false';
 				break;
 		}
 
@@ -231,7 +231,7 @@ exports.findById = function(req, res) {
 
 exports.update = function(req, res) {
 	var question = req.body.question;
-	if(!question || !question.action) throw Error();
+	if(!question || !question.action) return res.status(400);
 
 	//set question id, froam param
 	question.id = question.__id = req.param('id');
@@ -248,7 +248,7 @@ exports.update = function(req, res) {
 	var app = require('../shared/app.init');
 	var state = app.init(req);
 
-	if(!state.userid) throw Error('Session expired');
+	if(!state.userid) return res.staut(401).json({ message: 'Session expired' });
 
 	var aQuestion = transformer.toAppacitiveQuestion(Appacitive, question);
 
@@ -301,7 +301,7 @@ exports.update = function(req, res) {
 			response.question.voteconnid = question.voteconnid;
 			return res.json(response);
 		}, function(status) {
-			throw Error(status.message);
+			return res.status(502).json({ messsage: status.message });
 		});
 	};
 
@@ -319,7 +319,7 @@ exports.update = function(req, res) {
 					aQuestion.increment('totalvotecount', 2);
 					save();
 				}, function(status){
-					throw Error('Failed to register downvote');
+					return res.status(502).json({ messsage: 'Failed to register downvote' });
 				});
 			}else {
 				question_vote_Create(true, function(){
@@ -327,7 +327,7 @@ exports.update = function(req, res) {
 					aQuestion.increment('totalvotecount');
 					save();
 				}, function(status){
-					throw Error('Failed to register upvote');
+					return res.status(502).json({ messsage: 'Failed to register upvote' });
 				});
 			}
 			//has voted true
@@ -341,7 +341,7 @@ exports.update = function(req, res) {
 				aQuestion.decrement('totalvotecount');
 				save();
 			}, function(status){
-				throw Error('Failed to undo register upvote');
+				return res.status(502).json({ messsage: 'Failed to undo register upvote' });
 			});
 			//has removed vote
 			question.voted = 0;
@@ -358,7 +358,7 @@ exports.update = function(req, res) {
 					aQuestion.decrement('totalvotecount', 2);
 					save();
 				}, function(status){
-					throw Error('Failed to register downvote');
+					return res.status(502).json({ messsage: 'Failed to register downvote' });
 				});
 			}else {
 				question_vote_Create(false, function(){
@@ -366,7 +366,7 @@ exports.update = function(req, res) {
 					aQuestion.decrement('totalvotecount');
 					save();
 				}, function(status){
-					throw Error('Failed to register downvote');
+					return res.status(502).json({ messsage: 'Failed to register downvote' });
 				});
 			}
 			//has voted false
@@ -380,12 +380,129 @@ exports.update = function(req, res) {
 				aQuestion.increment('totalvotecount');
 				save();
 			}, function(status){
-				throw Error('Failed to undo register downvote');
+				return res.status(502).json({ messsage: 'Failed to undo register downvote' });
 			});
 			//has remove vote
 			question.voted = 0;
 			break;
 		default:
-			throw Error('Invalid action provided');
+			return res.status(400).json({ message: 'Invalid action provided' });
 	}
+};
+
+exports.create = function(req, res) {
+	var question = req.body.question;
+	if(!question) return res.status(400);
+
+	//initialize appacitive sdk
+	var sdk = require('./appacitive.init');
+	var Appacitive = sdk.init();
+
+	//get the transformer
+	var transformer = require('./infra/transformer');
+
+	//get the state of app
+	//to check if user is logged in or not
+	var app = require('../shared/app.init');
+	var state = app.init(req);
+
+	if(!state.userid) {
+		res.clearCookie('u');
+		return res.staut(401).json({ message: 'Session expired' });
+	}
+
+	var createQuestion = function() {
+		var question_user_conn_id;
+		var aQuestion = transformer.toAppacitiveQuestion(Appacitive, question);
+		aQuestion.set('title', question.title);
+		aQuestion.set('text', question.text);
+
+		var shortText = question.text.substring(0, 200);
+		shortText = shortText.substring(0, Math.min(shortText.length, shortText.lastIndexOf(' ')));
+		aQuestion.set('shorttext', shortText);
+
+		//creates 'question_user' relation between user and question 
+		var question_user_Create = function(onsuccess, onfailure) {
+			var relation = new Appacitive.ConnectionCollection({ relation: 'question_user' });
+			var connection = relation.createNewConnection({ 
+			  endpoints: [{
+			      article: aQuestion,
+			      label: 'question'
+			  }, {
+			      articleid: state.userid,
+			      label: 'user'
+			  }]
+			});
+			connection.save(function(){
+				question_user_conn_id = connection.id();
+				onsuccess();
+			}, onfailure);
+		}
+
+		//deletes 'question_user' relation between user and question 
+		var question_user_Delete = function(onsuccess, onfailure) {
+			var relation = new Appacitive.Connection({ relation: 'question_user', __id: question_user_conn_id });
+			relation.del();
+		}
+
+		//creates 'question_tag' relation between user and question 
+		var question_tag_Create = function(tagId, onsuccess, onfailure) {
+			var relation = new Appacitive.ConnectionCollection({ relation: 'question_tag' });
+			var connection = relation.createNewConnection({ 
+			  endpoints: [{
+			      articleid: aQuestion.id(),
+			      label: 'question'
+			  }, {
+			      articleid: tagId,
+			      label: 'tag'
+			  }]
+			});
+			connection.save(onsuccess, onfailure);
+		}
+
+		//update question, and set the issearchable flag to true
+		//so that it appears in all searches
+		var updateQuestion = function() {
+			//set issearchable
+			aQuestion.set('issearchable', true);
+			aQuestion.save(function(){
+				//return the response
+				var response = transformer.toQuestion(aQuestion);
+				response.question.answercount = 0;
+				response.question.author = question.author;
+				response.question.comments = [];
+				response.question.tags = question.tags;
+				return res.json(response);
+			}, function(status) {
+				return res.status(502).json({ messsage: status.message });
+			});
+		};
+
+		question_user_Create(function(){
+			var counter = question.tags.length;
+			var merge = function() {
+				if(--counter != 0) return;
+
+				//update the question
+				updateQuestion();
+			};
+			for (var i = 0; i < question.tags.length; i++) {
+				question_tag_Create(question.tags[i], merge, merge);
+			};
+		}, function(status) {
+			//rollback the connection
+			question_user_Delete();
+			return res.status(502).json({ messsage: 'Failed to connect user to question.' });		
+		});
+	};
+
+	//validate the user token, to do this get user by token
+	//this also sets the current user context
+	Appacitive.Users.getUserByToken(state.token, function(user) {
+	    createQuestion();
+	}, function(err) {
+		//delete the cookie, and redirect user to login page
+		res.clearCookie('u');
+		return res.staut(401).json({ message: 'Session expired' });
+	});
 };

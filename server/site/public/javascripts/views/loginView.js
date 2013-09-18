@@ -5,6 +5,12 @@
 		didInsertElement: function(){
 			//remove loader
 			$('#rootProgress').remove();
+
+			//show modal, showing user's session has expired
+			var isSessionExpired = $.fn.parseParam('s', '0');
+			if(isSessionExpired == '1') {
+				$('#modalSessionExpired').modal('show');
+			}
 		},
 		submitTextField: Ember.TextField.extend({
 			insertNewline: function() {

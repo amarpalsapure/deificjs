@@ -65,6 +65,30 @@
     </div>
   </div>
 
+  <div class="modal fade" id="modalSessionExpired" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Session Expired</h4>
+        </div>
+        <div class="modal-body">
+          <div class='mbs'>Your session has <strong>expired</strong>.</div>
+          <div class='mbs'>It can be due to any of the following reasons</div>
+          <ul class='mll pls'>
+            <li>Your browswer was <strong>idle</strong> for too long.</li>
+            <li>You have <strong>cleared the cookies</strong> from your browswer.</li>
+            <li><strong>Computer date set incorrectly</strong>: Cookies rely on dates and an incorrect date can confuse your browser, causing it to "forget" your cookie. To fix this, set the correct time and date on your computer.</li>
+            <li><strong>Security programs</strong>: If you have virus or spyware protection programs installed on your computer they can monitor or block cookies being sent to your computer. Try Temporarily turning off anti-virus, anti-spyware, and firewall products before signing in.</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div>
+
 
   {{view Deific.FooterView}} 
 </script>

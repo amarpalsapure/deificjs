@@ -7,7 +7,7 @@
 		isVoteOpen: false,
 		updateInProgress: false,
 
-			//action handlers
+		//action handlers
 		commentAction: function() {	this.set('isCommenting', !this.get('isCommenting')); },
 		createComment: function() { this.__saveComment('question');	},
 		votedetails: function() { this.set('isVoteOpen', true);	},
@@ -88,6 +88,44 @@
 					$('.answerError').html(alert).alert();
 
 					reset();
+				});
+			});
+		},
+
+		createQuestion: function() {
+			var that = this;
+			var model = this.get('model');
+
+			//set the title
+			model.set('title', $.trim($('#txtTitle').val()));
+
+			//set the text
+			model.set('text', $('#wmd-input').val());
+
+			//get the tags from store
+			var tagPromise = [];
+			$('#selectedTags ul li div').each(function(i,ele) { 
+				tagPromise.push(that.get('store').find('tag', $(ele).attr('id')));
+			});
+
+			//change the button state to loading (Bootstrap)
+			$('#btnSubmitQuestion').button('loading');
+
+			Ember.RSVP.all(tagPromise).then(function(tags) {
+				model.get('tags').pushObjects(tags);
+
+				//get the author from store
+				that.get('store').find('user', Deific.AccountController.user.userid).then(function(user) {
+					model.set('author', user);
+					model.save().then(function(savedObj){
+						//redirect user to the question page
+						window.location = savedObj.get('url');
+					}, function(error) {
+						//do the error handling
+						//errors can be session expired or bad gateway
+						//reset button state to loading (Bootstrap)
+						$('#btnSubmitQuestion').button('reset');		
+					});
 				});
 			});
 		},

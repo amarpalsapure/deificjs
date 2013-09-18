@@ -10,6 +10,7 @@
     <link type='text/css' rel='stylesheet' href='/stylesheets/bootstrap.css' />
     <link type='text/css' rel='stylesheet' href='/stylesheets/bootstrap-theme.css' />
     <link type='text/css' rel='stylesheet' href='/stylesheets/prettify.css' />
+    <link type='text/css' rel='stylesheet' href='/stylesheets/select2.css' />
     <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
 
     <link type='text/css' rel='stylesheet' href='/stylesheets/master-style.css' />
@@ -36,7 +37,7 @@
               <span class='icon-bar'></span>
               <span class='icon-bar'></span>
             </button>
-            <a class='navbar-brand' href='/'><%= title %></a>
+            <a class='navbar-brand' href='/'><%= brand %></a>
           </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -78,9 +79,9 @@
               <div class='row'>
                 <div class='col-xs-12 col-sm-12 col-lg-12'>
                   <div class="nospace btnquestion">
-                    <button href="#." class="btn btn-flat btn-skyblue pull-right btnquestion">
+                    <a href="/questions/ask" class="btn btn-flat btn-skyblue pull-right btnquestion">
                       <span class="mrm icon_ask">&nbsp;</span>Ask a Question
-                    </button>
+                    </a>
                   </div>
                   <div class="clear"></div>
                 </div>
