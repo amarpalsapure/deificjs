@@ -4,9 +4,8 @@
 Deific.Router.map(function () {
 	this.resource('question', { path: '/' });
 });
-Deific.Router.reopen({
-	location: 'none'
-});
+
+Deific.Router.reopen({ location: 'none' });
 
 Deific.QuestionRoute = Ember.Route.extend({
 	model: function(){ 
@@ -19,5 +18,9 @@ Deific.QuestionRoute = Ember.Route.extend({
 		//	});
 		//}
 		return store.createRecord('question');
+	},
+	renderTemplate: function() {
+		this.render('question');
+		this.render('header', {	into: 'question', outlet: 'headerBar', controller: 'header' });
 	}
 });

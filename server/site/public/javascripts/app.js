@@ -2,8 +2,8 @@
 	/*global Ember */
 	window.Deific = Ember.Application.create({
 		ApplicationController: Ember.Controller.extend({
-    		debug: true
-  		}),
+    		
+  		})
 	});
 
   	var showdown = new Showdown.converter();
@@ -20,10 +20,10 @@
 	Ember.Handlebars.registerBoundHelper('getmonth', function(date) {return moment(date).format("MMMM");});
 	Ember.Handlebars.registerBoundHelper('getyear', function(date) {return moment(date).format("YYYY");});
 	Ember.Handlebars.registerBoundHelper('pluralize', function(number, opts) {
-	  var single = opts.hash['s'];
-	  Ember.assert('pluralize requires a singular string (s)', single);
-	  var plural = opts.hash['p'] || single + 's';
-	  return (number <= 1) ? single : plural;
+		var single = opts.hash['s'];
+	  	Ember.assert('pluralize requires a singular string (s)', single);
+	  	var plural = opts.hash['p'] || single + 's';
+	  	return (number <= 1) ? single : plural;
 	});
 	Ember.Handlebars.registerBoundHelper('abbreviateNumber', function(value){
 		var abbreviateNumber=  function(value) {

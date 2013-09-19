@@ -1,5 +1,6 @@
 (function() {
 	Deific.QuestionsView =  Ember.View.extend({
+		templateName: 'questions',
 		didInsertElement: function(){
 
 			//remove loader

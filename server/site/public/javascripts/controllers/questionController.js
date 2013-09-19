@@ -1,8 +1,7 @@
 (function() {
-	Deific.QuestionController = Ember.ObjectController.extend({
+	Deific.QuestionController = Deific.HeaderController.extend({
 		//answers grouped by date
 		groupedAnswers: [],
-		isLoggedIn: Deific.AccountController.user != null,
 		isCommenting: false,
 		isVoteOpen: false,
 		updateInProgress: false,
