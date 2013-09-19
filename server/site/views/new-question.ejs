@@ -4,7 +4,6 @@
 <% script('/javascripts/router/new-questionRouter.js') -%>
 <% script('/javascripts/infra/prettify.js') -%>
 <% script('/javascripts/infra/select2.min.js') -%>
-<% script('/javascripts/controllers/accountController.js') -%>
 <% script('/javascripts/controllers/questionController.js') -%>
 <% script('/javascripts/views/questionView.js') -%>
 
@@ -15,7 +14,8 @@
 </script>
 
 <script type='text/x-handlebars', data-template-name='question'>
-{{view Deific.HeaderView}} 
+{{outlet headerBar}} 
+
 <div class='container'>
   <div class='content'>
     <div class='row question-new-page'>
@@ -94,5 +94,6 @@
     </div>
   </div>
 </div>
-{{view Deific.FooterView}} 
+
+{{render 'footer'}} 
 </script>

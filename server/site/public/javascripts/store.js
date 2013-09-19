@@ -35,6 +35,7 @@
 
 
 	Deific.localDataSource = Ember.Object.create({
+		debug: true,
 		getCurrentUser: function() {
 			
 			if (window.init && window.init.user) {
@@ -48,16 +49,14 @@
 				return null;
 			}
 		},
-		getError: function(code, message, severity, location, callback) {
-			if (Deific.ApplicationController.debug) {
-				console.debug('Deific - ' + severity + ' - Code: ' + code + ' Message: ' + message + ' Location: ' + location);
+		handleError: function(promiseError, source, action) {
+			if (this.debug) {
+				console.debug('Deific=>\n\tStatus Code:' + promiseError.status + 
+							  '\n\tStatus Text: ' + promiseError.statusText  + 
+							  '\n\tResponse: ' + promiseError.responseText + 
+							  '\n\tSource: ' + source);
 			}
-			return {
-				code: code,
-				message: message,
-				severity: severity,
-				location: location
-			};
+			return JSON.parse(promiseError.responseText);
 		}
 	});
 }).call(this);

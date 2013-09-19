@@ -43,20 +43,25 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
           <div class='collapse navbar-collapse navbar-ex1-collapse'>
             <ul id='ulLogin' class='nav navbar-nav navbar-right'>
-              <li><a class="<%= hidelogin %>" {{bindAttr href='loginurl'}}>Login</a></li>
-              <li><a class="<%= hidelogin %>" {{bindAttr href='loginurl'}}>Signup</a></li>
-              <li class="dropdown <%= hidelogout %>">
-                <a href='#' class='dropdown-toggle' data-toggle='dropdown'>
-                    <%= fullname %>
-                   <b class='caret'></b>
-                </a>
-                <ul class='dropdown-menu'>
-                  <li><a href='#'>My Profile</a></li>
-                  <li><a href='#'>Logout</a></li>
-                </ul>
-              </li>
+              {{#if isLoggedIn}}
+                <li class="dropdown">
+                  <a href='#' class='dropdown-toggle' data-toggle='dropdown'>
+                      <%= fullname %>
+                     <b class='caret'></b>
+                  </a>
+                  <ul class='dropdown-menu font9'>
+                    <li class='hide'><a href='javascript:void(0)' {{action signOut target=view}}>My Profile</a></li>
+                    <li><a href='javascript:void(0)' {{action signOut target=view}}>Logout</a></li>
+                  </ul>
+                </li>
+              {{else}}
+                <li><a {{bindAttr href='loginurl'}}>Login</a></li>
+                <li><a {{bindAttr href='loginurl'}}>Signup</a></li>
+              {{/if}}
             </ul>
           </div><!-- /.navbar-collapse -->
+          <div class='logoutError'>
+          </div>
         </nav>
       </div>
       <div class='container'>
@@ -79,7 +84,7 @@
               <div class='row'>
                 <div class='col-xs-12 col-sm-12 col-lg-12'>
                   <div class="nospace btnquestion">
-                    <a href="/questions/ask" class="btn btn-flat btn-skyblue pull-right btnquestion">
+                    <a {{bindAttr href='askUrl'}} class="btn btn-flat btn-skyblue pull-right btnquestion">
                       <span class="mrm icon_ask">&nbsp;</span>Ask a Question
                     </a>
                   </div>
@@ -142,7 +147,11 @@
     <script type='text/javascript' src="/javascripts/models/comment.js"></script>
     <script type='text/javascript' src="/javascripts/models/user.js"></script>
 
-    <%- scripts %>    
+    <!-- controllers -->
+    <script type='text/javascript' src="/javascripts/controllers/accountController.js"></script>
+    <script type='text/javascript' src="/javascripts/controllers/headerController.js"></script>
+
+    <%- scripts %>
 
     <!-- views -->
     <script type='text/javascript' src="/javascripts/views/headerView.js"></script>

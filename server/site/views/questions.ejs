@@ -2,7 +2,6 @@
 
 <% script('/javascripts/router/questionRouter.js') -%>
 <% script('/javascripts/infra/prettify.js') -%>
-<% script('/javascripts/controllers/accountController.js') -%>
 <% script('/javascripts/controllers/questionController.js') -%>
 <% script('/javascripts/views/questionView.js') -%>
 <% script('/javascripts/views/answerView.js') -%>
@@ -57,15 +56,15 @@
                 <i class='icon-large icon-thumbs-down'></i>
               </a>
             {{else}}
-              <a class='btn btn-success btn-sm' {{bindAttr href='loginurl'}} title='Login to up vote'>
+              <a class='btn btn-success btn-sm' {{bindAttr href='loginselfurl'}} title='Login to up vote'>
                 <i class='icon-large icon-thumbs-up'></i>
               </a>
               <div class='vote-cast'>
-                <a {{bindAttr href='loginurl'}} title='Login to view up and down vote count'>
+                <a {{bindAttr href='loginselfurl'}} title='Login to view up and down vote count'>
                   <span class='vote-count'>{{votecount}}</span>
                 </a>
               </div>
-              <a class='btn btn-danger btn-sm' {{bindAttr href='loginurl'}} title='Login to down vote'>
+              <a class='btn btn-danger btn-sm' {{bindAttr href='loginselfurl'}} title='Login to down vote'>
                 <i class='icon-large icon-thumbs-down'></i>
               </a>
             {{/if}}
@@ -145,7 +144,7 @@
                   Add a Comment
                 </a>
               {{else}}
-                <a {{bindAttr href='loginurl'}}>Login to Comment</a>
+                <a {{bindAttr href='loginselfurl'}}>Login to Comment</a>
               {{/if}}
             </div>
             {{/if}}
@@ -157,8 +156,8 @@
 </script>
 
 <script type='text/x-handlebars', data-template-name='question'>
-  {{view Deific.HeaderView}} 
-  {{ outlet }}
+  {{outlet headerBar}} 
+  <!--{{ outlet }}-->
   <div class='container'>
     <div class='content'>
       <div class='row question-page'>
@@ -424,5 +423,5 @@
     </div>
   </div>
 
-  {{view Deific.FooterView}} 
+  {{render 'footer'}} 
 </script>

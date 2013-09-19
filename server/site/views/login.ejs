@@ -1,13 +1,12 @@
 <% layout('__layout') -%>
 
 <% script('/javascripts/router/loginRouter.js') -%>
-<% script('/javascripts/controllers/accountController.js') -%>
 <% script('/javascripts/controllers/loginController.js') -%>
 <% script('/javascripts/views/loginView.js') -%>
 
 
 <script type='text/x-handlebars', data-template-name='login'>
-  {{view Deific.HeaderView}}
+  {{outlet headerBar}}
 
   <div class='container'>
     <div class='content'>
@@ -89,6 +88,5 @@
     </div><!-- /.modal-dialog -->
   </div>
 
-
-  {{view Deific.FooterView}} 
+  {{render 'footer'}}
 </script>

@@ -14,18 +14,14 @@ exports.login = function(req, res){
 	//set the title of the page
 	state.title = 'Log In - ' + state.brand;
 
-	if(!state.token || state.token == '') {
-		res.render('login', state);
-	} else {
-		//initialize the context
-		var context = require('../../shared/context');
-		//set the context
-		context.set(state.token, function(user) {
-		    res.redirect(process.config.host);
-		}, function(err) {
-			//delete the cookie, and redirect user to login page
-			res.clearCookie('u');
-	    	res.render('login', state);
-		});
-	}
+	//initialize the context
+	var context = require('../../shared/context');
+	//set the context
+	context.set(state.token, function(user) {
+	    res.redirect(process.config.host);
+	}, function(err) {
+		//delete the cookie, and redirect user to login page
+		res.clearCookie('u');
+    	res.render('login', state);
+	});
 };

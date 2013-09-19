@@ -17,5 +17,9 @@ Deific.QuestionsRoute = Ember.Route.extend({
 	},
 	setupController : function(controller, model) {
 		this.controllerFor('questions').set('questions', model);
+	},
+	renderTemplate: function() {
+		this.render('questions');
+		this.render('header', {	into: 'questions', outlet: 'headerBar', controller: 'header' });
 	}
 });

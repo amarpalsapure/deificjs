@@ -27,6 +27,7 @@ exports.findAll = function(req, res) {
 	} else {
 		var questionIds = [];
 
+		//initialize the SDK
 		var sdk = require('./appacitive.init');
 		var Appacitive = sdk.init();
 
@@ -248,7 +249,7 @@ exports.update = function(req, res) {
 	var app = require('../shared/app.init');
 	var state = app.init(req);
 
-	if(!state.userid) return res.staut(401).json({ message: 'Session expired' });
+	if(!state.userid) return res.status(401).json({ message: 'Session expired' });
 
 	var aQuestion = transformer.toAppacitiveQuestion(Appacitive, question);
 
@@ -408,7 +409,7 @@ exports.create = function(req, res) {
 
 	if(!state.userid) {
 		res.clearCookie('u');
-		return res.staut(401).json({ message: 'Session expired' });
+		return res.status(401).json({ message: 'Session expired' });
 	}
 
 	var createQuestion = function() {
@@ -503,6 +504,6 @@ exports.create = function(req, res) {
 	}, function(err) {
 		//delete the cookie, and redirect user to login page
 		res.clearCookie('u');
-		return res.staut(401).json({ message: 'Session expired' });
+		return res.status(401).json({ message: 'Session expired' });
 	});
 };
