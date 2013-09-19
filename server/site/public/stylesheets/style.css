@@ -103,10 +103,11 @@ body { background-color: #eef0f3; }
 .checked, .unchecked { width: 40px; height: 36px; display: inline-block;  }
 .checked { background: transparent url(../images/checked.png) center center no-repeat; }
 .unchecked { background: transparent url(../images/unchecked.png) center center no-repeat; }
-.voteError, .answerError, .tagError { position: relative; }
+.voteError, .answerError, .tagError, .logoutError { position: relative; }
 .voteError .alert { position: absolute; width: 290px; top: 12px; padding: 8px 14px 6px;}
-.answerError .alert, .tagError .alert { position: absolute; padding: 8px 14px 6px; top: 10px; z-index: 1; }
+.answerError .alert, .tagError .alert, .logoutError .alert { position: absolute; padding: 8px 14px 6px; top: 10px; z-index: 1; }
 .tagError .alert { top: 6px; }
+.logoutError .alert {width: 280px; right: 10px; }
 
 .comment { border-bottom: solid 1px #eee; font-size: 0.95em; color: #777; overflow: auto; }
     .comment .row { padding: 2px 0 0; }

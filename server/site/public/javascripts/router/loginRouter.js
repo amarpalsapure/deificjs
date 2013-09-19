@@ -9,5 +9,9 @@ Deific.Router.reopen({
 });
 
 Deific.LoginRoute = Ember.Route.extend({
-	model: function(){ return {}; }
+	model: function(){ return {}; },
+	renderTemplate: function() {
+		this.render('login');
+		this.render('header', {	into: 'login', outlet: 'headerBar', controller: 'header' });
+	}
 });

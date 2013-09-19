@@ -49,10 +49,6 @@
 			return false;
 		}.property('tags', 'author'),
 
-		loginurl: function(){
-			return  '/users/login?returnurl=' + window.location.pathname;
-		}.property('title'),
-
 		votecount: function(){
 			return this.get('upvotecount') - this.get('downvotecount');
 		}.property('upvotecount', 'downvotecount')		

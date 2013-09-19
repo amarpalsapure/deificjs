@@ -22,6 +22,11 @@ exports.auth = function(req, res){
 	var email = req.body.email;
 	var pwd = req.body.password;
 
+	//validate the inputs
+	if(!email || email === '' || !pwd || pwd === '')
+		return res.status(400).json({ message: 'Email and Password are required.' });
+	
+	//initialize the SDK
   	var sdk = require('./appacitive.init');
 	var Appacitive = sdk.init();
 
@@ -40,8 +45,7 @@ exports.auth = function(req, res){
 			httpOnly: true
 		})
 
-    	res.send({
-			success: true,
+    	return res.json({
 			user: {
 				id: authResult.user.id(),
 				fname: authResult.user.get('firstname'),
@@ -49,18 +53,25 @@ exports.auth = function(req, res){
 			}
 		});
 	}, function(data) {
-		var message = data && data.message ? data.message : 'Authentication failed';
-    	res.send({
-    		success: false,
-    		message: message
-    	});
+		return res.status(401).json({ message: 'Authentication failed' });
 	});	
 };
 
 exports.logout = function(req, res){
-	//TODO: Logout user from appacitve
+	//get the state of app
+	var app = require('../shared/app.init');
+	var state = app.init(req);
+
+	//initialize the SDK
+  	var sdk = require('./appacitive.init');
+	var Appacitive = sdk.init(state.token);
+
+	//Logout user from appacitve
+	Appacitive.Users.logout();
+
+	//remove the auth cookie
 	res.clearCookie('u');
-	res.send({
+	res.json({
 		success: true
 	});
 };

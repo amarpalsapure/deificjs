@@ -4,9 +4,8 @@
 Deific.Router.map(function () {
 	this.resource('question', { path: '/' });
 });
-Deific.Router.reopen({
-	location: 'none'
-});
+
+Deific.Router.reopen({ location: 'none' });
 
 Deific.QuestionRoute = Ember.Route.extend({
 	model: function(params){
@@ -40,7 +39,10 @@ Deific.QuestionRoute = Ember.Route.extend({
 				answer.then(function(gAnswer){
 					gAnswer.set('question', model);
 					//if url has hash (in case of answer id), then reload the page
-					if(--loadedanswercount == 0 && window.location.hash != '') window.location = window.location.href;
+					if(--loadedanswercount == 0 && window.location.hash != '') 
+						setTimeout(function(){
+							window.location = window.location.href;
+						}, 500);
 				});
 				if(match && match.length > 0){
 					match[0].answers.push(answer);
@@ -58,5 +60,9 @@ Deific.QuestionRoute = Ember.Route.extend({
 		c.set('groupedAnswers', groupedAnswers);
 		//change the model to single question
 		c.set('model', model);
+	},
+	renderTemplate: function() {
+		this.render('question');
+		this.render('header', {	into: 'question', outlet: 'headerBar', controller: 'header' });
 	}
 });

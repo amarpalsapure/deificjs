@@ -47,10 +47,6 @@
 			else return 0;
 		}.property('upvotecount', 'downvotecount'),
 
-		loginurl: function(){
-			return  '/users/login?returnurl=' + window.location.pathname;
-		}.property('text'),
-
 		isOwnerLoggedIn: function() {
 			//As are binding to question, when ever answer is fetched,
 			//in the router question will be assigned to question for the answer
@@ -60,6 +56,10 @@
 			return Deific.AccountController.user != null 
 					  && Deific.AccountController.user.userid == question.get('author').get('id');
 		}.property('question'),
+
+		loginselfurl: function(){
+			return  '/users/login?returnurl=' + window.location.pathname + '#' + this.get('id');
+		}.property('text'),
 
 		votecount: function(){
 			return this.get('upvotecount') - this.get('downvotecount');
