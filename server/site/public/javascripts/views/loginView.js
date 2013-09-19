@@ -28,12 +28,16 @@
 			that.resetLogin();
 
 			//Validation
+			// email
 			var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 			if(re.test(this.login.email) == false)
 				$('.login-email').closest('.form-group').addClass('has-error');
-
+			
+			// password
 			if($.trim(this.login.password) == '')
 				$('.login-pwd').closest('.form-group').addClass('has-error');
+
+			// check if any error element is visible or not
 			if($('#frmLogin .has-error').length > 0) return;
 
 			//Authentication

@@ -37,13 +37,13 @@ exports.ask = function(req, res) {
   	var app = require('../../shared/app.init');
 	var state = app.init(req);
 
-	//initialize the sdk
-	var sdk = require('../../service/appacitive.init');
-	var Appacitive = sdk.init();
+	//set the title of the page
 	state.title = 'Ask a Question - ' + state.title;
 
-	//validate the user token, to do this get user by token
-	Appacitive.Users.getUserByToken(state.token, function(user) {
+	//initialize the context
+	var context = require('../../shared/context');
+	//set the context
+	context.set(state.token, function(user) {
 	    res.render('new-question', state);
 	}, function(err) {
 		//delete the cookie, and redirect user to login page

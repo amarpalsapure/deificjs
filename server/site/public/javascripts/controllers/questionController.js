@@ -92,40 +92,31 @@
 			});
 		},
 
-		createQuestion: function() {
+		createQuestion: function(title, text, tagIds, onSuccess, onError) {
 			var that = this;
 			var model = this.get('model');
 
 			//set the title
-			model.set('title', $.trim($('#txtTitle').val()));
+			model.set('title', title);
 
 			//set the text
-			model.set('text', $('#wmd-input').val());
+			model.set('text', text);
 
 			//get the tags from store
 			var tagPromise = [];
-			$('#selectedTags ul li div').each(function(i,ele) { 
-				tagPromise.push(that.get('store').find('tag', $(ele).attr('id')));
-			});
+			for (var i = 0; i < tagIds.length; i++) 
+				tagPromise.push(that.get('store').find('tag', tagIds[i]));
 
-			//change the button state to loading (Bootstrap)
-			$('#btnSubmitQuestion').button('loading');
-
+			//wait for all tags to be fetched
 			Ember.RSVP.all(tagPromise).then(function(tags) {
+				//add tags to model
 				model.get('tags').pushObjects(tags);
 
 				//get the author from store
 				that.get('store').find('user', Deific.AccountController.user.userid).then(function(user) {
+					//set author of question
 					model.set('author', user);
-					model.save().then(function(savedObj){
-						//redirect user to the question page
-						window.location = savedObj.get('url');
-					}, function(error) {
-						//do the error handling
-						//errors can be session expired or bad gateway
-						//reset button state to loading (Bootstrap)
-						$('#btnSubmitQuestion').button('reset');		
-					});
+					model.save().then(onSuccess, onError);
 				});
 			});
 		},

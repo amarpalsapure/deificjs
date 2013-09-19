@@ -190,6 +190,31 @@
 			this.__checkQuestionFormIsComplete();
 		},
 
+		question: {},
+
+		createQuestion: function() {
+			var title = this.get('question').title.trim();
+			var text = this.get('question').text.trim();
+
+			var tagIds = [];
+			$('#selectedTags ul li div').each(function(i,ele) { 
+				tagIds.push($(ele).attr('id'));
+			});
+
+			//change the button state to loading (Bootstrap)
+			$('#btnSubmitQuestion').button('loading');
+
+			this.get('controller').createQuestion(title, text, tagIds, function(savedObj){
+				//redirect user to the question page
+				window.location = savedObj.get('url');
+			}, function(error) {
+				//do the error handling
+				//errors can be session expired or bad gateway
+				//reset button state to loading (Bootstrap)
+				$('#btnSubmitQuestion').button('reset');		
+			});
+		},
+
 		__checkQuestionFormIsComplete: function() {
 			if($.trim($('#txtTitle').val()).length < 10 		//title
 			 || $.trim($('#wmd-input').val()).length < 20		//description 
