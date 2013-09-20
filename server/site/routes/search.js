@@ -1,7 +1,7 @@
-exports.index = function(req, res){
+exports.search = function(req, res){
 	//initialize the app
   	var app = require('../../shared/app.init');
 	var state = app.init(req);
 	
-	res.render('index', state);
+	res.render('search', state);
 };

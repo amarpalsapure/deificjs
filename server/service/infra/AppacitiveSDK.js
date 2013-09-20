@@ -4,7 +4,7 @@
  * MIT license  : http://www.apache.org/licenses/LICENSE-2.0.html
  * Project      : https://github.com/chiragsanghvi/JavascriptSDK
  * Contact      : support@appacitive.com | csanghvi@appacitive.com
- * Build time 	: Thu Aug 22 15:46:28 IST 2013
+ * Build time 	: Wed Sep 18 10:43:12 IST 2013
  */
 
 // Add ECMA262-5 method binding if not supported natively
@@ -341,7 +341,7 @@ var global = {};
   			var response = xdr.responseText;
 			try {
 				var contentType = xdr.contentType;
-				if (contentType.toLowerCase() == 'application/json' ||  contentType .toLowerCase() == 'application/javascript') { 
+				if (contentType.toLowerCase() == 'application/json' ||  contentType.toLowerCase() == 'application/javascript' || contentType.toLowerCase() == 'application/json; charset=utf-8' || contentType.toLowerCase() == 'application/json; charset=utf-8;') { 
 					var jData = response;
 					if (!global.Appacitive.runtime.isBrowser) {
 						if (jData[0] != "{") {
@@ -379,7 +379,7 @@ var global = {};
 		request.headers.forEach(function(r){
 			if (r.key.toLowerCase() == 'content-type') {
 				doNotStringify = true;
-				if (r.value.toLowerCase() == 'application/json' || r.value.toLowerCase() == "application/javascript") {
+				if (r.value.toLowerCase() == 'application/json' || r.value.toLowerCase() == "application/javascript" || r.value.toLowerCase() == 'application/json; charset=utf-8' || r.value.toLowerCase() == 'application/json; charset=utf-8;') {
 					doNotStringify = false;
 				}
 			}
@@ -411,7 +411,7 @@ var global = {};
 						var response = this.responseText;
 						try {
 							var contentType = this.getResponseHeader('content-type') || this.getResponseHeader('Content-Type');
-							if (contentType.toLowerCase() == 'application/json' ||  contentType .toLowerCase() == 'application/javascript') { 
+							if (contentType.toLowerCase() == 'application/json' ||  contentType.toLowerCase() == 'application/javascript' || contentType.toLowerCase() == 'application/json; charset=utf-8' || contentType.toLowerCase() == 'application/json; charset=utf-8;') { 
 								var jData = response;
 								if (!global.Appacitive.runtime.isBrowser) {
 									if (jData[0] != "{") {
@@ -777,13 +777,17 @@ var global = {};
                 return String.format("{0}/{1}?fields={2}", this.userServiceUrl, userId, _getFields(fields));
             },
             getUserByTokenUrl: function(userToken) {
-                return String.format("{0}/me?useridtype=token&token=", this.userServiceUrl, userToken);
+                return String.format("{0}/me?useridtype=token&token={1}", this.userServiceUrl, userToken);
             },
             getUserByUsernameUrl: function(username) {
                 return String.format("{0}/{1}?useridtype=username", this.userServiceUrl, username);
             },
-            getUpdateUrl: function (userId, fields) {
-                return String.format("{0}/{1}?fields={2}", this.userServiceUrl, userId, _getFields(fields));
+            getUpdateUrl: function (userId, fields, revision) {
+                if (!revision) {
+                    return String.format("{0}/{1}?fields={2}", this.userServiceUrl, userId, _getFields(fields));
+                } else {
+                    return String.format("{0}/{1}?fields={2}&revision={3}", this.userServiceUrl, userId, _getFields(fields), revision);
+                }
             },
             getDeleteUrl: function (userId) {
                 return String.format("{0}/{1}", this.userServiceUrl, userId);
@@ -812,6 +816,12 @@ var global = {};
             },
             getCheckinUrl: function(userId, lat, lng) {
                 return String.format("{0}/{1}/chekin?lat={2}&lng={3}", this.userServiceUrl, userId, lat, lng);
+            },
+            getResetPasswordUrl: function(token) {
+                return String.format("{0}/resetpassword?token={1}", this.userServiceUrl, token);
+            },
+            getValidateResetPasswordUrl: function(token) {
+                return String.format("{0}/validateresetpasswordtoken?token={1}", this.userServiceUrl, token);
             }
         };
         this.device = {
@@ -823,8 +833,12 @@ var global = {};
             getGetUrl: function (deviceId, fields) {
                 return String.format("{0}/{1}?fields={2}", this.deviceServiceUrl, deviceId, _getFields(fields));
             },
-            getUpdateUrl: function (deviceId, fields) {
-                return String.format("{0}/{1}?fields={2}", this.deviceServiceUrl, deviceId, _getFields(fields));
+            getUpdateUrl: function (deviceId, fields, revision) {
+                if (!revision) {
+                    return String.format("{0}/{1}?fields={2}", this.deviceServiceUrl, deviceId, _getFields(fields));
+                } else {
+                    return String.format("{0}/{1}?fields={2}&revision={3}", this.deviceServiceUrl, deviceId, _getFields(fields), revision);
+                }
             },
             getDeleteUrl: function (deviceId) {
                 return String.format("{0}/{1}", this.deviceServiceUrl, deviceId);
@@ -865,8 +879,12 @@ var global = {};
             getGetUrl: function (schemaName, articleId, fields) {
                 return String.format('{0}/{1}/{2}?fields={3}', this.articleServiceUrl, schemaName, articleId, _getFields(fields));
             },
-            getUpdateUrl: function (schemaName, articleId, fields) {
-                return String.format('{0}/{1}/{2}?fields={3}', this.articleServiceUrl, schemaName, articleId, _getFields(fields));
+            getUpdateUrl: function (schemaName, articleId, fields, revision) {
+                if (!revision) {
+                    return String.format('{0}/{1}/{2}?fields={3}', this.articleServiceUrl, schemaName, articleId, _getFields(fields));
+                } else {
+                    return String.format('{0}/{1}/{2}?fields={3}&revision={4}', this.articleServiceUrl, schemaName, articleId, _getFields(fields), revision);
+                }
             },
             getDeleteUrl: function (schemaName, articleId) {
                 return String.format('{0}/{1}/{2}', this.articleServiceUrl, schemaName, articleId);
@@ -888,8 +906,12 @@ var global = {};
             getCreateUrl: function (relationName, fields) {
                 return String.format('{0}/{1}?fields={2}', this.connectionServiceUrl, relationName, _getFields(fields));
             },
-            getUpdateUrl: function (relationName, connectionId, fields) {
-                return String.format('{0}/{1}/{2}?fields={3}', this.connectionServiceUrl, relationName, connectionId, _getFields(fields));
+            getUpdateUrl: function (relationName, connectionId, fields, revision) {
+                if (!revision) {
+                    return String.format('{0}/{1}/{2}?fields={3}', this.connectionServiceUrl, relationName, connectionId, _getFields(fields));
+                } else {
+                    return String.format('{0}/{1}/{2}?fields={3}&revision={4}', this.connectionServiceUrl, relationName, connectionId, _getFields(fields), revision);
+                }
             },
             getDeleteUrl: function (relationName, connectionId) {
                 return String.format('{0}/{1}/{2}', this.connectionServiceUrl, relationName, connectionId);
@@ -958,8 +980,12 @@ var global = {};
 
             fileServiceUrl: 'file',
 
-            getUploadUrl: function (contentType) {
-                return String.format('{0}/uploadurl?contenttype={1}&expires=20', this.fileServiceUrl, escape(contentType));
+            getUploadUrl: function (contentType, fileName) {
+                if (fileName && fileName.length > 0) {
+                    return String.format('{0}/uploadurl?contenttype={1}&expires=20&filename={2}', this.fileServiceUrl, escape(contentType), escape(fileName));
+                } else {
+                    return String.format('{0}/uploadurl?contenttype={1}&expires=20', this.fileServiceUrl, escape(contentType));
+                }
             },
 
             getUpdateUrl: function (fileId, contentType) {
@@ -1685,7 +1711,7 @@ Depends on  NOTHING
         
         this.getValue = function() {
             if (typeof this.value == 'object' && this.value instanceof Date) return "date('" + Appacitive.Date.toISODate(this.value) + "')";
-            else return "date('" + this.value + "'')";
+            else return "date('" + this.value + "')";
         };
     };
 
@@ -1694,7 +1720,7 @@ Depends on  NOTHING
         
         this.getValue = function() {
             if (typeof this.value == 'object' && this.value instanceof Date) return "time('" + Appacitive.Date.toISOTime(this.value) + "')";
-            else return "time('" + this.value + "'')";
+            else return "time('" + this.value + "')";
         };
     };
 
@@ -1703,7 +1729,7 @@ Depends on  NOTHING
         
         this.getValue = function() {
             if (typeof this.value == 'object' && this.value instanceof Date) return "datetime('" + Appacitive.Date.toISOString(this.value) + "')";
-            else return "datetime('" + this.value + "'')";
+            else return "datetime('" + this.value + "')";
         };
     };
 
@@ -2060,7 +2086,7 @@ Depends on  NOTHING
 				_pageQuery.pageNumber(arguments[0]);
 				return this;
 			}
-			return _pageQuery.pageNumber; 
+			return _pageQuery.pageNumber(); 
 		};
 
 		//define getter and setter for pageSize
@@ -2069,19 +2095,19 @@ Depends on  NOTHING
 				_pageQuery.pageSize(arguments[0]);
 				return this;
 			}
-			return _pageQuery.pageSize; 
+			return _pageQuery.pageSize(); 
 		};
 
 		//define getter for sortquery
 		this.sortQuery = function() { return _sortQuery; };
 
 		//define getter and setter for orderby
-		this.orderby =  function() { 
+		this.orderBy =  function() { 
 			if (arguments.length == 1) {
-				_sortQuery.orderby(arguments[0]);
+				_sortQuery.orderBy(arguments[0]);
 				return this;
 			}
-			return _sortQuery.orderby; 
+			return _sortQuery.orderBy(); 
 		};
 
 		//define getter and setter for isAscending
@@ -2090,7 +2116,7 @@ Depends on  NOTHING
 				_sortQuery.isAscending(arguments[0]);
 				return this;
 			}
-			return _sortQuery.isAscending; 
+			return _sortQuery.isAscending(); 
 		};
 
 		//define getter and setter for filter
@@ -2294,6 +2320,7 @@ Depends on  NOTHING
 		if (!options.articleId) throw new Error('Specify articleId for connected articles query');
 		if (!options.schema) throw new Error('Specify schema of article id for connected articles query');
 		
+
 		var schema = options.schema;
 		delete options.schema;
 
@@ -2304,8 +2331,14 @@ Depends on  NOTHING
 		this.articleId = options.articleId;
 		this.relation = options.relation;
 		this.schema = schema;
-
+		this.prev = options.prev;
+		
+		this.returnEdge = true;
+		if (options.returnEdge != undefined || options.returnEdge != null && !options.returnEdge && !this.prev) this.returnEdge = false;
+		
 		this.label = '';
+		var that = this;
+
 		if (options.label && typeof options.label == 'string' && options.label.length > 0) this.label = '&label=' + options.label;
 
 		this.toRequest = function() {
@@ -2317,11 +2350,39 @@ Depends on  NOTHING
 
 		this.toUrl = function() {
 			return global.Appacitive.config.apiBaseUrl + 'connection/' + this.relation + '/' + this.schema + '/' + this.articleId + '/find?' +
-				this.getQueryString() + this.label;
+				this.getQueryString() + this.label + '&returnEdge=' + this.returnEdge;
 		};
 
 
 		var parseNodes = function(nodes, endpointA) {
+			var articles = [];
+			nodes.forEach(function(o) {
+				var tmpArticle = null;
+				if (o.__edge) {
+					var edge = o.__edge;
+					delete o.__edge;
+
+					edge.__endpointa = endpointA;
+					edge.__endpointb = {
+						articleid: o.__id,
+						label: edge.__label,
+						type: o.__schematype
+					};
+					delete edge.label;
+
+					var connection = new global.Appacitive.Connection(edge, true);
+					tmpArticle = new global.Appacitive.Article(o, true);
+					tmpArticle.connection = connection;
+				} else {
+					tmpArticle = new global.Appacitive.Article(o, true);
+				}
+				articles.push(tmpArticle);
+			});
+			return articles;
+		};
+
+
+		var	prevParseNodes = function(nodes, endpointA) {
 			var connections = [];
 			nodes.forEach(function(o) {
 				var edge = o.__edge;
@@ -2347,8 +2408,10 @@ Depends on  NOTHING
 			request.onSuccess = function(d) {
 			if (d && d.status && d.status.code == '200') {
 				   if (typeof onSuccess == 'function') {
-				   		onSuccess(parseNodes( d.nodes ? d.nodes : [], { articleid : options.articleId, type: schema, label: d.parent }), d.paginginfo);
-				   }
+					   var cb = parseNodes;
+					   if (that.prev) cb = prevParseNodes;
+				   	   onSuccess(cb( d.nodes ? d.nodes : [], { articleid : options.articleId, type: schema, label: d.parent }), d.paginginfo);   
+				   	}
 				} else {
 					d = d || {};
 					if (typeof onError == 'function') onError(d.status || { message : 'Server error', code: 400 });
@@ -2626,7 +2689,7 @@ Depends on  NOTHING
 							label: parentLabel
 						};
 						edge.__endpointb = {
-							articleid: tmpArticle.id,
+							articleid: tmpArticle.id(),
 							label: edge.__label
 						};
 						delete edge.__label;
@@ -2689,6 +2752,8 @@ Depends on  NOTHING
 				}
 			}
 		};
+
+		var that = this;
 
 		var raw = {};
 		_copy(objectOptions, raw);
@@ -2796,12 +2861,12 @@ Depends on  NOTHING
 		this.getChangedAttributes = _getChangedAttributes;
 
 		// accessor function for the article's aggregates
-		this.aggregates = function() {
+		this.aggregate = function() {
 			var aggregates = {};
 			for (var key in article) {
 				if (!article.hasOwnProperty(key)) return;
 				if (key[0] == '$') {
-					aggregates[key] = article[key];
+					aggregates[key.substring(1)] = article[key];
 				}
 			}
 			if (arguments.length === 0) return aggregates;
@@ -2908,7 +2973,11 @@ Depends on  NOTHING
 			}
 			else delete changeSet["__attributes"];
 
-			if (isDirty) return changeSet;
+			for (var p in changeSet) {
+				if (p[0] == '$') delete changeSet[p];
+			}
+
+			if (isDirty && !Object.isEmpty(changeSet)) return changeSet;
 			return false;
 		};
 
@@ -2972,15 +3041,14 @@ Depends on  NOTHING
 					if (!isNaN(res)) return res;
 				}
 				return value;
-			}, 
-			"decimal": function(value) { 
+			}, "decimal": function(value) { 
 				if (value) {
 					var res = parseFloat(value);
 					if (!isNaN(res)) return res;
 				}
 				return value;
 			}, "boolean": function(value) { 
-				if (value == 'true' || value == true || value > 0) return true;
+				if (value != undefined && value != null && (value.toString().toLowerCase() == 'true' || value == true || value > 0)) return true;
 				return false;
 			}, "date": function(value) { 
 				if (value) {
@@ -3074,12 +3142,32 @@ Depends on  NOTHING
 			return this;
 		};
 
+		var _atomicProps = [];
+
+		var _atomic = function(key, amount, multiplier) {
+			if (!key || typeof key != 'string' ||  key.length == 0 || key.indexOf('__') == 0) return this;
+
+			if (!amount || isNaN(parseInt(amount))) amount = multiplier;
+			else amount = parseInt(amount) * multiplier;
+
+			_atomicProps.push({ key: key.toLowerCase(), amount: amount });
+			return that;
+		};
+
+		this.increment = function(key, amount) {
+			return _atomic(key, amount, 1);
+		};
+
+		this.decrement = function(key, amount) {
+			return _atomic(key, amount, -1);
+		};
+
 		/* crud operations  */
 
 		/* save
 		   if the object has an id, then it has been created -> update
 		   else create */
-		this.save = function(onSuccess, onError) {
+		this.save = function() {
 			if (article.__id) _update.apply(this, arguments);
 			else _create.apply(this, arguments);
 			return this;
@@ -3101,6 +3189,10 @@ Depends on  NOTHING
 			// for User and Device articles
 			if (article.__schematype &&  ( article.__schematype.toLowerCase() == 'user' ||  article.__schematype.toLowerCase() == 'device')) 
 				url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory[article.__schematype.toLowerCase()].getCreateUrl();
+
+			for (var p in article) {
+				if (p[0] == '$') delete article[p];
+			}
 
 			var _saveRequest = new global.Appacitive.HttpRequest();
 			_saveRequest.url = url;
@@ -3149,58 +3241,94 @@ Depends on  NOTHING
 			onSuccess = onSuccess || function(){};
 			onError = onError || function(){};
 
-			var changeSet = _getChanged(true);
-			var that = this;
-			if (changeSet) {
-
-				if (typeof fields == 'string') _fields = value;
-				else if (typeof fields == 'object' && fields.length) fields = fields.join(',');
-				else fields = _fields;
-
-				var _updateRequest = new global.Appacitive.HttpRequest();
-				var url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory[this.type].getUpdateUrl(article.__schematype || article.__relationtype, (_snapshot.__id) ? _snapshot.__id : article.__id, fields);
-				
-				// for User and Device articles
-				if (article && article.__schematype &&  ( article.__schematype.toLowerCase() == 'user' ||  article.__schematype.toLowerCase() == 'device')) 
-					url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory[article.__schematype.toLowerCase()].getUpdateUrl(_snapshot.__id);
-				
-				_updateRequest.url = url;
-				_updateRequest.method = 'post';
-				_updateRequest.data = changeSet;
-				_updateRequest.onSuccess = function(data) {
-					if (data && (data.article || data.connection || data.user || data.device)) {
-						_snapshot = data.article || data.connection || data.user || data.device;
-						_copy(_snapshot, article);
-						_removeTags = [];
-						global.Appacitive.eventManager.fire((that.schema || that.relation)  + '.' + that.type + "." + article.__id +  '.updated', that, { object : that });
-						if (typeof onSuccess == 'function') onSuccess(that);
-					} else {
-						data = data || {};
-						data.status =  data.status || {};
-						data.status = _getOutpuStatus(data.status);
-						global.Appacitive.eventManager.fire((that.schema || that.relation)  + '.' + that.type + "." + article.__id +  '.updateFailed', that, { object : data.status });
-						if (typeof onError == 'function') onError(data.status, that);
-					}
-				};
-				_updateRequest.onError = function(err) {
-					err = err || {};
-					err.message = err.message || 'Server error';
-					err.code = err.code || '500';
-					if (typeof onError == 'function') onError(err, that);
+			var cb = function(revision) {
+				var changeSet = _getChanged(true);
+				for (var p in changeSet) {
+					if (p[0] == '$') delete changeSet[p];
 				}
-				global.Appacitive.http.send(_updateRequest);
-			} else {
-				if (typeof onSuccess == 'function') onSuccess(that);
+
+				if (!Object.isEmpty(changeSet)) {
+
+					if (typeof fields == 'string') _fields = value;
+					else if (typeof fields == 'object' && fields.length) fields = fields.join(',');
+					else fields = _fields;
+
+					var _updateRequest = new global.Appacitive.HttpRequest();
+					var url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory[that.type].getUpdateUrl(article.__schematype || article.__relationtype, (_snapshot.__id) ? _snapshot.__id : article.__id, fields, revision);
+					
+					var type = that.type;
+
+					// for User and Device articles
+					if (article && article.__schematype &&  ( article.__schematype.toLowerCase() == 'user' ||  article.__schematype.toLowerCase() == 'device')) { 
+						type = article.__schematype.toLowerCase();
+						url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory[article.__schematype.toLowerCase()].getUpdateUrl(_snapshot.__id, fields, revision);
+					}
+					_updateRequest.url = url;
+					_updateRequest.method = 'post';
+					_updateRequest.data = changeSet;
+					_updateRequest.onSuccess = function(data) {
+						if (data && data[type]) {
+							_atomicProps.length = 0;
+							_snapshot = data[that.type];
+							_copy(_snapshot, article);
+							_removeTags = [];
+							global.Appacitive.eventManager.fire((that.schema || that.relation)  + '.' + type + "." + article.__id +  '.updated', that, { object : that });
+							if (typeof onSuccess == 'function') onSuccess(that);
+						} else {
+							data = data || {};
+							data.status =  data.status || {};
+							data.status = _getOutpuStatus(data.status);
+							if (data.status.code == '7008' && _atomicProps.length > 0) {
+								_update(onSuccess, onError, fields);
+							}  else {
+								global.Appacitive.eventManager.fire((that.schema || that.relation)  + '.' + type + "." + article.__id +  '.updateFailed', that, { object : data.status });
+								if (typeof onError == 'function') onError(data.status, that);
+							}
+						}
+					};
+					_updateRequest.onError = function(err) {
+						err = err || {};
+						err.message = err.message || 'Server error';
+						err.code = err.code || '500';
+						if (err.code == '7008' && _atomicProps.length > 0) {
+							_update(onSuccess, onError, fields);
+						} else {
+							if (typeof onError == 'function') onError(err, that);
+						}
+					}
+					global.Appacitive.http.send(_updateRequest);
+				} else {
+					if (typeof onSuccess == 'function') onSuccess(that);
+				}
 			}
+
+			if (_atomicProps.length > 0) {
+				var props = ['__revision'];
+				_atomicProps.forEach(function(p) { 
+					props.push(p.key); 
+				});
+
+				_fetch(function(obj) {
+					var tmp = {};
+
+					_atomicProps.forEach(function(p) {
+						var value = _types['integer'](obj[p.key]);
+						if (!value) value = 0
+						that.set(p.key, value + p.amount);
+					});
+
+					cb(obj.__revision);
+				}, onError, props, true);
+			} else cb();
+
 			return this;
 		};
 
-		// fetch ( by id )
-		this.fetch = function(onSuccess, onError, fields) {
+		var _fetch = function (onSuccess, onError, fields, isVersion) {
 			onSuccess = onSuccess || function() {};
 			onError = onError || function() {};
 			if (!article.__id) {
-				if (typeof onError == 'function') onError( {code:'400', message: 'Please specify id for get operation'} ,this);
+				if (typeof onError == 'function') onError( {code:'400', message: 'Please specify id for get operation'}, that);
 				return;
 			}
 
@@ -3209,17 +3337,25 @@ Depends on  NOTHING
 			else fields = _fields;
 
 			// get this article by id
-			var that = this;
-			var url = global.Appacitive.config.apiBaseUrl  + global.Appacitive.storage.urlFactory[this.type].getGetUrl(article.__schematype || article.__relationtype, article.__id, fields);
+			var url = global.Appacitive.config.apiBaseUrl  + global.Appacitive.storage.urlFactory[that.type].getGetUrl(article.__schematype || article.__relationtype, article.__id, fields);
 			var _getRequest = new global.Appacitive.HttpRequest();
 			_getRequest.url = url;
 			_getRequest.method = 'get';
 			_getRequest.onSuccess = function(data) {
-				if (data && (data.article || data.connection || data.user || data.device)) {
-					_snapshot = data.article || data.connection || data.user || data.device;
-					_copy(_snapshot, article);
-					if (that.___collection && ( that.___collection.collectionType == 'article')) that.___collection.addToCollection(that);
-					if (typeof onSuccess == 'function') onSuccess(that);
+				if (data && data[that.type]) {
+					if (!isVersion) {
+						_snapshot = data[that.type];
+						_copy(_snapshot, article);
+						if (data.connection) {
+							if (!that.endpoints && (!that.endpointA || !that.endpointB)) {
+								that.setupConnection(article.__endpointa, article.__endpointb);
+							}
+						}
+						if (that.___collection && ( that.___collection.collectionType == 'article')) that.___collection.addToCollection(that);
+						if (typeof onSuccess == 'function') onSuccess(that);
+					} else {
+						if (typeof onSuccess == 'function') onSuccess(data[that.type]);
+					}
 				} else {
 					data = data || {};
 					data.status =  data.status || {};
@@ -3232,7 +3368,12 @@ Depends on  NOTHING
 				if (typeof onError == 'function') onError(err, that);
 			}
 			global.Appacitive.http.send(_getRequest);
-			return this;
+			return that;
+		};
+
+		// fetch ( by id )
+		this.fetch = function(onSuccess, onError, fields) {
+			_fetch(onSuccess, onError, fields);
 		};
 
 		// delete the article
@@ -3384,6 +3525,8 @@ Depends on  NOTHING
 		else _options = options;
 
 		this.collectionType = 'article';
+
+		this.type = function() { return _schema; };
 
 		if (!_options || !_options.schema) throw new Error('Must provide schema while initializing ArticleCollection.');
 		
@@ -3590,9 +3733,9 @@ Depends on  NOTHING
 			return _a;
 		};
 
-		this.map = function() { return _articles.map.apply(this, arguments); };
-		this.forEach = function() { return _articles.forEach.apply(this, arguments); };
-		this.filter = function() { return _articles.filter.apply(this, arguments); };
+		this.map = function(delegate, context) { return _articles.map.apply(delegate, context || this); };
+		this.forEach = function(delegate, context) { return _articles.forEach(delegate, context); };
+		this.filter = function(delegate, context) { return _articles.filter.apply(delegate, context || this); };
 
 	};
 
@@ -3606,14 +3749,12 @@ Depends on  NOTHING
 		return this.getAllArticles();
 	};
 
-
-
 	global.Appacitive.ArticleCollection.prototype.articles = function() {
 		return this.getAll();
 	};
 
 	global.Appacitive.ArticleCollection.prototype.length = function() {
-		return this.articles.length;
+		return this.articles().length;
 	};
 
 })(global);(function(global) {
@@ -3641,6 +3782,8 @@ Depends on  NOTHING
 		var connectionMap = {};
 
 		this.collectionType = 'connection';
+
+		this.type = function() { return _relation; };
 
 		var that = this;
 
@@ -3822,7 +3965,7 @@ Depends on  NOTHING
 
 		this.fetch = function(onSuccess, onError) {
 			_connections.length = 0;
-
+			_query.prev = true;
 			_query.fetch(function(connections, pagingInfo) {
 				parseConnections(connections, pagingInfo, onSuccess);
 			}, function(err) {
@@ -3868,18 +4011,28 @@ Depends on  NOTHING
 			return _a;
 		};
 
-		this.map = function() { return _connections.map.apply(this, arguments); };
-
-		this.forEach = function(delegate, context) {
-			context = context || this;
-			return _connections.forEach(delegate, context);
-		};
-
-		this.filter = function() { return _connections.filter.apply(this, arguments); };
-
+		this.map = function(delegate, context) { return _connections.map.apply(delegate, context || this); };
+		this.forEach = function(delegate, context) { return _connections.forEach(delegate, context); };
+		this.filter = function(delegate, context) { return _connections.filter.apply(delegate, context || this); };
 	};
 
 	global.Appacitive.ConnectionCollection = _ConnectionCollection;
+
+	global.Appacitive.ConnectionCollection.prototype.toString = function() {
+		return JSON.stringify(this.getAllConnections());
+	};
+
+	global.Appacitive.ConnectionCollection.prototype.toJSON = function() {
+		return this.getAllConnections();
+	};
+
+	global.Appacitive.ConnectionCollection.prototype.connections = function() {
+		return this.getAll();
+	};
+
+	global.Appacitive.ConnectionCollection.prototype.length = function() {
+		return this.connections().length;
+	};
 
 })(global);(function (global) {
 
@@ -3931,9 +4084,32 @@ Depends on  NOTHING
 		this.type = 'article';
 		this.connectionCollections = [];
 		this.getArticle = this.getObject;
+		this.children = {};
 
 		if (this.get('__schematype').toLowerCase() == 'user') this.getFacebookProfile = _getFacebookProfile;
 
+		this.toJSON = function(recursive) {
+			if (recursive) {
+				var parseChildren = function(root) {
+					var articles = [];
+					root.forEach(function(obj) {
+						var tmp = obj.getObject();
+						if (obj.children && !Object.isEmpty(obj.children)) {
+							tmp.children = {};
+							for (var c in obj.children) {
+								tmp.children[c] = parseChildren(obj.children[c]);
+							}
+						}
+						if (obj.connection) tmp.__connection = obj.connection.toJSON();
+						articles.push(tmp);
+					});
+					return articles;
+				};
+				return parseChildren([this])[0];
+			} else {
+				return this.getObject();
+			}
+		};
 		return this;
 	};
 
@@ -3964,13 +4140,35 @@ Depends on  NOTHING
 
 		options.schema = this.entityType;
 		options.articleId = this.get('__id');
-		
+		options.prev = true;
+
 		var collection = new global.Appacitive.ConnectionCollection({ relation: options.relation });
 		collection.query(new global.Appacitive.Queries.ConnectedArticlesQuery(options));
 		collection.connectedArticle = this;
 		this.connectionCollections.push(collection);
 
 		return collection;
+	};
+
+	global.Appacitive.Article.prototype.fetchConnectedArticles = function(options, onSuccess, onError) {
+		options = options || {};
+		if (typeof options == 'string') {
+			options = { relation: options };
+		}
+
+		options.schema = this.entityType;
+		options.articleId = this.get('__id');
+
+		var that = this;
+
+		var query = new global.Appacitive.Queries.ConnectedArticlesQuery(options);
+
+		query.fetch(function(articles, pagingInfo) {
+			that.children[options.relation] = articles;
+			if (onSuccess && typeof onSuccess == 'function') onSuccess(that, pagingInfo);
+		}, onError);		
+
+		return query; 
 	};
 
 	global.Appacitive.Article.multiDelete = function(options, onSuccess, onError) {
@@ -4048,8 +4246,7 @@ Depends on  NOTHING
 		if (options.schema.toLowerCase() == 'user') obj = new global.Appacitive.User({ __id: options.id });
 		else obj = new global.Appacitive.Article({ __schematype: options.schema, __id: options.id });
 		
-		obj.fields = options.fields;
-		obj.fetch(onSuccess, onError);
+		obj.fetch(onSuccess, onError, options.fields);
 
 		return obj;
 	};
@@ -4134,8 +4331,8 @@ Depends on  NOTHING
 		this.parseConnection = function() {
 			
 			var typeA = 'A', typeB ='B';
-			if ( options.__endpointa.label == this.get('__endpointb').label ) {
-				if ((options.__endpointa.label != options.__endpointb.label) && (options.__endpointa.articleid == this.get('__endpointb').articleid || !options.__endpointa.articleid)) {
+			if ( options.__endpointa.label.toLowerCase() == this.get('__endpointb').label.toLowerCase() ) {
+				if ((options.__endpointa.label.toLowerCase() != options.__endpointb.label.toLowerCase()) && (options.__endpointa.articleid == this.get('__endpointb').articleid || !options.__endpointa.articleid)) {
 				 	typeA = 'B', typeB = 'A';
 				}
 			}
@@ -4195,6 +4392,15 @@ Depends on  NOTHING
 
 		// 2
 		this.set('__endpointb', _parseEndpoint(endpointB, 'B', this));
+
+		// 3
+		this.endpoints = function() {
+			var endpoints = [];
+			endpoints.push(this.endpointA);
+			endpoints.push(this.endpointB);
+			return endpoints;
+		};
+
 	};
 
 	global.Appacitive.Connection.get = function(options, onSuccess, onError) {
@@ -4746,7 +4952,7 @@ Depends on  NOTHING
 			global.Appacitive.http.send(request); 
 		};
 
-		var _getUserByIdType = function(url, onSuccess, onError){
+		var _getUserByIdType = function(url, onSuccess, onError) {
 			onSuccess = onSuccess || function(){};
 			onError = onError || function(){};
 
@@ -4765,6 +4971,7 @@ Depends on  NOTHING
 		this.getUserByToken = function(token, onSuccess, onError) {
 			if (!token || typeof token != 'string' || token.length == 0) throw new Error("Please specify valid token");
 			var url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory.user.getUserByTokenUrl(token);
+			global.Appacitive.Session.setUserAuthHeader(token, 0, true);
 			_getUserByIdType(url, onSuccess, onError);
 		};
 
@@ -4778,6 +4985,45 @@ Depends on  NOTHING
 			callback = callback || function() {};
 			_authenticatedUser = null;
 			global.Appacitive.Session.removeUserAuthHeader(callback, avoidApiCall);
+		};
+
+		this.resetPassword = function(token, newPassword, onSuccess, onError) {
+			onSuccess = onSuccess || function(){};
+			onError = onError || function(){};
+
+			if (!token) throw new Error("Please specify token");
+			if (!newPassword || newPassword.length == 0) throw new Error("Please specify password");
+
+			var request = new global.Appacitive.HttpRequest();
+			request.url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory.user.getResetPasswordUrl(token);
+			request.method = 'post';
+			request.data = { newpassword: newPassword };
+			request.onSuccess = function(a) {
+				if (a && a.code == '200') {
+				 	if (typeof onSuccess == 'function') onSuccess();
+				} else { onError(a); }
+			};
+			request.onError = onError;
+			global.Appacitive.http.send(request); 
+		};
+
+		this.validateResetPasswordToken = function(token, onSuccess, onError) {
+			onSuccess = onSuccess || function(){};
+			onError = onError || function(){};
+
+			if (!token) throw new Error("Please specify token");
+
+			var request = new global.Appacitive.HttpRequest();
+			request.url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory.user.getValidateResetPasswordUrl(token);
+			request.method = 'post';
+			request.data = {};
+			request.onSuccess = function(a) {
+				if (a.status && a.status.code == '200') {
+				 	if (typeof onSuccess == 'function') onSuccess(a.user);
+				} else { onError(a.status); }
+			};
+			request.onError = onError;
+			global.Appacitive.http.send(request); 
 		};
 	};
 
@@ -5222,10 +5468,10 @@ Depends on  NOTHING
           if (!that.fileData) throw new Error('Please specify filedata');
           if (contentType || typeof contentType == 'string') that.contentType = contentType;
           else {
-              if (!that.contentType || typeof contentType !== 'string' || that.contentType.length == 0) that.contentType = 'text/plain';
+              if (!that.contentType || typeof that.contentType !== 'string' || that.contentType.length == 0) that.contentType = 'text/plain';
               try { that.contentType = file.type; } catch(e) {}
           }
-          var url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory.file.getUploadUrl(that.contentType);
+          var url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory.file.getUploadUrl(that.contentType, that.fileId ? that.fileId : '');
           onSuccess = onSuccess || function(){};
           onError = onError || function(){};
 
@@ -5317,6 +5563,29 @@ Depends on  NOTHING
           return this;
       };
 
+      this.getUploadUrl = function(onSuccess, onError, contentType) {
+          var that = this;
+
+          if (contentType || typeof contentType == 'string') this.contentType = contentType;
+          else {
+              if (!this.contentType || typeof this.contentType !== 'string' || this.contentType.length == 0) this.contentType = 'text/plain';
+          }
+
+          var url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory.file.getUploadUrl(this.contentType, this.fileId ? this.fileId : '');
+          onSuccess = onSuccess || function() {};
+          onError = onError || function() {};
+
+          _getUrls(url, function(response) {
+              if (response && response.status && response.status.code == '200') {
+                  that.url = response.url;
+                  onSuccess(response.url, that);
+              } else if (typeof onError == 'function') {
+                  onError(response.status, that);
+              }
+          }, onError);
+      };
+
+      return this;
   };
 
   global.Appacitive.File = _file;

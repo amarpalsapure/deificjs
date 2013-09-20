@@ -1,0 +1,17 @@
+<% layout('__layout') -%>
+
+<% script('/javascripts/questionrouter.js') -%>
+<% script('/javascripts/infra/prettify.js') -%>
+<% script('/javascripts/views/questionView.js') -%>
+
+<script type="text/x-handlebars", data-template-name='tag'>
+  <span class='label label-default'><a {{bindAttr href='view.selfurl'}}>{{tag}}</a></span>
+</script>
+
+<script type="text/x-handlebars", data-template-name="question">
+  {{view Deific.HeaderView}} 
+
+  this is a user page
+
+  {{view Deific.FooterView}} 
+</script>

@@ -1,34 +1,10 @@
 <% layout('__layout') -%>
 
-<% script('/javascripts/router/indexRouter.js') -%>
-<% script('/javascripts/controllers/questionController.js') -%>
-<% script('/javascripts/views/questionsView.js') -%>
-<% script('/javascripts/views/tagView.js') -%>
+<% script('/javascripts/router/freeSearchRouter.js') -%>
+<% script('/javascripts/views/entitiesView.js') -%>
 
 
-<script type='text/x-handlebars', data-template-name='tag'>
-  <span class='label label-default mrm'>
-    <a data-toggle='popover' {{bindAttr data-content='description'}} {{bindAttr data-original-title='name'}} {{bindAttr href='selfurl'}}>{{name}}</a>
-  </span>
-</script>
-
-<script type='text/x-handlebars', data-template-name='tags'>
-  <ul class='tagCloud-container pan mtm'>
-  {{#each tag in tags itemController="question"}}
-    <li class='tag-container'>
-      {{render 'tag' tag}}<small class='muted'>x {{abbreviateNumber tag.questioncount}}</small>
-    </li>
-  {{else}}
-    <div class='row'>
-      <div class='col-xs-12 col-sm-12 col-lg-12'>
-        <h5 class='muted mtm'>No related tags.</h5>
-      </div>
-    </div>
-  {{/each}}
-  </ul>
-</script>
-
-<script type='text/x-handlebars', data-template-name='questions'>
+<script type='text/x-handlebars', data-template-name='entities'>
   {{outlet headerBar}}
   
   <div class='container'>
@@ -38,18 +14,20 @@
           <div class='mainSection'>
             <div class='row contentTitle'>
               <div class='col-xs-12 col-sm-7 col-lg-7'>
-                <h1 class='mtm' id='h1Sortedby'></h1>
+                <h1 id='h1Sortedby'></h1>
               </div>
               <div class="col-xs-12 col-sm-5 col-lg-5">
-                <div class="sortGroup btn-group" >
-                  <a id='apopular' href='/?sort=popular' class="btn btn-danger">Popular</a>
-                  <a id='alatest' href='/?sort=latest' class="btn btn-danger">Latest</a>
-                  <a id='aunresolved' href='/?sort=unresolved' class="btn btn-danger">Unresolved</a>
+                <div class="mts">
+                  <div class="sortGroup mtm btn-group" >
+                    <a id='apopular' href='/?sort=popular' class="btn btn-danger">Popular</a>
+                    <a id='alatest' href='/?sort=latest' class="btn btn-danger">Latest</a>
+                    <a id='aunresolved' href='/?sort=unresolved' class="btn btn-danger">Unresolved</a>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class='question-list'>
-              {{#each question in questions itemController="question"}}
+            <div class='question-list container'>
+              {{#each question in entities itemController="entity"}}
                 {{#if isfavtag}}
                 <div class='question row isfavtag'>
                 {{else}}
@@ -94,15 +72,6 @@
                         <span class='mrs'>&#8226; {{viewcount}} {{pluralize viewcount s='view'}}</span>
                       </div>
                     </div>
-                     <div class='row'>
-                      <div class='col-xs-12 col-sm-12 col-lg-12 question-tag'>
-                        <div class='pbl tag-container'>
-                          {{#each tag in tags}}
-                            {{render 'tag' tag}}
-                          {{/each}}
-                        </div>
-                      </div>
-                    </div>
                   </div>
                   <div class='col-xs-12 col-sm-2 col-lg-2'>
                     <div class='divTime'>
@@ -110,27 +79,13 @@
                     </div> 
                   </div>
                 </div>              
-              {{else}}
-                <div class='row'>
-                  <div class='col-xs-12 col-sm-12 col-lg-12'>
-                    <h5 class='muted mtm'>Be first to add a question to this forum.</h5>
-                  </div>
-                </div>
               {{/each}}
             </div>
           </div>
         </div>
         <div class='col-xs-12 col-sm-12 col-lg-3'>
           <div class='sideSection'>
-            <div class='row contentTitle'>
-              <div class='col-xs-12 col-sm-12 col-lg-12'>
-                <h1 class='related-tags'>Related Tags</h1>
-              </div>
-            </div>
             <div class='row'>
-              <div class='col-xs-12 col-sm-12 col-lg-12'>
-                {{outlet relatedTags}}
-              </div>
             </div>
           </div>
         </div>

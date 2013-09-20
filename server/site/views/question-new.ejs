@@ -1,0 +1,99 @@
+<% layout('__layout') -%>
+
+
+<% script('/javascripts/router/new-questionRouter.js') -%>
+<% script('/javascripts/infra/prettify.js') -%>
+<% script('/javascripts/infra/select2.min.js') -%>
+<% script('/javascripts/controllers/questionController.js') -%>
+<% script('/javascripts/views/questionView.js') -%>
+
+<script type='text/x-handlebars', data-template-name='tag'>
+  <span class='label label-default mrs'>
+    <a data-toggle='popover' {{bindAttr data-content='description'}} {{bindAttr data-original-title='name'}} {{bindAttr href='url'}}>{{name}}</a>
+  </span>
+</script>
+
+<script type='text/x-handlebars', data-template-name='question'>
+{{outlet headerBar}} 
+
+<div class='container'>
+  <div class='content'>
+    <div class='row question-new-page'>
+      <div class='col-xs-12 col-sm-12 col-lg-9'>
+        <div class='mainSection'>
+          <form id='frmNewQuestion' class='form-horizontal' role='form'>
+            <div class='form-group mbn'>
+              <div class='col-lg-12'>
+                <h4 class='mbs mts'>Title</h4>
+              </div>
+              <div class='col-lg-12'>
+                {{view Ember.TextField id='txtTitle' valueBinding='view.question.title' type='text' class='form-control input-large font110 no-radius' placeholder='Title for your question'}}
+              </div>
+            </div>
+            <div class='form-group mbm'>
+              <div class='col-lg-12 '>
+                <div id='wmd-button-bar'>
+                </div>
+              </div>
+            </div>
+            <div class='form-group mbm'>
+              <div class='col-lg-12'>
+                {{view Ember.TextArea class='resizable' id='wmd-input' name='wmd-input' placeholder='You can use Markdown language to write your question. Click on help for more information.' valueBinding='view.question.text'}}
+              </div>
+            </div>
+            <div class='form-group mts'>
+              <div class='col-lg-12'>
+                <small class='muted'>Watch the preview of your question here.</small>
+                <div id='wmd-preview'></div>
+              </div>
+            </div>
+            <div class='form-group hide'>
+              <div class='col-xs-12 col-sm-12 col-lg-10 col-lg-offset-1'>
+                <div id='wmd-output'>
+                </div>
+              </div>
+            </div>
+            <div class='form-group mbn'>
+              <div class='col-lg-12'>
+                <h4 class='mbs pbxs'>Tags</h4>
+              </div>
+              <div class='col-lg-12 mbm'>
+                <div class='border-all-dashed paxs' style='height: 40px;'>
+                  <small class='muted mts mls pull-left'> Selected tags will appear here (max four)</small>
+                  <div id='selectedTags' class='select2-container select2-container-multi hide'>
+                    <ul class="select2-choices">  
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class='col-xs-12 col-sm-10 col-lg-10 mbs'>
+                <input id='tagSearch' placeholder='Search for tag' class='width-100p'></input>
+                <div class='alert-dismiss-container tagError'>
+                </div>
+              </div>
+              <div class='col-xs-12 col-sm-2 col-lg-2'>
+                <a {{action 'newQuestionAddTag' target=view}} class='btn btn-primary'>Add</a>
+              </div>
+            </div>
+            <div class='form-group ptxxl mtl'>
+              <div class='col-lg-12'>
+                  <button id='btnSubmitQuestion' disabled='disabled' class='btn btn-large btn-primary mrm' data-loading-text='Submitting Your Question' href='javascript:void(0)' {{action 'createQuestion' target=view}}>Submit Your Question</button>
+                  <div class='alert-dismiss-container answerError'>
+                  </div>
+                </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class='col-xs-12 col-sm-12 col-lg-3'>
+        <div class='sideSection'>
+          <div class='row'>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{render 'footer'}} 
+</script>
