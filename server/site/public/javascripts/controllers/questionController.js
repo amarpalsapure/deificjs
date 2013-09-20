@@ -24,8 +24,26 @@
 			//validation
 			if (!text || !text.trim()) return;
 
+			//change the button state to loading (Bootstrap)
+			$('#btnSubmitAnswer').button('loading');
+
+			var reset = function(answer) {
+				if(answer) answer.set('action', '');
+				//reset button state to loading (Bootstrap)
+				$('#btnSubmitAnswer').button('reset');
+			};
+
+			var alert_n_reset = function() {
+				//in case of any error roll back the changes (if any)
+				//and show an error message
+				var alert = '<div class="alert alert-block alert-danger font9"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred during saving answer. </div>';
+				$('.answerError').html(alert).alert();
+
+				reset();
+			};
+
 			var that = this;
-			this.get('store').find('user', Deific.AccountController.user.userid).then(function(user){
+			this.get('store').find('user', Deific.AccountController.user.userid).then(function(user) {
 				// Create the new Comment model
 				var questionModel = that.get('model');
 				var parentId = questionModel.get('id');
@@ -33,16 +51,8 @@
 				answer.set('text', text);
 				answer.set('author', user);
 				answer.set('question', questionModel);
+				answer.set('title', questionModel.get('title'));
 				answer.set('action', 'do:answer');
-
-				//change the button state to loading (Bootstrap)
-				$('#btnSubmitAnswer').button('loading');
-
-				var reset = function() {
-					answer.set('action', '');
-					//reset button state to loading (Bootstrap)
-					$('#btnSubmitAnswer').button('reset');
-				};
 
 				// Save the new model
 				answer.save().then(function(savedObj){
@@ -76,18 +86,21 @@
 						}
 					}
 
+					$('.answer-section').removeClass('hide');
 					$('#wmd-input').val('');
 					$('#wmd-input').trigger('focus');
-					//TODO: Set the location to # of answer
-					reset();
-				}, function(){
-					//in case of any error roll back the changes (if any)
-					//and show an error message
-					var alert = '<div class="alert alert-block alert-danger font9"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred during saving answer. </div>';
-					$('.answerError').html(alert).alert();
 
-					reset();
+					reset(savedObj);
+
+					//Set the location to # of answer
+					setTimeout(function() {
+						window.location = model.get('url') + '#' + savedObj.get('id');
+					}, 1000);
+				}, function(){
+					alert_n_reset();
 				});
+			}, function(error) {
+				alert_n_reset();				
 			});
 		},
 

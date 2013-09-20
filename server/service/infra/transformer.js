@@ -208,7 +208,8 @@ exports.toAnswer = _toAnswer;
 var _to_Appacitive_Question = function(Appacitive, question) {
 	return new Appacitive.Article({
 		__id: question.id,
-		__schematype: 'question'
+		__schematype: 'entity',
+		type: 'question'
 	});
 };
 exports.toAppacitiveQuestion = _to_Appacitive_Question;
@@ -216,7 +217,8 @@ exports.toAppacitiveQuestion = _to_Appacitive_Question;
 var _to_Appacitive_Answer = function(Appacitive, answer) {
 	return new Appacitive.Article({
 		__id: answer.id,
-		__schematype: 'answer'
+		__schematype: 'entity',
+		type: 'answer'
 	});
 };
 exports.toAppacitiveAnswer = _to_Appacitive_Answer;

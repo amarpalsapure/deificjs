@@ -3,6 +3,7 @@
 		__utcdatecreated: DS.attr('date'),
 		__createdby: DS.attr('string'),
 		
+		title: DS.attr('string'), //question title, will be used when new answer is created
 		text: DS.attr('string'),
 		url: DS.attr('string'),
 		murl: DS.attr('string'),

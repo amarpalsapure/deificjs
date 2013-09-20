@@ -6,8 +6,9 @@
 var express = require('express');
 var engine = require('ejs-locals');
 var routes = require('./server/site/routes');
-var users = require('./server/site/routes/users');
-var questions = require('./server/site/routes/questions');
+var userRoute = require('./server/site/routes/user');
+var questionRoute = require('./server/site/routes/question');
+var searchRoute = require('./server/site/routes/search');
 var http = require('http');
 var path = require('path');
 process.config = require('./server/shared/configuration').load();
@@ -19,6 +20,7 @@ var answerApi = require('./server/service/answer.js');
 var userApi = require('./server/service/user.js');
 var commentApi = require('./server/service/comment.js');
 var tagApi = require('./server/service/tag.js');
+var searchApi = require('./server/service/search.js');
 
 var app = express();
 
@@ -83,6 +85,10 @@ app.post('/service/comments', commentApi.save)
 // find tag
 app.get('/service/tags', tagApi.find)
 
+// ################# search api ####################
+// free text search
+app.get('/service/entities', searchApi.freeText);
+
 
 // *************************************************
 // ***************** site route ********************
@@ -93,33 +99,35 @@ app.get('/service/tags', tagApi.find)
 app.get('/', routes.index);
 
 //ask a question
-app.get('/questions/ask', questions.ask);
+app.get('/questions/ask', questionRoute.ask);
 
 // question page without title in url
-app.get('/questions/:id', questions.index);
+app.get('/questions/:id', questionRoute.index);
 
 // question page with title in url
-app.get('/questions/:id/:title', questions.index);
+app.get('/questions/:id/:title', questionRoute.index);
 
 // question list page by tag
-app.get('/questions/tagged/:tag', questions.index);
+app.get('/questions/tagged/:tag', questionRoute.index);
 
 // short url for question
-app.get('/q/:qid', questions.miniindex);
+app.get('/q/:qid', questionRoute.miniindex);
 
 //short url for answer
-app.get('/a/:qid/:aid', questions.miniindex);
+app.get('/a/:qid/:aid', questionRoute.miniindex);
 
 // ################ user #######################
 // user login page
-app.get('/users/login',users.login);
+app.get('/users/login',userRoute.login);
 
 // get user by id withour name in url
-app.get('/users/:id', users.index);
+app.get('/users/:id', userRoute.index);
 
 // get user by id with name in url
-app.get('/users/:id/:title', users.index);
+app.get('/users/:id/:title', userRoute.index);
 
+// ################ search #######################
+app.get('/search', searchRoute.search);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

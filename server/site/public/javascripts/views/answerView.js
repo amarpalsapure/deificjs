@@ -42,7 +42,10 @@
 						var hiddenComments = model.get('comments').filter(function(comment) {
 							return comment.get('ishidden');
 						});
-						if(hiddenComments && hiddenComments.get('length') > 0) return;
+						if(hiddenComments && hiddenComments.get('length') > 0) {
+							$ele.find('.showMore').removeClass('hide');
+							return;
+						}
 						var $ele = $('#answer-' + model.get('id'));
 						$ele.find('.showMore').parent().remove();			
 					}, 50);

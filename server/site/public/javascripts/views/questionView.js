@@ -36,7 +36,7 @@
 
 				//if there are no answers, remore the answer section
 				if(model.get('answersMeta').get('length') == 0){
-					$('.answer-section').remove();
+					$('.answer-section').addClass('hide');
 				}
 
 				//question data is loaded and will be render immediately,
@@ -223,16 +223,6 @@
 	        	return;
 	     	}
 	     	$('#btnSubmitQuestion').removeAttr('disabled');
-		}
-	});
-	Deific.TagView = Ember.View.extend({
-		didInsertElement: function() {
-			$(this.get('element')).find('a').popover({trigger: 'hover'});
-		}
-	});
-	Deific.CommentView = Ember.View.extend({
-		didInsertElement: function() {
-			
 		}
 	});
 }).call(this);

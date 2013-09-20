@@ -4,8 +4,7 @@
 
     	signOut: function() {
     		return Deific.AccountController.signOut(function(data) {
-				//logged out successfully reload the page
-				//window.location.reload()
+				//don't do anything
 				}, function(error) {
 					var alert = '<div class="alert alert-block alert-danger font9">' +
               						'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +

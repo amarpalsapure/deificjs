@@ -3,7 +3,15 @@ exports.index = function(req, res){
   	var app = require('../../shared/app.init');
 	var state = app.init(req);
 
-	res.render('questions', state);
+	res.render('question', state);
+};
+
+exports.tagged = function(req, res) {
+	//initialize the app
+  	var app = require('../../shared/app.init');
+	var state = app.init(req);
+
+	res.render('question-tagged', state);
 };
 
 exports.miniindex = function(req, res) {
@@ -20,7 +28,7 @@ exports.miniindex = function(req, res) {
 
 	// get the question from api and the redirect user to question page
 	Appacitive.Article.get({ 
-	    schema: 'question', //mandatory
+	    schema: 'entity', //mandatory
 	    id: questionId, //mandatory
 	    fields: ["title"] //optional
 	}, function(question) {
@@ -44,7 +52,7 @@ exports.ask = function(req, res) {
 	var context = require('../../shared/context');
 	//set the context
 	context.set(state.token, function(user) {
-	    res.render('new-question', state);
+	    res.render('question-new', state);
 	}, function(err) {
 		//delete the cookie, and redirect user to login page
 		res.clearCookie('u');

@@ -252,6 +252,8 @@ exports.save = function(req, res) {
 	//perform a basic transform
 	var aAnswer = transformer.toAppacitiveAnswer(Appacitive, answer);
 	aAnswer.set('text', answer.text);
+	aAnswer.attr('question', answer.question);
+	aAnswer.attr('title', answer.title);
 
 	//STEP 1: Save the Answer and connect user to answer
 	var userRelation = new Appacitive.ConnectionCollection({ relation: 'answer_user' });

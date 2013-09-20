@@ -36,7 +36,7 @@ exports.findAll = function(req, res) {
 		//First get the question according to the query
 		//then get the question details by making a graph query call
 		var orderBy = '__utcdatecreated',
-			filter = '*issearchable==true';
+			filter = "*issearchable == true and *type == 'question'";
 
 
 		var sort = req.query.sort;
@@ -53,7 +53,7 @@ exports.findAll = function(req, res) {
 		}
 
 		var query = new Appacitive.Queries.FindAllQuery({
-						schema : 'question',
+						schema : 'entity',
 						fields : '__id',
 						isAscending: false,
 						orderBy: orderBy,
@@ -65,6 +65,9 @@ exports.findAll = function(req, res) {
 			questions.forEach(function (question) {
 				questionIds.push(question.id());
 			})
+
+			//No questions found
+			if(questionIds.length === 0) return res.json(response);
 
 			//Get the question details
 			var query = new Appacitive.Queries.GraphProjectQuery('questions', questionIds);
@@ -181,9 +184,10 @@ var _findById = function(req, qId, callback) {
 			break;
 	}
 
-	var question = new Appacitive.Article({ __id : qId, schema : 'question' });
+	var question = new Appacitive.Article({ __id : qId, schema : 'entity' });
 	question.fetchConnectedArticles({ 
 	    relation: 'question_answer',
+	    label: 'answer',
 	    orderBy: orderBy,
 	    isAscending: isAscending,
 	    pageSize: process.config.pagesize,

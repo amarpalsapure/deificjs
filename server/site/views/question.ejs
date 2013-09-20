@@ -5,6 +5,8 @@
 <% script('/javascripts/controllers/questionController.js') -%>
 <% script('/javascripts/views/questionView.js') -%>
 <% script('/javascripts/views/answerView.js') -%>
+<% script('/javascripts/views/commentView.js') -%>
+<% script('/javascripts/views/tagView.js') -%>
 
 <script type='text/x-handlebars', data-template-name='tag'>
   <span class='label label-default mrs'>
@@ -119,7 +121,7 @@
               </div>
             {{/each}}
             <div class='mts pts pbs mbm border-bottom-dashed'>
-              <a href='javascript:void(0)' title='Show more Comments' class='showMore' {{action showAllComment target=view}}>...</a>
+              <a href='javascript:void(0)' title='Show more Comments' class='showMore hide' {{action showAllComment target=view}}>...</a>
             </div>
           </div>
           <div class='row comment-add-container'>

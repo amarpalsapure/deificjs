@@ -10,10 +10,10 @@ body { background-color: #eef0f3; }
 .footer { border-top: solid 5px #222; min-height: 80px; padding: 10px 0; }
 .searchbox { padding-left: 6px; background-color: #fff; color: #adadad !important; border: 10px solid #52a82b; height: 66px; line-height: 52px; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; }
     .searchbox input { width: 90%; display: inline-block; height: 30px; padding: 4px 6px; margin-bottom: 10px; font-size: 14px; line-height: 20px; color: #555555; vertical-align: middle; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; outline: none; }
-.btn.btn-flat.btn-green { background: #52a82b; color: #fff; font-size: 112.5%; text-decoration: none; font-family: 'Open Sans', sans-serif; font-weight: 600; border-bottom: 1px solid #777879; line-height: 52px; padding-left: 34px; padding-right: 34px; border-left: none !important; margin-left: -9px; }
+.btn.btn-flat.btn-green { background: #52a82b; color: #fff; font-size: 112.5%; width: 106%; text-decoration: none; font-family: 'Open Sans', sans-serif; font-weight: 600; border-bottom: 1px solid #777879; line-height: 52px; padding-left: 34px; padding-right: 34px; border-left: none !important; margin-left: -9px; }
     .btn.btn-flat.btn-green:hover { background: #39990e; text-decoration: none; }
 .imglnk { margin-left: -15px; margin-right: -15px; }
-.btn.btn-flat.btn-skyblue { background: #0db0ff; color: #fff; font-size: 112.5%; text-decoration: none; font-family: 'Open Sans', sans-serif; font-weight: 600; border-bottom: 1px solid #777879; padding-left: 59px; padding-right: 59px; }
+.btn.btn-flat.btn-skyblue { background: #0db0ff; color: #fff; font-size: 112.5%; width: 100%; text-decoration: none; font-family: 'Open Sans', sans-serif; font-weight: 600; border-bottom: 1px solid #777879; padding-left: 59px; padding-right: 59px; }
     .btn.btn-flat.btn-skyblue:hover { background: #01608e; text-decoration: none; }
 .icon_ask { background: url(../images/icon_ask.png) left center no-repeat; height: 54px; width: 24px; display: inline-block; line-height: 54px; margin-right: 3px; }
 .entity-container { padding-top: 21px !important; padding-left: 6.2%; margin-left: -4.8%; border-left: solid 3px #eee; width: 96.2%; min-height: 380px; }
@@ -28,6 +28,10 @@ body { background-color: #eef0f3; }
 .question-page .user-profile { margin-top: 18px; }
 .question-page textarea, .question-new-page textarea { resize: vertical; width: 100%; font-size: 0.9em; font-family: Monaco, Menlo, Consolas, "Courier New", monospace;}
 .question-new-page textarea { height: 200px !important; }
+.related-tags { margin-top: 4px; padding: 5px 0px 7px;}
+.tagCloud-container li { list-style: none; padding: 4px 0 4px;}
+.tagCloud-container li div { display: inline-block; }
+.tagCloud-container .muted { margin-top: 1px; color: #888; margin-left: -8px; }
 
 .vote-cast { display: inline-block; font-size: 1.4em; margin-bottom: 2px; width: 100%; text-align: center; margin-top: 3px;}
     .vote-cast a, .vote-cast a:hover { text-decoration: none; }
@@ -39,7 +43,7 @@ body { background-color: #eef0f3; }
     .vote-panel a:first-child { margin-bottom: 3px; }
 
 .content, .question-list { padding: 0px; }
-    .content .mainSection, .content .sideSection { min-height: 480px; margin-bottom: 48px; background-color: #fff; padding: 15px 20px 60px; }
+    .content .mainSection, .content .sideSection { min-height: 480px; margin-bottom: 48px; background-color: #fff; padding: 10px 20px 60px; }
     .question-list .question { padding: 18px 0 18px !important; border-bottom: 1px dashed #ADADAD; }
         .question-list .question .user-img { padding-bottom: 4px; }
     .question-list h4 { padding: 0; margin: 0; font-size: 16px; line-height: 1.4; }
@@ -59,7 +63,7 @@ body { background-color: #eef0f3; }
 .divPts { color: gray; font-size: 0.85em; font-weight: bold; padding-top: 2px; }
 .divTime { font-size: 12px; color: #737373; font-style: italic; text-align: right; white-space: nowrap; }
 .divUser a, .divUser a span, .commentor, .divUser a:hover, .commentor:hover { font-size: 0.95em; text-overflow: ellipsis; overflow: hidden; color: #222; font-weight: 700; line-height: 16px;}
-.divUser a, .divUser a span { display: block; width: 60px; }
+.divUser a, .divUser a span { display: block; width: 65px;}
 .commentor { margin-right: 5px; white-space: nowrap; }
 
 .question-page .question-title { margin-top: 0px; margin-bottom: -6px; }
@@ -174,6 +178,7 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
 .login-nav li a { display: inline-block; padding: 15px 40px !important; white-space: normal; width: 165px; }
 .login-nav li a span { display: inline-block; }
 .login-nav li a:hover { background-color: #eee; }
+.login-nav .btn.btn-flat.btn-skyblue { width: auto; }
 .lgn-cancel { vertical-align: bottom; line-height: 31px; }
 .icon_fb { background: url(../images/facebook.png) left center no-repeat; height: 32px; width: 32px; display: inline-block; line-height: 32px; margin-right: 3px; }
 
@@ -190,8 +195,7 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
 
 /* tablets */
 @media screen and (max-width: 980px) {
-    .divUser a, .divUser a span { display: inline-block; width: auto; }
-    .divUser a .lname { margin-left: 3px; }
+    .divUser a, .divUser a span { display: inline-block; width: 50px; }
     .divPic, .divUserDetails { display: inline-block; vertical-align: top; margin-top: 0px; }
     .divUserDetails { margin-top: 2px; }
         .divUserDetails div { margin-top: 0px; margin-left: 3px; }
@@ -204,6 +208,8 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
 }
 
 @media screen and (max-width: 767px) {
+    .divUser a, .divUser a span { display: inline-block; width: 80px; }
+    .divUser a .lname { margin-left: 3px; }
     .btn.btn-flat.btn-green { width: 100%; margin-top: 10px; margin-left: 0px; }
     .imglnk, .bubble { display: none; }
     .contentTitle .btn { font-size: 11px; }
