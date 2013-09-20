@@ -1,0 +1,92 @@
+<% layout('__layout') -%>
+
+<% script('/javascripts/router/loginRouter.js') -%>
+<% script('/javascripts/controllers/loginController.js') -%>
+<% script('/javascripts/views/loginView.js') -%>
+
+
+<script type='text/x-handlebars', data-template-name='login'>
+  {{outlet headerBar}}
+
+  <div class='container'>
+    <div class='content'>
+      <div class='row'>
+        <div class='col-xs-12 col-sm-12 col-lg-9'>
+          <div class='mainSection'>
+            <div class='row border-bottom'>
+              <h3 class='mts pll pbsi mbs'>Log In</h3>
+            </div>
+            <div class='ptm mtm mll mrl'>
+              {{#if isLogin}}
+                <form id='frmLogin' class="form-horizontal" role="form">
+                  <h3>Appacitive Account</h3>
+                  <div class="form-group">
+                    <div class="col-lg-12 ptm">
+                      {{view view.submitTextField valueBinding='view.login.email' type='text' class='login-input form-control login-email' placeholder='Enter your email address'}}
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-lg-12">
+                      {{view view.submitTextField valueBinding='view.login.password' type='password' class='login-input form-control login-pwd' placeholder='Enter your password'}}
+                    </div>
+                  </div>
+                  <div class='form-group login-error hide'>
+                    <div class="col-lg-12">
+                      <label class='control-label'>{{view.login.error}} </label>
+                    </div>
+                  </div>
+                  <div class="form-group ptm">
+                    <div class="col-lg-12">
+                      <button data-loading-text="Log In" class="btn btn-primary" {{action "signIn" target="view"}}>Log In</button>
+                      <button data-loading-text="Cancel" class="btn mlm" {{action "cancelSignIn" target="view"}}>Cancel</button>
+                    </div>
+                  </div>
+                </form>
+              {{else}}
+                <div class='row text-center'>
+                  <ul class='nav login-nav'>
+                    <li><a href='javascript:void(0)' {{action lgnAppacitive}} class='btn btn-flat btn-skyblue'>login with appacitive</a></li>
+                    <li><a href='javascript:void(0)' {{action lgnFacebook}} class='btn btn-flat btn-skyblue'>login with facebook</a></li>
+                    <li><a href='javascript:void(0)' {{action lgnTwitter}} class='btn btn-flat btn-skyblue'>login with twitter</a></li>
+                  </ul>
+                </div>
+              {{/if}}
+            </div>
+          </div>
+        </div>
+        <div class='col-xs-12 col-sm-12 col-lg-3'>
+          <div class='sideSection'>
+            <div class='row'>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalSessionExpired" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Session Expired</h4>
+        </div>
+        <div class="modal-body">
+          <div class='mbs'>Your session has <strong>expired</strong>.</div>
+          <div class='mbs'>It can be due to any of the following reasons</div>
+          <ul class='mll pls'>
+            <li>Your browswer was <strong>idle</strong> for too long.</li>
+            <li>You have <strong>cleared the cookies</strong> from your browswer.</li>
+            <li><strong>Computer date set incorrectly</strong>: Cookies rely on dates and an incorrect date can confuse your browser, causing it to "forget" your cookie. To fix this, set the correct time and date on your computer.</li>
+            <li><strong>Security programs</strong>: If you have virus or spyware protection programs installed on your computer they can monitor or block cookies being sent to your computer. Try Temporarily turning off anti-virus, anti-spyware, and firewall products before signing in.</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div>
+
+  {{render 'footer'}}
+</script>
