@@ -2,6 +2,21 @@
 	Deific.HeaderView =  Ember.View.extend({
     	templateName: 'header',
 
+    	submitTextField: Ember.TextField.extend({
+			insertNewline: function() {
+		        return this.get('parentView').search();
+	   		}
+		}),
+
+    	search: function() {
+    		var query = this.get('searchtext');
+    		
+    		//validation
+    		if(!query || query.trim() === '') return;
+
+    		window.location = window.host + '/search?q=' + encodeURI(query);
+    	},
+
     	signOut: function() {
     		return Deific.AccountController.signOut(function(data) {
 				//don't do anything

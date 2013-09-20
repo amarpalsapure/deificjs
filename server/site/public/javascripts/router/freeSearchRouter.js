@@ -27,9 +27,11 @@ Deific.EntityController = Deific.HeaderController.extend({
 
 Deific.EntitiesRoute = Ember.Route.extend({
 	model: function(param){ 
-		console.log(param);
+		var query = $.fn.parseParam('q');
+		if(query === '') window.location = '/error.html';
 		var sort = $.fn.parseParam('sort', 'popular');
 		return this.get('store').find('entity', {
+			q: decodeURI(query),
 			sort: sort
 		});
 	},
