@@ -14,19 +14,17 @@
           <div class='mainSection'>
             <div class='row contentTitle'>
               <div class='col-xs-12 col-sm-7 col-lg-7'>
-                <h1 id='h1Sortedby'></h1>
+                <h1 class='mtm' id='h1Sortedby'></h1>
               </div>
               <div class="col-xs-12 col-sm-5 col-lg-5">
-                <div class="mts">
-                  <div class="sortGroup mtm btn-group" >
-                    <a id='apopular' href='/?sort=popular' class="btn btn-danger">Popular</a>
-                    <a id='alatest' href='/?sort=latest' class="btn btn-danger">Latest</a>
-                    <a id='aunresolved' href='/?sort=unresolved' class="btn btn-danger">Unresolved</a>
-                  </div>
+                <div class="sortGroup btn-group" >
+                  <a id='alatest' href='/search?sort=latest' class="btn btn-danger">Latest</a>
+                  <a id='avotes' href='/search?sort=votes' class="btn btn-danger">Votes</a>
+                  <a id='aactive' href='/search?sort=active' class="btn btn-danger">Active</a>
                 </div>
               </div>
             </div>
-            <div class='question-list container'>
+            <div class='question-list'>
               {{#each question in entities itemController="entity"}}
                 {{#if isfavtag}}
                 <div class='question row isfavtag'>
@@ -68,8 +66,6 @@
                     <div class='row'>
                       <div class='col-xs-12 col-sm-12 col-lg-12 question-details'>
                         <span class="mrs">{{votecount}} {{pluralize votecount s='vote'}}</span>
-                        <span class='mrs'>&#8226; {{answercount}} {{pluralize answercount s='answer'}} </span>
-                        <span class='mrs'>&#8226; {{viewcount}} {{pluralize viewcount s='view'}}</span>
                       </div>
                     </div>
                   </div>

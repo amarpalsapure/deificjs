@@ -18,7 +18,11 @@ Deific.Entity = DS.Model.extend({
 	downvotecount: DS.attr('number', { defaultValue: 0 }),
 	isanswered: DS.attr('boolean'),
 
-	author: DS.belongsTo('user')
+	author: DS.belongsTo('user'),
+
+	votecount: function(){
+		return this.get('upvotecount') - this.get('downvotecount');
+	}.property('upvotecount', 'downvotecount')
 
 });
 

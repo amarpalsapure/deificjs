@@ -62,7 +62,7 @@ exports.findAll = function(req, res) {
 						pageSize: process.config.pagesize
 					});
 
-		query.fetch(function (questions, pi) {
+		query.fetch(function (questions, paginginfo) {
 			questions.forEach(function (question) {
 				questionIds.push(question.id());
 			})
@@ -74,7 +74,7 @@ exports.findAll = function(req, res) {
 			var query = new Appacitive.Queries.GraphProjectQuery('questions', questionIds);
 			query.fetch(function (gQuestions) {
 				//if no data found
-				if(gQuestions && gQuestions.length > 0) response = transformer.toQuestions(gQuestions);
+				if(gQuestions && gQuestions.length > 0) response = transformer.toQuestions(gQuestions, paginginfo);
 				
 				return res.json(response);
 			}, function (status) {

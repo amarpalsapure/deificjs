@@ -2,6 +2,13 @@
 	Deific.HeaderView =  Ember.View.extend({
     	templateName: 'header',
 
+        didInsertElement: function() {
+            var query = $.fn.parseParam('q');
+            if(query === '') return;
+            this.set('searchtext', decodeURI(query));
+            $(this.get('element')).find('.searchbox > input').focus();
+        },
+
     	submitTextField: Ember.TextField.extend({
 			insertNewline: function() {
 		        return this.get('parentView').search();
@@ -9,11 +16,13 @@
 		}),
 
     	search: function() {
+            //get the search query
     		var query = this.get('searchtext');
     		
     		//validation
     		if(!query || query.trim() === '') return;
 
+            //set the search in query string
     		window.location = window.host + '/search?q=' + encodeURI(query);
     	},
 
