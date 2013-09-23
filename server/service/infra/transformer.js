@@ -138,13 +138,20 @@ var _toQuestion = function(question) {
 };
 exports.toQuestion = _toQuestion;
 
-var _toQuestions = function(questions) {
+var _toQuestions = function(questions, paginginfo) {
 	var response = {
 		questions: [],
 		comments: [],
 		users: [],
 		tags: []
 	};
+
+	//set the paginginfo
+	if(paginginfo) {
+		response.meta = {
+			paginginfo: paginginfo
+		};
+	}
 
 	questions.forEach(function(question) {
 		var questionResponse = _toQuestion(question);
@@ -204,6 +211,55 @@ var _toAnswer = function(answer) {
 	return response;
 };
 exports.toAnswer = _toAnswer;
+
+var _toEntities = function(entities, paginginfo) {
+	var response = {
+		entities: [],
+		users: []
+	};
+
+	//set paging info if it is available
+	if(paginginfo) {
+		response.meta = {
+			paginginfo : paginginfo
+		};
+	}
+
+	entities.forEach(function(entity) {
+		var jEntity = entity.toJSON();
+
+		//set the title for answer as question title from it's attribute
+		if(jEntity.type != 'question') jEntity.title = entity.attr('title');
+
+		//set the url
+		if(jEntity.type === 'question') 
+			jEntity.url = process.config.host + '/questions/' 
+						+ entity.id() + '/' + _urlEncode(entity.get('title'));
+		else
+			jEntity.url = process.config.host + '/questions/' 
+						+ entity.attr('question') + '/' + _urlEncode(entity.attr('title'))
+						+ '#' + entity.id();
+
+		//set the author
+		jEntity.author = jEntity.__createdby;
+
+		if(jEntity.text.length > 250) {
+			jEntity.text = jEntity.text.substring(0, 250);
+			jEntity.text = jEntity.text.substring(0, Math.min(jEntity.text.length, jEntity.text.lastIndexOf(' ')));
+		}
+
+		//delete unrequired properties, so that payload is less
+		delete jEntity.__schematype;
+		delete jEntity.__attributes;
+		delete jEntity.__tags;
+		delete jEntity.__createdby;
+
+		response.entities.push(jEntity);
+	});
+
+	return response;
+};
+exports.toEntities = _toEntities;
 
 var _to_Appacitive_Question = function(Appacitive, question) {
 	return new Appacitive.Article({

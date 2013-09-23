@@ -1,8 +1,27 @@
 <% layout('__layout') -%>
 
+<% script('/javascripts/router/baseRoute.js') -%>
 <% script('/javascripts/router/freeSearchRouter.js') -%>
-<% script('/javascripts/views/entitiesView.js') -%>
 
+<% script('/javascripts/models/entity.js') -%>
+<% script('/javascripts/models/paging.js') -%>
+
+<% script('/javascripts/controllers/entityController.js') -%>
+<% script('/javascripts/controllers/pagingController.js') -%>
+
+<% script('/javascripts/views/entitiesView.js') -%>
+<% script('/javascripts/views/pagingView.js') -%>
+
+
+<script type="text/x-handlebars", data-template-name='paging'>
+  <ul class="pagination">
+    <li {{bindAttr class='view.disableprepage:disabled'}}><a {{bindAttr href='view.jumpfirstpage'}}>&laquo;</a></li>
+    {{#each page in pages itemController="paging"}}
+      <li {{bindAttr class='isactivepage:active'}}><a {{bindAttr href='jumptopage'}}>{{pagenumber}}</a></li>
+    {{/each}}
+    <li {{bindAttr class='view.disablenextpage:disabled'}}><a {{bindAttr href='view.jumplastpage'}}>&raquo;</a></li>
+  </ul>
+</script>
 
 <script type='text/x-handlebars', data-template-name='entities'>
   {{outlet headerBar}}
@@ -10,29 +29,23 @@
   <div class='container'>
     <div class='content'>
       <div class='row question-list-page'>
-        <div class='col-xs-12 col-sm-12 col-lg-9'>
+        <div class='col-xs-12 col-sm-12 col-lg-9 z-index-1'>
           <div class='mainSection'>
             <div class='row contentTitle'>
               <div class='col-xs-12 col-sm-7 col-lg-7'>
-                <h1 id='h1Sortedby'></h1>
+                <h1 class='mtm transform-lower'><span id='h1SearchCount'></span>&nbsp;results</h1>
               </div>
               <div class="col-xs-12 col-sm-5 col-lg-5">
-                <div class="mts">
-                  <div class="sortGroup mtm btn-group" >
-                    <a id='apopular' href='/?sort=popular' class="btn btn-danger">Popular</a>
-                    <a id='alatest' href='/?sort=latest' class="btn btn-danger">Latest</a>
-                    <a id='aunresolved' href='/?sort=unresolved' class="btn btn-danger">Unresolved</a>
-                  </div>
+                <div class="sortGroup btn-group" >
+                  <a id='alatest' href='/search?sort=latest' class="btn btn-danger">Latest</a>
+                  <a id='avotes' href='/search?sort=votes' class="btn btn-danger">Votes</a>
+                  <a id='aactive' href='/search?sort=active' class="btn btn-danger">Active</a>
                 </div>
               </div>
             </div>
-            <div class='question-list container'>
+            <div class='question-list'>
               {{#each question in entities itemController="entity"}}
-                {{#if isfavtag}}
-                <div class='question row isfavtag'>
-                {{else}}
-                <div class='question row'>
-                {{/if}}
+                <div {{bindAttr class=":question :row isanswered:isanswered"}}>
                   <div class='col-xs-12 col-sm-1 col-lg-1 user-profile'>
                     <div class='divPic'><a class='user-img' {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}><img {{bindAttr src='author.smallimgurl'}}/></a></div>
                     <div class='divUserDetails'>
@@ -51,12 +64,14 @@
                     <div class='row'>
                       <div class='col-xs-12 col-sm-12 col-lg-12'>
                         <h4 class='question-title'>
-                          {{#if isanswered}}
-                            <span class='answered' title='one of the answer was accepted as answer'></span>
-                          {{else}}
-                            <span class='unanswered' title='none of the answers was accepted as answer'></span>
-                          {{/if}}
-                          <a {{bindAttr title='text'}} {{bindAttr href='url'}}>{{title}}</a>
+                          <a {{bindAttr title='text'}} {{bindAttr href='url'}}>
+                            {{#if isquestion}}
+                              Q: 
+                            {{else}}
+                              A: 
+                            {{/if}}
+                            {{title}}
+                          </a>
                         </h4>
                       </div>
                     </div>
@@ -68,8 +83,6 @@
                     <div class='row'>
                       <div class='col-xs-12 col-sm-12 col-lg-12 question-details'>
                         <span class="mrs">{{votecount}} {{pluralize votecount s='vote'}}</span>
-                        <span class='mrs'>&#8226; {{answercount}} {{pluralize answercount s='answer'}} </span>
-                        <span class='mrs'>&#8226; {{viewcount}} {{pluralize viewcount s='view'}}</span>
                       </div>
                     </div>
                   </div>
@@ -81,9 +94,16 @@
                 </div>              
               {{/each}}
             </div>
+            <div class='pager-container'>
+              <div class='row'>
+                <div class='col-xs-12 col-sm-12 col-lg-12'>
+                  {{outlet pagerBar}}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class='col-xs-12 col-sm-12 col-lg-3'>
+        <div class='col-xs-12 col-sm-12 col-lg-3 z-index-0'>
           <div class='sideSection'>
             <div class='row'>
             </div>
