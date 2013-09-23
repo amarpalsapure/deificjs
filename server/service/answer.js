@@ -240,7 +240,10 @@ exports.save = function(req, res) {
 	var app = require('../shared/app.init');
 	var state = app.init(req);
 
-	if(!state.userid) return res.status(401).json(req.body.answer);
+	if(!state.userid) {
+		res.clearCookie('u');
+		return res.status(401).json({ message: 'Session expired' });
+	}
 
 	//initialize appacitive sdk
 	var sdk = require('./appacitive.init');
@@ -249,46 +252,84 @@ exports.save = function(req, res) {
 	//get the transformer
 	var transformer = require('./infra/transformer');
 
-	//perform a basic transform
-	var aAnswer = transformer.toAppacitiveAnswer(Appacitive, answer);
-	aAnswer.set('text', answer.text);
-	aAnswer.attr('question', answer.question);
-	aAnswer.attr('title', answer.title);
-
-	//STEP 1: Save the Answer and connect user to answer
-	var userRelation = new Appacitive.ConnectionCollection({ relation: 'answer_user' });
-	var userConnection = userRelation.createNewConnection({ 
-	  endpoints: [{
-	      article: aAnswer,
-	      label: 'answer'
-	  }, {
-	      articleid: state.userid,
-	      label: 'user'
-	  }]
-	});
-	userConnection.save(function(){
-		//STEP 2: Create connection of Answer with question
-		var questionRelation = new Appacitive.ConnectionCollection({ relation: 'question_answer' });
-		var questionConnection = questionRelation.createNewConnection({ 
-		  endpoints: [{
-		      articleid: answer.question,
-		      label: 'question'
-		  }, {
-	       	  article: aAnswer,
-		      label: 'answer'
-		  }]
-		});
-		questionConnection.save(function(){
-			var response = transformer.toAnswer(aAnswer);
-			response.answer.author = state.userid;
-			response.answer.question = answer.question;
-			return res.json(response);
-		}, function(status){
-			//Rollback the answer
-			aAnswer.del(function(){}, function(){}, true);
-			return res.status(500).json({ message: 'Unable to save answer' });
-		})
-	}, function(status){
+	var rollbackAnswer = function(aAnswer) {
+		//Rollback the answer
+		aAnswer.del(function(){}, function(){}, true);
 		return res.status(500).json({ message: 'Unable to save answer' });
-	});
+	};
+
+	//creates the answer and connects it with current logged in user
+	//and then connects with question
+	var createAnswer = function() {
+		//perform a basic transform
+		var aAnswer = transformer.toAppacitiveAnswer(Appacitive, answer);
+		aAnswer.set('text', answer.text);
+		aAnswer.set('__createdby', state.userid);
+		aAnswer.attr('question', answer.question);
+		aAnswer.attr('title', answer.title);
+
+		//creates 'answer_user' relation between user and answer
+		var answer_user_Create = function(onsuccess, onfailure) {
+			var relation = new Appacitive.ConnectionCollection({ relation: 'answer_user' });
+			var connection = relation.createNewConnection({ 
+			  endpoints: [{
+			      article: aAnswer,
+			      label: 'answer'
+			  }, {
+			      articleid: state.userid,
+			      label: 'user'
+			  }]
+			});
+			connection.save(onsuccess, onfailure);
+		}
+
+		//creates 'question_answer' relation between question and answer
+		var question_answer_Create = function(onsuccess, onfailure) {
+			var relation = new Appacitive.ConnectionCollection({ relation: 'question_answer' });
+			var connection = relation.createNewConnection({ 
+			  endpoints: [{
+			      articleid: answer.question,
+			      label: 'question'
+			  }, {
+		       	  articleid: aAnswer.id(),
+			      label: 'answer'
+			  }]
+			});
+			connection.save(onsuccess, onfailure);
+		}
+
+		//update question, and set the issearchable flag to true
+		//so that it appears in all searches
+		var updateAnswer = function() {
+			//set issearchable
+			aAnswer.set('issearchable', true);
+			aAnswer.save(function(){
+				//return the response
+				var response = transformer.toAnswer(aAnswer);
+				response.answer.author = state.userid;
+				response.answer.question = answer.question;
+				return res.json(response);
+			}, function(status) {
+				return rollbackAnswer();
+			});
+		};
+
+		//create answer and connect to user
+		answer_user_Create(function(){
+			//connect question and answer
+			question_answer_Create(function() {
+				//update answer, so that it can be searched
+				updateAnswer();
+			}, function(status) {
+				//rollback answer
+				return rollbackAnswer(aAnswer);
+			});
+		}, function(status) {
+			//rollback answer
+			return rollbackAnswer(aAnswer);
+		});
+	};
+
+	//initiate the create process
+	createAnswer();
 };

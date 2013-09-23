@@ -20,10 +20,15 @@ exports.init = function (req) {
 		state.fullname = req.signedCookies.u.f + ' ' + req.signedCookies.u.l;
 		state.user = "window.init = {};" +
 					 "window.init.user = { "+
-					 "id: '"+ req.signedCookies.u.i +"', "+
-					 "fname: '" + req.signedCookies.u.f + "', "+
-					 "lname: '"+ req.signedCookies.u.l +"'};" +
+						"id: '"+ req.signedCookies.u.i +"', "+
+						"fname: '" + req.signedCookies.u.f + "', "+
+						"lname: '"+ req.signedCookies.u.l + "'" +
+					 "};" +
+					 "window.init.config = { " +
+					 	"maxpagecount: " + parseInt(process.config.maxpagecount) +
+					 "};" +
 					 "window.host = '" + config.host + "'";
+
 		state.token = req.signedCookies.u.t;
 	}
 	return state;

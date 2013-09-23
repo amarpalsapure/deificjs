@@ -31,6 +31,7 @@ exports.findAll = function(req, res) {
 		var sdk = require('./appacitive.init');
 		var Appacitive = sdk.init();
 
+		//get the transformer
 		var transformer = require('./infra/transformer');
 
 		//First get the question according to the query
@@ -61,7 +62,7 @@ exports.findAll = function(req, res) {
 						pageSize: process.config.pagesize
 					});
 
-		query.fetch(function (questions, pi) {
+		query.fetch(function (questions, paginginfo) {
 			questions.forEach(function (question) {
 				questionIds.push(question.id());
 			})
@@ -73,7 +74,7 @@ exports.findAll = function(req, res) {
 			var query = new Appacitive.Queries.GraphProjectQuery('questions', questionIds);
 			query.fetch(function (gQuestions) {
 				//if no data found
-				if(gQuestions && gQuestions.length > 0) response = transformer.toQuestions(gQuestions);
+				if(gQuestions && gQuestions.length > 0) response = transformer.toQuestions(gQuestions, paginginfo);
 				
 				return res.json(response);
 			}, function (status) {
@@ -416,17 +417,18 @@ exports.create = function(req, res) {
 		return res.status(401).json({ message: 'Session expired' });
 	}
 
+	//creates the question and connects it with current logged in user
 	var createQuestion = function() {
-		var question_user_conn_id;
 		var aQuestion = transformer.toAppacitiveQuestion(Appacitive, question);
 		aQuestion.set('title', question.title);
 		aQuestion.set('text', question.text);
+		aQuestion.set('__createdby', state.userid);
 
 		var shortText = question.text.substring(0, 200);
 		shortText = shortText.substring(0, Math.min(shortText.length, shortText.lastIndexOf(' ')));
 		aQuestion.set('shorttext', shortText);
 
-		//creates 'question_user' relation between user and question 
+		//creates 'question_user' relation between user and question
 		var question_user_Create = function(onsuccess, onfailure) {
 			var relation = new Appacitive.ConnectionCollection({ relation: 'question_user' });
 			var connection = relation.createNewConnection({ 
@@ -442,12 +444,6 @@ exports.create = function(req, res) {
 				question_user_conn_id = connection.id();
 				onsuccess();
 			}, onfailure);
-		}
-
-		//deletes 'question_user' relation between user and question 
-		var question_user_Delete = function(onsuccess, onfailure) {
-			var relation = new Appacitive.Connection({ relation: 'question_user', __id: question_user_conn_id });
-			relation.del();
 		}
 
 		//creates 'question_tag' relation between user and question 
@@ -479,7 +475,8 @@ exports.create = function(req, res) {
 				response.question.tags = question.tags;
 				return res.json(response);
 			}, function(status) {
-				return res.status(502).json({ messsage: status.message });
+				aQuestion.del(function(){}, function(){}, true);
+				return res.status(500).json({ messsage: 'Unable to save answer' });		
 			});
 		};
 
@@ -495,19 +492,12 @@ exports.create = function(req, res) {
 				question_tag_Create(question.tags[i], merge, merge);
 			};
 		}, function(status) {
-			//rollback the connection
-			question_user_Delete();
-			return res.status(502).json({ messsage: 'Failed to connect user to question.' });		
+			//rollback the question
+			aQuestion.del(function(){}, function(){}, true);
+			return res.status(500).json({ messsage: 'Unable to save answer' });		
 		});
 	};
 
-	//validate the user token, to do this get user by token
-	//this also sets the current user context
-	Appacitive.Users.getUserByToken(state.token, function(user) {
-	    createQuestion();
-	}, function(err) {
-		//delete the cookie, and redirect user to login page
-		res.clearCookie('u');
-		return res.status(401).json({ message: 'Session expired' });
-	});
+	//initiate the create process
+    createQuestion();
 };

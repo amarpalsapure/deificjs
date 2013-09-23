@@ -51,6 +51,6 @@
 
 		votecount: function(){
 			return this.get('upvotecount') - this.get('downvotecount');
-		}.property('upvotecount', 'downvotecount')		
+		}.property('upvotecount', 'downvotecount')
 	});
 }).call(this);
