@@ -20,15 +20,12 @@ body { background-color: #eef0f3; }
 .answer .entity-container { padding-bottom: 50px !important; }
 .bubble { border: solid 15px #eee; border-radius: 15px; float: left; margin-top: -8px; }
 .user-profile, .vote-panel { z-index: 1; background-color: #fff; padding-bottom: 5px; }
-.isfavtag, .isfavtag .user-profile, .isfavtag .vote-panel { background-color: #FFF1B5; }
-.answered, .unanswered { width: 24px; height: 18px; display: inline-block; vertical-align: text-bottom;  }
-.answered { background: transparent url(../images/answer.png) left center no-repeat; }
-.unanswered { background: transparent url(../images/unanswer.png) left center no-repeat; }
+.isanswered, .isanswered .user-profile, .isanswered .vote-panel { background-color: #F4FFEC; }
 .user-profile { padding-top: 2px; }
 .question-page .user-profile { margin-top: 18px; }
 .question-page textarea, .question-new-page textarea { resize: vertical; width: 100%; font-size: 0.9em; font-family: Monaco, Menlo, Consolas, "Courier New", monospace;}
 .question-new-page textarea { height: 200px !important; }
-.related-tags { margin-top: 4px; padding: 5px 0px 7px;}
+.related-tags { margin-top: 6px; padding: 5px 0px 7px;}
 .tagCloud-container li { list-style: none; padding: 4px 0 4px;}
 .tagCloud-container li div { display: inline-block; }
 .tagCloud-container .muted { margin-top: 1px; color: #888; margin-left: -8px; }
@@ -42,8 +39,11 @@ body { background-color: #eef0f3; }
 .vote-panel { padding-top: 4px; }
     .vote-panel a:first-child { margin-bottom: 3px; }
 
+.content { border: solid 1px #cdcdcd; margin-bottom: 48px; }
 .content, .question-list { padding: 0px; }
-    .content .mainSection, .content .sideSection { min-height: 480px; margin-bottom: 48px; background-color: #fff; padding: 10px 20px 60px; }
+    .content .mainSection, .content .sideSection { min-height: 480px; padding: 10px 20px 60px; }
+    .content .mainSection { margin-right: -15px; background-color: #fff; border-right: solid 1px #cdcdcd; box-shadow: 1px 0px 4px #bbb; }
+    .content .sideSection {  margin-left: -15px; background-color: #EEF0F3; }
     .question-list .question { padding: 18px 0 18px !important; border-bottom: 1px dashed #ADADAD; }
         .question-list .question .user-img { padding-bottom: 4px; }
     .question-list h4 { padding: 0; margin: 0; font-size: 16px; line-height: 1.4; }

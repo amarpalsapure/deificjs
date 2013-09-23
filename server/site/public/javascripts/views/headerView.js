@@ -4,7 +4,7 @@
 
         didInsertElement: function() {
             var query = $.fn.parseParam('q');
-            if(query === '') return;
+            if(!query || query === '') return;
             this.set('searchtext', decodeURI(query));
             $(this.get('element')).find('.searchbox > input').focus();
         },

@@ -18,7 +18,10 @@ exports.freeText = function (req, res) {
 	//First get the question according to the query
 	//then get the question details by making a graph query call
 	var orderBy = '__utcdatecreated',
-		filter = "*issearchable == true and (*title like '*" + query + "*' or *text like '*" + query + "*')";
+		filter = "*issearchable == true and (*title like '*" + query + "*' or *text like '*" + query + "*')",
+		pagenumber = req.param('page');
+
+	if(!pagenumber) pagenumber = 1;
 
 	var sort = req.query.sort;
 	sort = (!sort) ? 'latest' : sort.toLowerCase();
@@ -35,10 +38,11 @@ exports.freeText = function (req, res) {
 
 	var query = new Appacitive.Queries.FindAllQuery({
 					schema : 'entity',
-					fields : 'title,text,type,upvotecount,downvotecount,totalvotecount,__createdby,__utcdatecreated,__attributes',
+					fields : 'title,text,type,isanswered,totalvotecount,__createdby,__utcdatecreated,__attributes',
 					isAscending: false,
 					orderBy: orderBy,
 					filter: filter,
+					pageNumber: pagenumber,
 					pageSize: process.config.pagesize
 				});
 

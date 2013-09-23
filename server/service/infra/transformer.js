@@ -228,12 +228,11 @@ var _toEntities = function(entities, paginginfo) {
 	entities.forEach(function(entity) {
 		var jEntity = entity.toJSON();
 
-		//set the title depending upon the type
-		if(jEntity.type === 'question') jEntity.title = 'Q: ' + jEntity.title;
-		else jEntity.title = 'A: ' + entity.attr('title');
+		//set the title for answer as question title from it's attribute
+		if(jEntity.type != 'question') jEntity.title = entity.attr('title');
 
 		//set the url
-		if(jEntity.type === 'question')
+		if(jEntity.type === 'question') 
 			jEntity.url = process.config.host + '/questions/' 
 						+ entity.id() + '/' + _urlEncode(entity.get('title'));
 		else
@@ -244,8 +243,10 @@ var _toEntities = function(entities, paginginfo) {
 		//set the author
 		jEntity.author = jEntity.__createdby;
 
-		jEntity.text = jEntity.text.substring(0, 200);
-		jEntity.text = jEntity.text.substring(0, Math.min(jEntity.text.length, jEntity.text.lastIndexOf(' ')));
+		if(jEntity.text.length > 250) {
+			jEntity.text = jEntity.text.substring(0, 250);
+			jEntity.text = jEntity.text.substring(0, Math.min(jEntity.text.length, jEntity.text.lastIndexOf(' ')));
+		}
 
 		//delete unrequired properties, so that payload is less
 		delete jEntity.__schematype;

@@ -8,7 +8,6 @@
 			//enable the the active link
 			var sort = $.fn.parseParam('sort', 'latest').toLowerCase();
 			$('.sortGroup #' + 'a' + sort).addClass('active');
-			$("#h1Sortedby").html(sort + ' questions');
 
 			//update the href of all the sort
 			//add query to the href

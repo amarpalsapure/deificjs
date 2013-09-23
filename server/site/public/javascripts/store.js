@@ -37,7 +37,6 @@
 	Deific.localDataSource = Ember.Object.create({
 		debug: true,
 		getCurrentUser: function() {
-			
 			if (window.init && window.init.user) {
 				var user = window.init.user;
 				var lUser = Deific.LocalUser.create();
