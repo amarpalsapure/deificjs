@@ -2,7 +2,12 @@
 	Deific.EntitiesView =  Ember.View.extend({
 		templateName: 'entities',
 
-		entitylist: 'pagetype',
+		entitylist: true,
+		hidetag: true,
+		hidevotecount: false,
+		hideviewcount: true,
+		hideanswercount: true,
+
 
 		didInsertElement: function(){
 			//remove loader

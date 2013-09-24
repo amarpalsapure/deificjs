@@ -47,7 +47,7 @@ body { background-color: #eef0f3; }
     .content .sideSection {  margin-left: -15px; background-color: #EEF0F3; }
     .question-list .question { padding: 18px 0 18px !important; border-bottom: 1px dashed #ADADAD; }
         .question-list .question .user-img { padding-bottom: 4px; }
-        .question-list .col-sm-9 { padding-left: 5px; padding-right: 5px; }
+        .question-list .col-entity-details { padding-left: 5px; padding-right: 5px; }
 .entity-details span { font-size: 0.9em; color: #777; }
 
 .mainSection .row { padding: 2px 0 6px; }
@@ -236,7 +236,7 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
 @media screen and (max-width: 767px) {
     .sortGroup { margin-top: 4px; }
     .entity-info .divUser, .entity-info .separator { display: none; }
-    .question-list .col-sm-9 { padding-left: 15px; padding-right: 15px; }
+    .question-list .col-entity-details { padding-left: 15px; padding-right: 15px; }
     .user-profile .divUser { display: inline-block; }
     .divPic, .divUserDetails { display: inline-block; vertical-align: top; margin-top: 0px; }
     .divUserDetails div { margin-top: 0px; margin-left: 3px; }

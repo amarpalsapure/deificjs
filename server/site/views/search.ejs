@@ -35,60 +35,8 @@
               </div>
             </div>
             <div class='question-list'>
-              {{#each question in entities itemController="entity"}}
-                <div {{bindAttr class=":question :row isanswered:isanswered"}}>
-                  <div class='col-xs-12 col-sm-1 col-lg-1'>
-                    <div class='user-profile'>
-                      <div class='divPic'>
-                        <a class='user-img' {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}>
-                          <img {{bindAttr src='author.smallimgurl'}}/>
-                        </a>
-                      </div>
-                      <div class='divUserDetails'>
-                        <div class='divUser'>
-                          <a {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}>
-                            <span class='fname'>{{author.firstname}}</span><span class='lname'>{{author.lastname}}</span>
-                          </a>
-                          </div>
-                        <div class='divPts'>{{abbreviateNumber author.reputation}}</div>
-                      </div>
-                      <div class='divPosted'>
-                        asked...
-                      </div>
-                    </div>
-                  </div>
-                  <div class='col-xs-12 col-sm-9 col-lg-9'>
-                    <div class='row'>
-                      <div class='col-xs-12 col-sm-12 col-lg-12'>
-                        <h4 class='question-title'>
-                          <a {{bindAttr title='text'}} {{bindAttr href='url'}}>
-                            {{#if isquestion}}
-                              Q: 
-                            {{else}}
-                              A: 
-                            {{/if}}
-                            {{title}}
-                          </a>
-                        </h4>
-                      </div>
-                    </div>
-                    <div class='row'>
-                      <div class='col-xs-12 col-sm-12 col-lg-12 font9'>
-                        {{text}}... <a {{bindAttr href='url' title='Click to read more'}}>more</a>
-                      </div>
-                      </div>
-                    <div class='row'>
-                      <div class='col-xs-12 col-sm-12 col-lg-12 question-details'>
-                        <span class="mrs">{{votecount}} {{pluralize votecount s='vote'}}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class='col-xs-12 col-sm-2 col-lg-2'>
-                    <div class='divTime'>
-                      {{sincetime __utcdatecreated}}
-                    </div> 
-                  </div>
-                </div>
+              {{#each entity in entities itemController="entity"}}
+                {{render 'entity' entity}}
               {{else}}
                 <div class='row'>
                   <div class='col-xs-12 col-sm-12 col-lg-12'>

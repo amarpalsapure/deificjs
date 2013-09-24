@@ -1,16 +1,11 @@
 <% layout('__layout') -%>
 
+<% script('/javascripts/infra/commonTemplate.js') -%>
 <% script('/javascripts/router/indexRouter.js') -%>
 <% script('/javascripts/controllers/questionController.js') -%>
 <% script('/javascripts/views/questionsView.js') -%>
 <% script('/javascripts/views/tagView.js') -%>
 
-
-<script type='text/x-handlebars', data-template-name='tag'>
-  <span class='label label-default mrm'>
-    <a data-toggle='popover' {{bindAttr data-content='description'}} {{bindAttr data-original-title='name'}} {{bindAttr href='selfurl'}}>{{name}}</a>
-  </span>
-</script>
 
 <script type='text/x-handlebars', data-template-name='tags'>
   <ul class='tagCloud-container pan mtm'>
@@ -50,85 +45,7 @@
             </div>
             <div class='question-list'>
               {{#each question in questions itemController="question"}}
-                <div {{bindAttr class=":question :row isanswered:isanswered"}}>
-                  <div class='col-xs-12 col-sm-1 col-lg-1'>
-                    <div class='user-profile'>
-                      <div class='divPic'>
-                        <a class='user-img' {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}>
-                          <img {{bindAttr src='author.smallimgurl'}}/>
-                        </a>
-                      </div>
-                      <div class='divUserDetails'>
-                        <div class='divUser'>
-                          <a {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}>
-                            <span class='name'>{{author.fullname}}</span>&nbsp;<span class='spanPosted'>asked...</span>
-                          </a>
-                        </div>
-                        <div class='divPts'>{{abbreviateNumber author.reputation}}</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div {{bindAttr class=':col-xs-12 view.questionlist:col-sm-9:col-sm-11 view.questionlist:col-lg-9:col-lg-11'}}>
-                    <div {{bindAttr class=':row view.questionpage:border-bottom'}}>
-                      <div class='col-xs-12 col-sm-12 col-lg-12'>
-                        <div class='entity-info-container'>
-                          <div {{ bindAttr class='view.questionpage:question-bookmark:hide'}}>
-                            <i class="icon-star"></i>
-                          </div>
-                          <div class='entity-info'>
-                            <div class='entity-title'>
-                              <div class='pbxs'>
-                                <h1>
-                                  <a {{bindAttr title='text'}} {{bindAttr href='url'}}>
-                                    {{#if view.entitylist}}
-                                      {{#if isquestion}}
-                                        Q: 
-                                      {{else}}
-                                        A: 
-                                      {{/if}}
-                                    {{/if}}
-                                    {{title}}
-                                  </a>
-                                </h1>
-                              </div>
-                            </div>
-                            <div class='divUser'>
-                              <span class='spanPosted muted font9'>asked by </span>
-                              <a {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}>
-                                <span class='name'>{{author.fullname}}</span>
-                              </a>
-                            </div>
-                            <div class='separator'></div>
-                            <div class='entity-details'>
-                              <span class="mrs">{{votecount}} {{pluralize votecount s='vote'}}</span>
-                              <span class='mrs'>&#8226; {{answercount}} {{pluralize answercount s='answer'}} </span>
-                              <span class='mrs'>&#8226; {{viewcount}} {{pluralize viewcount s='view'}}</span>
-                            </div>
-                            <div class='question-tag'>
-                              <div class='pts pbm tag-container'>
-                                {{#each tag in tags}}
-                                  {{render 'tag' tag}}
-                                {{/each}}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class='row'>
-                      <div class='col-xs-12 col-sm-12 col-lg-12 font9'>
-                        <div {{bindAttr class='view.questionpage:ptm :pbm'}}>
-                          {{text}}... <a {{bindAttr href='url' title='Click to read more'}}>more</a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div {{bindAttr class=':col-xs-12 :col-sm-2 :col-lg-2 view.questionlist:show:hide'}} >
-                    <div class='divTime'>
-                      {{sincetime __utcdatecreated}}
-                    </div> 
-                  </div>
-                </div>
+                {{render 'entity' question}}
               {{else}}
                 <div class='row'>
                   <div class='col-xs-12 col-sm-12 col-lg-12'>

@@ -32,6 +32,7 @@ app.engine('ejs', engine);
 //app.use(googlebot());
 app.use(express.favicon());
 app.use(express.logger('dev'));
+app.use(express.compress());
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.cookieParser('9b7c1f44590b46e509db'));
