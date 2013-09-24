@@ -1,11 +1,13 @@
 exports.save = function(req, res) {
 	var payload = req.body.comment;
 
-	var sdk = require('./appacitive.init');
-	var Appacitive = sdk.init();
-
+	//get the state of app
 	var app = require('../shared/app.init');
 	var state = app.init(req);
+
+	//intialize SDK
+	var sdk = require('./appacitive.init');
+	var Appacitive = sdk.init(state.debug);
 
 	if(!state.userid) throw new Error('Session expired');
 

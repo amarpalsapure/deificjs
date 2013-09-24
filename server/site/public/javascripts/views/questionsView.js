@@ -1,6 +1,10 @@
 (function() {
 	Deific.QuestionsView =  Ember.View.extend({
 		templateName: 'questions',
+
+		questionlist: true,
+		//questionpage: true,
+
 		didInsertElement: function(){
 
 			//remove loader
@@ -10,11 +14,6 @@
 			var sort = $.fn.parseParam('sort', 'popular').toLowerCase();
 			$('.sortGroup #' + 'a' +sort).addClass('active');
 			$("#h1Sortedby").html(sort + ' questions');
-		}
-	});
-	Deific.TagView = Ember.View.extend({
-		didInsertElement: function() {
-			$(this.get('element')).find('a').popover({trigger: 'hover'});
 		}
 	});
 }).call(this);

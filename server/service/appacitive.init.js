@@ -1,4 +1,9 @@
-exports.init = function (userToken) {
+exports.init = function (userToken, debug) {
+	if(!debug) debug = false;
+	if(typeof userToken === 'boolean') {
+		debug = userToken;
+		userToken = null;
+	}
 	var path = './infra/AppacitiveSDK.js';
 	delete require.cache[require.resolve(path)];
 
@@ -9,7 +14,8 @@ exports.init = function (userToken) {
 	    apikey: process.config.apikey, 
 	    env: process.config.env,
 	    appId: process.config.appId,
-	    userToken: userToken
+	    userToken: userToken,
+	    debug: debug
 	});
 
 	Appacitive.config.apiBaseUrl = "http://apis.appacitive.com/";

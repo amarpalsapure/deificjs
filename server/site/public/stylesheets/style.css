@@ -20,8 +20,9 @@ body { background-color: #eef0f3; }
 .answer .entity-container { padding-bottom: 50px !important; }
 .bubble { border: solid 15px #eee; border-radius: 15px; float: left; margin-top: -8px; }
 .user-profile, .vote-panel { z-index: 1; background-color: #fff; padding-bottom: 5px; }
+.user-profile img { box-shadow: 1px 1px 3px #ccc; }
 .isanswered, .isanswered .user-profile, .isanswered .vote-panel { background-color: #F4FFEC; }
-.user-profile { padding-top: 2px; }
+.user-profile { padding-top: 2px; width: 36px;}
 .question-page .user-profile { margin-top: 18px; }
 .question-page textarea, .question-new-page textarea { resize: vertical; width: 100%; font-size: 0.9em; font-family: Monaco, Menlo, Consolas, "Courier New", monospace;}
 .question-new-page textarea { height: 200px !important; }
@@ -46,8 +47,8 @@ body { background-color: #eef0f3; }
     .content .sideSection {  margin-left: -15px; background-color: #EEF0F3; }
     .question-list .question { padding: 18px 0 18px !important; border-bottom: 1px dashed #ADADAD; }
         .question-list .question .user-img { padding-bottom: 4px; }
-    .question-list h4 { padding: 0; margin: 0; font-size: 16px; line-height: 1.4; }
-.question-details span { font-size: 0.9em; color: #777; }
+        .question-list .col-sm-9 { padding-left: 5px; padding-right: 5px; }
+.entity-details span { font-size: 0.9em; color: #777; }
 
 .mainSection .row { padding: 2px 0 6px; }
 
@@ -58,16 +59,23 @@ body { background-color: #eef0f3; }
 
 .action-question, .action-question:hover { display: inline-block; float: right; margin: 14px 8px 0 0; padding: 4px 8px; background-color: #428bca; color: #fff; cursor: pointer; }
 
-.divUser, .divPic, .divUserDetails { display: block; margin-top: 2px; }
-.divPosted { display: none; }
-.divPts { color: gray; font-size: 0.85em; font-weight: bold; padding-top: 2px; }
+.divPic, .divUserDetails { display: block; margin-top: 2px; }
+.user-profile .spanPosted, .user-profile .divUser { display: none; }
+.divPic { padding-bottom: 4px; }
+.divPts { color: #aaa; font-size: 0.85em; text-align: center; border: solid 1px #eee; width: 40px; }
 .divTime { font-size: 12px; color: #737373; font-style: italic; text-align: right; white-space: nowrap; }
 .divUser a, .divUser a span, .commentor, .divUser a:hover, .commentor:hover { font-size: 0.95em; text-overflow: ellipsis; overflow: hidden; color: #222; font-weight: 700; line-height: 16px;}
-.divUser a, .divUser a span { display: block; width: 65px;}
 .commentor { margin-right: 5px; white-space: nowrap; }
 
-.question-page .question-title { margin-top: 0px; margin-bottom: -6px; }
-    .question-page .question-title a { color: #222; }
+.entity-info-container > div { float: left; }
+.entity-info-container h1, .entity-info > div { display: inline; }
+
+.entity-info-container h1 { padding: 0; margin: 0; font-size: 1.2em; line-height: 1.4; }
+.question-bookmark { color: #F7DF2C; font-size: 1.2em; width: 25px;}
+.entity-info .entity-title { display: block;}
+
+.question-page .entity-title { margin-top: 0px; margin-bottom: -6px; }
+    .question-page .entity-title a { color: #222; }
 .question-page .question-tag { margin-top: -2px; margin-bottom: 8px; }
 .question-page .vote-sum { color: gray; font-size: 1.5em; line-height: 2.0em; min-width: 30px; text-align: center; }
 .question-page .user-panel { background-color: #eee; padding: 6px 10px 4px; }
@@ -195,12 +203,6 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
 
 /* tablets */
 @media screen and (max-width: 980px) {
-    .divUser a, .divUser a span { display: inline-block; width: 50px; }
-    .divPic, .divUserDetails { display: inline-block; vertical-align: top; margin-top: 0px; }
-    .divUserDetails { margin-top: 2px; }
-        .divUserDetails div { margin-top: 0px; margin-left: 3px; }
-    .divPts { margin-top: -2px; }
-    .user-profile { margin-bottom: -2px; }
     .navbar-brand { line-height: 40px; }
     .content .sideSection { display: none; }
     .entity-container { padding-left: 6.4%; margin-left: -4.2%; width: 95%; }
@@ -208,15 +210,13 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
 }
 
 @media screen and (max-width: 767px) {
-    .divUser a, .divUser a span { display: inline-block; width: 80px; }
-    .divUser a .lname { margin-left: 3px; }
     .btn.btn-flat.btn-green { width: 100%; margin-top: 10px; margin-left: 0px; }
     .imglnk, .bubble { display: none; }
     .contentTitle .btn { font-size: 11px; }
     .contentTitle h1 { font-size: 18px; margin-bottom: 0px; }
     .contentTitle .btn-group { float: left; }
-    .divPosted { font-weight: 700; font-size: 0.95em; margin-left: 2px; margin-top: 2px; display: inline-block; }
-    .question-page .question-title { padding-top: 6px; }
+    .user-profile .spanPosted { font-weight: 700; font-size: 0.95em; margin-left: 2px; margin-top: 2px; display: inline-block; }
+    .question-page .entity-title { padding-top: 6px; }
     .entity-container { padding-top: 6px !important; padding-left: 15px; margin-left: 0px; width: 100%; border-left: none; }
     .time-container { margin-left: 0px; }
     .arrow-left { display: none; }
@@ -232,7 +232,15 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
     .vote-up-count { border-bottom: none; }
 }
 
-@media screen and (max-width: 480px) /* Mobile */ {
+/* Mobile */
+@media screen and (max-width: 767px) {
+    .sortGroup { margin-top: 4px; }
+    .entity-info .divUser, .entity-info .separator { display: none; }
+    .question-list .col-sm-9 { padding-left: 15px; padding-right: 15px; }
+    .user-profile .divUser { display: inline-block; }
+    .divPic, .divUserDetails { display: inline-block; vertical-align: top; margin-top: 0px; }
+    .divUserDetails div { margin-top: 0px; margin-left: 3px; }
+    .divPts { margin-top: 2px !important; }
     .user-profile, .vote-panel { width: 100% !important; }
     .vote-panel { margin-top: 10px; text-align: left; }
     #wmd-spacer3, #wmd-undo-button, #wmd-redo-button { display: none !important; }

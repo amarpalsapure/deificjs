@@ -1,6 +1,9 @@
 (function() {
 	Deific.EntitiesView =  Ember.View.extend({
 		templateName: 'entities',
+
+		entitylist: 'pagetype',
+
 		didInsertElement: function(){
 			//remove loader
 			$('#rootProgress').remove();

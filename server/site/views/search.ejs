@@ -1,5 +1,7 @@
 <% layout('__layout') -%>
 
+<% script('/javascripts/infra/commonTemplate.js') -%>
+
 <% script('/javascripts/router/baseRoute.js') -%>
 <% script('/javascripts/router/freeSearchRouter.js') -%>
 
@@ -12,17 +14,6 @@
 <% script('/javascripts/views/entitiesView.js') -%>
 <% script('/javascripts/views/pagingView.js') -%>
 
-
-<script type="text/x-handlebars", data-template-name='paging'>
-  <ul class="pagination">
-    <li {{bindAttr class='view.disableprepage:disabled'}}><a {{bindAttr href='view.jumpfirstpage'}}>&laquo;</a></li>
-    {{#each page in pages itemController="paging"}}
-      <li {{bindAttr class='isactivepage:active'}}><a {{bindAttr href='jumptopage'}}>{{pagenumber}}</a></li>
-    {{/each}}
-    <li {{bindAttr class='view.disablenextpage:disabled'}}><a {{bindAttr href='view.jumplastpage'}}>&raquo;</a></li>
-  </ul>
-</script>
-
 <script type='text/x-handlebars', data-template-name='entities'>
   {{outlet headerBar}}
   
@@ -33,7 +24,7 @@
           <div class='mainSection'>
             <div class='row contentTitle'>
               <div class='col-xs-12 col-sm-7 col-lg-7'>
-                <h1 class='mtm transform-lower'><span id='h1SearchCount'></span>&nbsp;results</h1>
+                <h1 class='mtm transform-lower'><span id='h1SearchCount'>0</span>&nbsp;results</h1>
               </div>
               <div class="col-xs-12 col-sm-5 col-lg-5">
                 <div class="sortGroup btn-group" >
@@ -46,18 +37,24 @@
             <div class='question-list'>
               {{#each question in entities itemController="entity"}}
                 <div {{bindAttr class=":question :row isanswered:isanswered"}}>
-                  <div class='col-xs-12 col-sm-1 col-lg-1 user-profile'>
-                    <div class='divPic'><a class='user-img' {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}><img {{bindAttr src='author.smallimgurl'}}/></a></div>
-                    <div class='divUserDetails'>
-                      <div class='divUser'>
-                        <a {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}>
-                          <span class='fname'>{{author.firstname}}</span><span class='lname'>{{author.lastname}}</span>
+                  <div class='col-xs-12 col-sm-1 col-lg-1'>
+                    <div class='user-profile'>
+                      <div class='divPic'>
+                        <a class='user-img' {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}>
+                          <img {{bindAttr src='author.smallimgurl'}}/>
                         </a>
-                        </div>
-                      <div class='divPts'>{{abbreviateNumber author.reputation}}</div>
-                    </div>
-                    <div class='divPosted'>
-                      asked...
+                      </div>
+                      <div class='divUserDetails'>
+                        <div class='divUser'>
+                          <a {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}>
+                            <span class='fname'>{{author.firstname}}</span><span class='lname'>{{author.lastname}}</span>
+                          </a>
+                          </div>
+                        <div class='divPts'>{{abbreviateNumber author.reputation}}</div>
+                      </div>
+                      <div class='divPosted'>
+                        asked...
+                      </div>
                     </div>
                   </div>
                   <div class='col-xs-12 col-sm-9 col-lg-9'>
@@ -91,7 +88,13 @@
                       {{sincetime __utcdatecreated}}
                     </div> 
                   </div>
-                </div>              
+                </div>
+              {{else}}
+                <div class='row'>
+                  <div class='col-xs-12 col-sm-12 col-lg-12'>
+                    <h5 class='muted mtm'>No matching results found.</h5>
+                  </div>
+                </div>
               {{/each}}
             </div>
             <div class='pager-container'>

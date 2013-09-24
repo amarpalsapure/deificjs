@@ -27,13 +27,9 @@ exports.findAll = function(req, res) {
 	} else {
 		var questionIds = [];
 
-		//get the state of app
-		var app = require('../shared/app.init');
-		var state = app.init(req);
-
 		//initialize the SDK
 		var sdk = require('./appacitive.init');
-		var Appacitive = sdk.init(state.debug);
+		var Appacitive = sdk.init();
 
 		//get the transformer
 		var transformer = require('./infra/transformer');
@@ -41,7 +37,7 @@ exports.findAll = function(req, res) {
 		//First get the question according to the query
 		//then get the question details by making a graph query call
 		var orderBy = '__utcdatecreated',
-			filter = "*issearchable==true and *type=='question'";
+			filter = "*issearchable == true and *type == 'question'";
 
 
 		var sort = req.query.sort;
@@ -142,16 +138,16 @@ var _findById = function(req, qId, callback) {
 		callback(response);
 	};
 
-	//get the state of app
-	var app = require('../shared/app.init');
-	var state = app.init(req);
-
 	//initialize the SDK
   	var sdk = require('./appacitive.init');
-	var Appacitive = sdk.init(state.debug);
+	var Appacitive = sdk.init();
 
-	//get the transformer
 	var transformer = require('./infra/transformer');
+
+	//get the state of app
+	//to check if user is logged in or not
+	var app = require('../shared/app.init');
+	var state = app.init(req);
 
 	//PARALLEL CALL 1 
 	//Get the question details
@@ -246,16 +242,17 @@ exports.update = function(req, res) {
 	//set question id, froam param
 	question.id = question.__id = req.param('id');
 
-	//get the state of app
-	var app = require('../shared/app.init');
-	var state = app.init(req);
-
 	//initialize appacitive sdk
 	var sdk = require('./appacitive.init');
-	var Appacitive = sdk.init(state.debug);
+	var Appacitive = sdk.init();
 
 	//get the transformer
 	var transformer = require('./infra/transformer');
+
+	//get the state of app
+	//to check if user is logged in or not
+	var app = require('../shared/app.init');
+	var state = app.init(req);
 
 	if(!state.userid) return res.status(401).json({ message: 'Session expired' });
 
@@ -403,19 +400,18 @@ exports.create = function(req, res) {
 	var question = req.body.question;
 	if(!question) return res.status(400);
 
-	//get the state of app
-	var app = require('../shared/app.init');
-	var state = app.init(req);
-
 	//initialize appacitive sdk
 	var sdk = require('./appacitive.init');
-	var Appacitive = sdk.init(state.debug);
+	var Appacitive = sdk.init();
 
 	//get the transformer
 	var transformer = require('./infra/transformer');
 
-	//from the state of app
-	//check if user is logged in or not
+	//get the state of app
+	//to check if user is logged in or not
+	var app = require('../shared/app.init');
+	var state = app.init(req);
+
 	if(!state.userid) {
 		res.clearCookie('u');
 		return res.status(401).json({ message: 'Session expired' });

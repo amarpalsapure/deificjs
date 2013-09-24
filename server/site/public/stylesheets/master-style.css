@@ -58,12 +58,13 @@
 .mll, .mhl, .mal { margin-left: 20px; }
 .noborder { border:0px !important; }
 .noboxshadow { box-shadow:none !important; }
-.border-bottom {border-bottom: solid 1px #ddd;}
+.border-bottom {border-bottom: solid 1px #eee;}
 .border-bottom-dark {border-bottom: solid 1px #aaa;}
 .border-bottom-dashed{border-bottom: dashed 1px #ccc;}
 .border-all-dashed {border: dashed 1px #ccc;}
 .muted { color: #bbb; font-style: italic; }
 .no-radius { border-radius: 0px; }
+.separator { border-left: solid 1px #bbb; margin: 0 10px 0 5px; }
 .width-100p { width: 100%; }
 .input-large { padding: 3px 5px; line-height: 1.6em; height: 34px; }
 .z-index-0 { z-index: 0; }

@@ -22,9 +22,13 @@ exports.findById = function(req, res) {
 		return res.json(response);
 	}
 
+	//get the state of app
+	var app = require('../shared/app.init');
+	var state = app.init(req);
+
 	//initialize the sdk
   	var sdk = require('./appacitive.init');
-	var Appacitive = sdk.init();
+	var Appacitive = sdk.init(state.debug);
 
 	//get the transformer
 	var transformer = require('./infra/transformer');
@@ -85,7 +89,7 @@ exports.update = function(req, res) {
 
 	//initialize appacitive sdk
 	var sdk = require('./appacitive.init');
-	var Appacitive = sdk.init();
+	var Appacitive = sdk.init(state.debug);
 
 	//get the transformer
 	var transformer = require('./infra/transformer');
@@ -247,7 +251,7 @@ exports.save = function(req, res) {
 
 	//initialize appacitive sdk
 	var sdk = require('./appacitive.init');
-	var Appacitive = sdk.init();
+	var Appacitive = sdk.init(state.debug);
 
 	//get the transformer
 	var transformer = require('./infra/transformer');

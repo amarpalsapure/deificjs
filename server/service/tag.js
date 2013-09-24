@@ -8,17 +8,16 @@ exports.find = function(req, res) {
 	var pageSize = req.param('ps');
 	if(isNaN(pageSize)) pageSize = process.config.pagesize;
 
+	//get the state of app
+	var app = require('../shared/app.init');
+	var state = app.init(req);
+
 	//initialize the sdk
   	var sdk = require('./appacitive.init');
-	var Appacitive = sdk.init();
+	var Appacitive = sdk.init(state.debug);
 
 	//get the transformer
 	var transformer = require('./infra/transformer');
-
-	//get the state of app
-	//to check if user is logged in or not
-	var app = require('../shared/app.init');
-	var state = app.init(req);
 
 	//search for matching tags
 	var query = new Appacitive.Queries.FindAllQuery({
@@ -56,7 +55,7 @@ exports.update = function(req, res) {
 
 	//initialize appacitive sdk
 	var sdk = require('./appacitive.init');
-	var Appacitive = sdk.init();
+	var Appacitive = sdk.init(state.debug);
 
 	//get the transformer
 	var transformer = require('./infra/transformer');
@@ -215,7 +214,7 @@ exports.save = function(req, res) {
 
 	//initialize appacitive sdk
 	var sdk = require('./appacitive.init');
-	var Appacitive = sdk.init();
+	var Appacitive = sdk.init(state.debug);
 
 	//get the transformer
 	var transformer = require('./infra/transformer');

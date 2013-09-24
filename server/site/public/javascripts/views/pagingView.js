@@ -41,6 +41,9 @@
 			var placeHolder = this.controller.get('totalRecordPlaceholder');
 			if(placeHolder)
 				$(placeHolder).html(totalRecords.toFixed(1).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").replace('.0',''));
+
+			//show the control
+			if(totalRecords > 0) this.controller.set('isvisible', true);
 		}
 	});
 }).call(this);
