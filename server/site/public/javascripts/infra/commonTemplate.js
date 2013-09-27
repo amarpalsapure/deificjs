@@ -54,7 +54,7 @@
 	  	"<div {{bindAttr id='entityid'}} {{bindAttr class='istypeanswer:answer:question istypeanswer:hide :row isanswered:isanswered'}}> \
 		    <div class='col-xs-12 col-sm-1 col-lg-1'>   \
 		    	<div class='row'>	\
-				    <div class='col-xs-8 col-sm-12 col-lg-12'>	\
+				    <div class='col-xs-7 col-sm-12 col-lg-12 prni'>	\
 		    			<!-- Entity posted by goes here --> \
 				        <div class='user-profile'>  \
 				            <div class='divPic'>    \
@@ -72,7 +72,7 @@
 				            </div>  \
 				        </div>  \
 			       	</div>	\
-			       	<div {{bindAttr class=':col-xs-4 :col-sm-12 :col-lg-12 view.questionpage:show:hide'}}>	\
+			       	<div {{bindAttr class=':col-xs-5 :plni :col-sm-12 :col-lg-12 view.questionpage:show:hide'}}>	\
 			       		<div class='vote-panel'>	\
 				       		{{#if isLoggedIn}}	\
 								<a {{action upvote}} {{bindAttr class='hasupvoted'}} href='javascript:void(0)'>	\
@@ -116,64 +116,80 @@
 			    </div>	\
 		    </div>	\
 		    <div {{bindAttr class=':col-entity-details :col-xs-12 view.questionlist:col-sm-9:col-sm-11 view.questionlist:col-lg-9:col-lg-11'}}>	\
-		    	<div {{bindAttr class='istypeanswer:callout :odd'}}>	\
+		    	<div {{bindAttr class='istypeanswer:callout :odd iscorrectanswer:answer-accepted'}}>	\
           			<div {{bindAttr class='istypeanswer:arrow-container:hide'}}>	\
 	            		<div class='arrow-left'></div>	\
 	            		<div class='arrow-up'></div>	\
           			</div>	\
 			        <div class='row'>	\
 			            <div class='col-xs-12 col-sm-12 col-lg-12'>	\
-			            	<div {{bindAttr class=':pull-left :width-100p view.questionpage:border-bottom view.questionpage:pbm'}}>	\
-				                <div class='entity-info-container'>	\
-				                	<!-- Question bookmark goes here --> \
-				                    <div {{ bindAttr class='view.questionpage:question-bookmark:hide istypeanswer:hide'}}>	\
-				                        <a href='javascript:void(0)' {{action toggleBookmark target=view}}> \
-				                        	<i {{bindAttr class=':icon-star-empty isbookmarked:icon-star'}}></i>	\
-				                        </a>	\
-				                    </div>	\
-				                    <div class='entity-info'>	\
-				                    	<!-- Entity title goes here --> \
-				                        <div class='entity-title'>	\
-				                            <div class='pbxs'>	\
-				                                <h1>	\
-				                                    <a {{bindAttr title='text'}} {{bindAttr href='url'}} {{bindAttr class='view.questionpage:font120'}}>	\
-				                                        {{#if view.entitylist}}	\
-				                                            {{#if isquestion}}	\
-				                                                Q: 	\
-				                                            {{else}}	\
-				                                                A: 	\
-				                                            {{/if}}	\
-				                                        {{/if}}	\
-				                                        {{title}}	\
-				                                    </a>	\
-				                                </h1>	\
-				                            </div>	\
-				                        </div>	\
-				                        <!-- Entity posted by goes here (for mobile users) --> \
-				                        <div class='divUser'>	\
-				                            <span class='spanPosted muted font9'>{{postedaction}} </span>	\
-				                            <a {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}>	\
-				                                <span class='name'>{{author.fullname}}</span>	\
-				                            </a>	\
-				                        </div>	\
-				                        <div class='separator'></div>	\
-				                        <!-- Question stats goes here --> \
-				                        <div class='entity-details'>	\
-				                            <span {{bindAttr class=':mrs view.hidevotecount:hide'}}>{{votecount}} {{pluralize votecount s='vote'}}</span>	\
-				                            <span {{bindAttr class=':mrs view.hideviewcount:hide'}}><span {{bindAttr class='view.questionpage:hide'}}>&#8226;</span> {{answercount}} {{pluralize answercount s='answer'}} </span>	\
-				                            <span {{bindAttr class=':mrs view.hideanswercount:hide'}}>&#8226; {{viewcount}} {{pluralize viewcount s='view'}}</span>	\
-				                        </div>	\
-				                        <!-- Question tags goes here --> \
-				                        <div {{bindAttr class=':question-tag view.hidetag:hide'}}>	\
-				                            <div class='pts pbm tag-container'>	\
-				                                {{#each tag in tags}}	\
-				                                    {{render 'tag' tag}}	\
-				                                {{/each}}	\
-				                            </div>	\
-				                        </div>	\
-				                    </div>	\
+			            	<div {{bindAttr class=':pull-left :width-100p view.questionpage:border-bottom view.questionpage:pbm istypeanswer:pbsi'}}>	\
+				            	<div {{bindAttr class=':pull-left istypeanswer:width-90p:width-100p'}}>	\
+					                <div class='entity-info-container'>	\
+					                	<!-- Question bookmark goes here --> \
+					                    <div {{ bindAttr class='view.questionpage:question-bookmark:hide istypeanswer:hide'}}>	\
+					                        <a href='javascript:void(0)' {{action toggleBookmark target=view}}> \
+					                        	<i {{bindAttr class=':icon-star-empty isbookmarked:icon-star'}}></i>	\
+					                        </a>	\
+					                    </div>	\
+					                    <div class='entity-info'>	\
+					                    	<!-- Entity title goes here --> \
+					                        <div class='entity-title'>	\
+					                            <div class='pbxs'>	\
+					                                <h1>	\
+					                                    <a {{bindAttr title='text'}} {{bindAttr href='url'}} {{bindAttr class='view.questionpage:font120'}}>	\
+					                                        {{#if view.entitylist}}	\
+					                                            {{#if isquestion}}	\
+					                                                Q: 	\
+					                                            {{else}}	\
+					                                                A: 	\
+					                                            {{/if}}	\
+					                                        {{/if}}	\
+					                                        {{title}}	\
+					                                    </a>	\
+					                                </h1>	\
+					                            </div>	\
+					                        </div>	\
+					                        <!-- Entity posted by goes here (for mobile users) --> \
+					                        <div class='divUser'>	\
+					                            <span class='spanPosted muted font9'>{{postedaction}} by</span>	\
+					                            <a {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}>	\
+					                                <span class='name'>{{author.fullname}}</span>	\
+					                            </a>	\
+					                        </div>	\
+					                        <div class='separator'></div>	\
+					                        <!-- Question stats goes here --> \
+					                        <div class='entity-details'>	\
+					                            <span {{bindAttr class=':mrs view.hidevotecount:hide'}}>{{votecount}} {{pluralize votecount s='vote'}}</span>	\
+					                            <span {{bindAttr class=':mrs view.hideviewcount:hide'}}><span {{bindAttr class='view.questionpage:hide'}}>&#8226;</span> {{answercount}} {{pluralize answercount s='answer'}} </span>	\
+					                            <span {{bindAttr class=':mrs view.hideanswercount:hide'}}>&#8226; {{viewcount}} {{pluralize viewcount s='view'}}</span>	\
+					                        </div>	\
+					                        <!-- Question tags goes here --> \
+					                        <div {{bindAttr class=':question-tag view.hidetag:hide'}}>	\
+					                            <div class='pts pbm tag-container'>	\
+					                                {{#each tag in tags}}	\
+					                                    {{render 'tag' tag}}	\
+					                                {{/each}}	\
+					                            </div>	\
+					                        </div>	\
+					                    </div>	\
+					                </div>	\
 				                </div>	\
-			                </div>	\
+				                <div {{bindAttr class='istypeanswer:show:hide :pull-right :mbxs'}}> \
+		                        	<div {{bindAttr class=':btn-group :answer-accept iscorrectanswer:iscorrectanswer'}}>	\
+		                        		<a class='' data-toggle='dropdown'>	\
+  											<i class='pls icon-ok mrs'></i>	<i class='icon-caret-down prs'></i>	\
+  										</a>	\
+  										<ul class='dropdown-menu' role='menu'>	\
+  											{{#if iscorrectanswer}}	\
+  												<li><a href='#'><i class='icon-remove'></i> <span class='font9'>Unaccept</span></a></li>	\
+											{{else}}	\
+										    	<li><a href='#'><i class='icon-ok'></i> <span class='font9'>Accept</span></a></li>	\
+										    {{/if}} \
+									  	</ul>	\
+									</div>	\
+		                        </div>	\
+	                        </div>	\
 			            </div>	\
 			        </div>	\
 			        <!-- Entity description or text -->	\

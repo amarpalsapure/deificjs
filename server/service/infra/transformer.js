@@ -188,9 +188,9 @@ var _toAnswer = function(answer, state) {
 	delete answerJ.__tags;
 	//UI will set action, when answer is updated
 	answerJ.action = '';
-	response.answer.iscorrect = answer.get('score') == 1;
-	delete answerJ.score;
 	response.answer = answerJ;
+	response.answer.iscorrectanswer = answer.get('score') === '1';
+	delete answerJ.score;
 
 	//Question and miniurl for answer
 	if(answer.children.question && answer.children.question.length > 0) {

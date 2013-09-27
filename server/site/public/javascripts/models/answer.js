@@ -71,7 +71,7 @@
 		}.property('upvotecount', 'downvotecount'),
 
 		postedaction: function() {
-			return 'Answered by';
+			return 'Answered';
 		}.property('type')
 	});
 }).call(this);

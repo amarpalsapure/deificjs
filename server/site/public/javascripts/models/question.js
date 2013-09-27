@@ -57,7 +57,7 @@
 		}.property('upvotecount', 'downvotecount'),
 
 		postedaction: function() {
-			return 'asked by';
+			return 'asked';
 		}.property('type')
 	});
 }).call(this);

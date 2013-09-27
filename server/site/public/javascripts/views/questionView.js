@@ -227,7 +227,12 @@
 	     	$('#btnSubmitQuestion').removeAttr('disabled');
 		},
 
+		notimplemented: function() {
+			alert('not implemented');
+		},
+
 		toggleBookmark: function() {
+			alert('not implemented');
 		}
 	});
 }).call(this);
