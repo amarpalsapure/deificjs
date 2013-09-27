@@ -49,6 +49,7 @@ exports.save = function(req, res) {
 
 		//Set the author
 		response.comment.author = state.userid;
+		response.comment.isowner = true;
 
 		//Set the parent, either question or answer
 		if(payload.question) response.comment.question = payload.question;

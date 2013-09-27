@@ -16,12 +16,15 @@
 		isanswered: DS.attr('boolean'),
 		voted: DS.attr('number'),
 		action: DS.attr('string'),
+		isowner: DS.attr('boolean'),
 
 		//relationship property
 		answers: DS.hasMany('answer'),
 		comments: DS.hasMany('comment'),
 		author: DS.belongsTo('user'),
 		tags: DS.hasMany('tag'),
+
+		type: 'question',
 
 		//observing functions
 		commentsArray: function() {
@@ -51,6 +54,10 @@
 
 		votecount: function(){
 			return this.get('upvotecount') - this.get('downvotecount');
-		}.property('upvotecount', 'downvotecount')
+		}.property('upvotecount', 'downvotecount'),
+
+		postedaction: function() {
+			return 'asked by';
+		}.property('type')
 	});
 }).call(this);

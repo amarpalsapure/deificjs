@@ -18,7 +18,10 @@
 
 		isquestion: function() {
 			return this.get('type') === 'question';
-		}.property('type')
+		}.property('type'),
 
+		postedaction: function() {
+			return this.get('type') === 'question' ? 'asked by' : 'answered by';
+		}.property('type')
 	});
 }).call(this);

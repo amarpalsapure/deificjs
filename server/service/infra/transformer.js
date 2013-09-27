@@ -42,7 +42,7 @@ var _toUser = function(user) {
 exports.toUser = _toUser;
 
 
-var _toComment = function(comment) {
+var _toComment = function(comment, state) {
 	if(!comment) return {};
 	var response = {
 		'__id': comment.id(),
@@ -51,6 +51,8 @@ var _toComment = function(comment) {
 		'author': comment.get('__createdby'),
 		'ishidden': false
 	};
+
+	if(state) response.isowner = response.author === state.userid;
 
 	return response;
 };
@@ -69,7 +71,7 @@ var _toTag = function(tag) {
 };
 exports.toTag = _toTag;
 
-var _toQuestion = function(question) {
+var _toQuestion = function(question, state) {
 	var response = {
 		question: {},
 		comments: [],
@@ -105,7 +107,7 @@ var _toQuestion = function(question) {
 		for (var i = 0; i < question.children.comments.length; i++) {
 			var comment = question.children.comments[i];
 			response.question.comments.push(comment.id())
-			var commentJ = _toComment(comment);
+			var commentJ = _toComment(comment, state);
 			if(i >= process.config.comments) commentJ.ishidden = true;
 			response.comments.push(commentJ);
 		};
@@ -124,6 +126,7 @@ var _toQuestion = function(question) {
 	if(question.children.author && question.children.author.length > 0) {
 		var author = _toUser(question.children.author[0]);
 		response.question.author = author['__id'];
+		if(state) response.question.isowner = author['__id'] === state.userid;
 		response.users.push(author);
 	}
 
@@ -172,7 +175,7 @@ var _toQuestions = function(questions, paginginfo) {
 };
 exports.toQuestions = _toQuestions;
 
-var _toAnswer = function(answer) {
+var _toAnswer = function(answer, state) {
 	var response = {
 		answer: {},
 		comments: [],
@@ -189,13 +192,19 @@ var _toAnswer = function(answer) {
 	delete answerJ.score;
 	response.answer = answerJ;
 
+	//Question and miniurl for answer
+	if(answer.children.question && answer.children.question.length > 0) {
+		response.answer.question = answer.children.question[0].id();
+		response.answer.murl = process.config.host + '/a/'+ response.answer.question + '/' + answer.id();
+	}
+
 	//Comments
 	if(answer.children.comments && answer.children.comments.length > 0) {
 		response.answer.comments = [];
 		for (var i = 0; i < answer.children.comments.length; i++) {
 			var comment = answer.children.comments[i];
 			response.answer.comments.push(comment.id())
-			var commentJ = _toComment(comment);
+			var commentJ = _toComment(comment, state);
 			if(i >= process.config.comments) commentJ.ishidden = true;
 			response.comments.push(commentJ);
 		};
@@ -205,6 +214,7 @@ var _toAnswer = function(answer) {
 	if(answer.children.author && answer.children.author.length > 0) {
 		var author = _toUser(answer.children.author[0]);
 		response.answer.author = author['__id'];
+		if(state) response.answer.isowner = author['__id'] === state.userid;
 		response.users.push(author);
 	}
 				

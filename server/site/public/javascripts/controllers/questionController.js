@@ -299,7 +299,7 @@
 		},
 		//check if user who has questioned or answered is not upvoting his/her own answer
 		__validateVoteUser: function(type, model) {
-			if(Deific.AccountController.user.userid != model.get('author').get('id')) return false;
+			if(model.get('isowner') === false) return false;
 			//show error
 			var alert = '<div class="alert alert-block alert-danger font9 pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> You can\'t vote on your own post. </div>';
 			$('#'+ type + '-' + model.get('id') +' .voteError').html(alert).alert();

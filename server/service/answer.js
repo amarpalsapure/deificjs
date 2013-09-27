@@ -45,7 +45,7 @@ exports.findById = function(req, res) {
 		//if no data found
 		if(!answers && answers.length == 0) return res.json(response);
 		
-		response = transformer.toAnswer(answers[0]);
+		response = transformer.toAnswer(answers[0], state);
 		merge();
 	}, function (status) {
 		merge();
@@ -136,7 +136,7 @@ exports.update = function(req, res) {
 		aAnswer.save(function(){
 			//transform the object
 			delete answer.id;
-			var response = transformer.toAnswer(aAnswer);
+			var response = transformer.toAnswer(aAnswer, state);
 			response.answer.author = answer.author;
 			response.answer.comments = answer.comments;
 			response.answer.tags = answer.tags;
@@ -309,7 +309,7 @@ exports.save = function(req, res) {
 			aAnswer.set('issearchable', true);
 			aAnswer.save(function(){
 				//return the response
-				var response = transformer.toAnswer(aAnswer);
+				var response = transformer.toAnswer(aAnswer, state);
 				response.answer.author = state.userid;
 				response.answer.question = answer.question;
 				return res.json(response);

@@ -64,5 +64,7 @@ Deific.QuestionRoute = Ember.Route.extend({
 	renderTemplate: function() {
 		this.render('question');
 		this.render('header', {	into: 'question', outlet: 'headerBar', controller: 'header' });
+		this.render('entity', { into: 'question', outlet: 'questionDetails' });
+		this.render('time', { into: 'question', outlet: 'questionDate' });
 	}
 });

@@ -161,7 +161,7 @@ var _findById = function(req, qId, callback) {
 		if(!questions && questions.length == 0) callback(response);
 		
 		var question = questions[0]
-		response = transformer.toQuestion(question);
+		response = transformer.toQuestion(question, state);
 		merge();
 
 		//update the view count, fire and forget save call
@@ -301,7 +301,7 @@ exports.update = function(req, res) {
 		aQuestion.save(function(){
 			//transform the object
 			delete question.id;
-			var response = transformer.toQuestion(aQuestion);
+			var response = transformer.toQuestion(aQuestion, state);
 			response.question.answercount = question.answercount;
 			response.question.author = question.author;
 			response.question.comments = question.comments;
@@ -472,7 +472,7 @@ exports.create = function(req, res) {
 			aQuestion.set('issearchable', true);
 			aQuestion.save(function(){
 				//return the response
-				var response = transformer.toQuestion(aQuestion);
+				var response = transformer.toQuestion(aQuestion, state);
 				response.question.answercount = 0;
 				response.question.author = question.author;
 				response.question.comments = [];

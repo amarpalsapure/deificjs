@@ -1,4 +1,4 @@
-.font120 {font-size: 1.2em;}
+.font120 {font-size: 1.2em; line-height: 1.6em;}
 .font110 {font-size: 1.1em;}
 .font105 {font-size: 1.05em;}
 .font95 { font-size: 0.95em;}
@@ -61,6 +61,7 @@
 .border-bottom {border-bottom: solid 1px #eee;}
 .border-bottom-dark {border-bottom: solid 1px #aaa;}
 .border-bottom-dashed{border-bottom: dashed 1px #ccc;}
+.border-top-dashed {border-top: dashed 1px #ccc;}
 .border-all-dashed {border: dashed 1px #ccc;}
 .muted { color: #bbb; font-style: italic; }
 .no-radius { border-radius: 0px; }

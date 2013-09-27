@@ -1,12 +1,17 @@
 (function() {
-	Deific.AnswerView =  Ember.View.extend({
+	Deific.AnswerView =  Deific.BaseView.extend({
+
+		hidevotecount: true,
+		hideanswercount: true,
+		hideviewcount: true,
+
 		didInsertElement: function(){
 			//remove loader and show answer
 			var asyncShowAnswer = function() {
 				setTimeout(function(){
 					var $loaderEle = $('#answer-loader-'+ model.get('id'));
 					//show answer
-					$loaderEle.next('.answer').removeClass('hide')
+					$('#answer-'+model.get('id')).removeClass('hide')
 					//remove loader
 					$loaderEle.remove();
 				}, 50);
@@ -64,6 +69,10 @@
 			var $ele = $('#answer-' + model.get('id'));
 			$ele.find('.comment').removeClass('hide');
 			$ele.find('.showMore').parent().remove();
+		},
+
+		notimplemented: function() {
+			alert('not implemented');
 		}
 	});
 }).call(this);

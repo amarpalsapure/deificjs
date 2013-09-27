@@ -3,6 +3,7 @@
 		__utcdatecreated: DS.attr('date'),
 		text: DS.attr('string'),		
 		ishidden: DS.attr('boolean'),
+		isowner: DS.attr('boolean'),
 
 		question: DS.belongsTo('question'),
 		answer: DS.belongsTo('answer'),

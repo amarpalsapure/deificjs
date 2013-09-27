@@ -1,5 +1,9 @@
 (function() {
-	Deific.QuestionView =  Ember.View.extend({
+	Deific.QuestionView =  Deific.BaseView.extend({
+
+		question: {},
+		hidevotecount: true,
+
 		didInsertElement: function(){
 			var that = this;
 			//remove loader
@@ -190,8 +194,6 @@
 			this.__checkQuestionFormIsComplete();
 		},
 
-		question: {},
-
 		createQuestion: function() {
 			var title = this.get('question').title.trim();
 			var text = this.get('question').text.trim();
@@ -223,6 +225,9 @@
 	        	return;
 	     	}
 	     	$('#btnSubmitQuestion').removeAttr('disabled');
+		},
+
+		toggleBookmark: function() {
 		}
 	});
 }).call(this);
