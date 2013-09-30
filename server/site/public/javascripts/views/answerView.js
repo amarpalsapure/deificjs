@@ -67,22 +67,52 @@
 		},
 
 		acceptAnswer: function() {
+			var model = this.controller.get('model');
+			var parentId = model.get('id');
 			//show the loader and disable the dropdown menu
+			var toggleView = function() {
+				$('#answer-' + parentId + ' .action-toggle-accept').toggleClass('hide');
+				$('#answer-' + parentId + ' .action-toggle-accept-progress').toggleClass('hide');
+			};
+
+			toggleView();
 
 			//mark current answer as accepted answer
 			//if user is switching the answer, 
 			//then unaccept the initial answer (this will be done in the service)
 			//on client side just mark the original answer as unaccepted
 			this.controller.acceptAnswer(function(answer) {
-
+				toggleView();
 			}, function(error) {
-
+				toggleView();
+				var alert = '<div class="alert alert-block alert-danger pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred during accepting answer. </div>';
+				$('#answer-' + parentId + ' .action-toggle-accept-error').html(alert).alert();
 			});
 
 		},
 
 		unacceptAnswer: function() {
 			var model = this.controller.get('model');
+			var parentId = model.get('id');
+			//show the loader and disable the dropdown menu
+			var toggleView = function() {
+				$('#answer-' + parentId + ' .action-toggle-accept').toggleClass('hide');
+				$('#answer-' + parentId + ' .action-toggle-accept-progress').toggleClass('hide');
+			};
+
+			toggleView();
+
+			//mark current answer as accepted answer
+			//if user is switching the answer, 
+			//then unaccept the initial answer (this will be done in the service)
+			//on client side just mark the original answer as unaccepted
+			this.controller.unacceptAnswer(function(answer) {
+				toggleView();
+			}, function(error) {
+				toggleView();
+				var alert = '<div class="alert alert-block alert-danger pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred during unaccepting answer. </div>';
+				$('#answer-' + parentId + ' .action-toggle-accept-error').html(alert).alert();
+			});
 		},
 
 		notimplemented: function() {

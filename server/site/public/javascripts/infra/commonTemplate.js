@@ -176,9 +176,15 @@
 					                    </div>	\
 					                </div>	\
 				                </div>	\
-				                <div {{bindAttr class='istypeanswer:show:hide :pull-right :mbxs'}}> \
+				                <div {{bindAttr class='istypeanswer:width-10p:hide :text-right :pull-right :mbxs :position-relative'}}> \
+				                	<div class='progress progress-striped active mts hide action-toggle-accept-progress position-absolute width-100p'>	\
+										<div class='progress-bar'  role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width: 100%'>	\
+										</div>	\
+									</div>	\
+									<div class='alert-dismiss-container action-error position-absolute action-toggle-accept-error font9'>	\
+									</div>	\
 		                        	<div {{bindAttr class=':btn-group :answer-accept iscorrectanswer:iscorrectanswer'}}>	\
-		                        		<a class='' data-toggle='dropdown'>	\
+		                        		<a class='action-toggle-accept' data-toggle='dropdown'>	\
   											<i class='pls icon-ok mrs'></i>	<i class='icon-caret-down prs'></i>	\
   										</a>	\
   										<ul class='dropdown-menu' role='menu'>	\

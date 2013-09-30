@@ -136,6 +136,8 @@ body { background-color: #eef0f3; }
 .answer-accept .dropdown-menu { min-width: 40px; font-size: 1em; left: auto; right: 0; top: 22px; }
 .answer-accept > a, .answer-accept > a:hover { padding: 3px; border-radius: 4px; font-size: 1em; text-decoration: none; cursor: pointer; border:solid 1px #777; border: solid 1px #dedede; color: #8f8f8f;}
 .iscorrectanswer > a, .iscorrectanswer > a:hover { background-color: green; color: #fff; border:solid 1px green; }
+.action-toggle-accept-error { z-index: 100; right: -33px; width: 315px; top: -2px;}
+.action-toggle-accept-error .alert { padding: 10px;}
 
 .arrow-up { display: none; }
 .callout { position: relative; }

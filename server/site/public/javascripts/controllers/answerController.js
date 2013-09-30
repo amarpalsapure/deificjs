@@ -26,6 +26,7 @@
 						if(answer.get('id') != model.get('id') && answer.get('iscorrectanswer') === true) {
 							answer.set('iscorrectanswer', false);
 							onSuccess(model);
+							return;
 						}
 					};
 				};
@@ -35,7 +36,14 @@
 			});
 		},
 		unacceptAnswer: function() {
-
+			var that = this;
+			var model = that.get('content').get('content');
+			model.set('action', 'undo:accepted');
+			model.save().then(function(savedObj){
+				onSuccess(savedObj);
+			}, function(error){
+				onError(Deific.localDataSource.handleError(error, 'Deific.AnswerController-acceptAnswer'));
+			});
 		}
 	});
 }).call(this);

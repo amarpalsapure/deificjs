@@ -281,15 +281,18 @@ exports.update = function(req, res) {
 				correct_answer_Create(answer.id, function() {
 					//if oldAcceptedAnswer is null, means mark the question as answered
 					if(!oldAcceptedAnswer) update_question();
-
-					//set the score of old answer as zero
-					//which will reduce the reputation of repective user
-					oldAcceptedAnswer.set('score', 0);
-					oldAcceptedAnswer.save();
+					else {
+						//set the score of old answer as zero
+						//which will reduce the reputation of repective user
+						oldAcceptedAnswer.set('score', 0);
+						oldAcceptedAnswer.save();
+					}
 
 					//set the score of current answer to one
 					//which will increase the reputation of respective user
 					aAnswer.set('score', 1);
+
+					//save the answer and return the response
 					save();
 				}, function() {
 					if(!oldAcceptedAnswer) return res.status(502).json({ messsage: 'Failed to accept the answer' });
@@ -305,8 +308,18 @@ exports.update = function(req, res) {
 				return res.status(502).json({ messsage: 'Failed to accept the answer' });
 			});
 			break;
+		case 'undo:accepted':
+			//Step 1: Delete the connection
+			//Step 2: Update the score to 0 for current answer
+			check_n_delete_correct_answer(function() {
+				aAnswer.set('score', 0);
+				save();
+			}, function() {
+				return res.status(502).json({ messsage: 'Failed to undo accepted answer' });
+			});
+			break;
 		default:
-			throw Error('Invalid action provided');
+			return res.status(400).json({ messsage: 'Invalid action provided.' });
 	}
 };
 
