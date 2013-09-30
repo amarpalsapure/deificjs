@@ -5,6 +5,9 @@
 		hidevotecount: true,
 
 		didInsertElement: function(){
+			//hide the answer containers
+			$('.answer-section .question').addClass('hide');
+
 			var that = this;
 			//remove loader
 			$('#rootProgress').remove();
@@ -80,6 +83,7 @@
 			setTimeout(function(){
 				$(window).trigger('deificloaded');
 			}, 100);
+
 
 			if($('#tagSearch').length > 0) {
 				function tagFormatResult(tag) {
