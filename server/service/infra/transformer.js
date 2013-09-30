@@ -101,6 +101,14 @@ var _toQuestion = function(question, state) {
 		delete response.question.$answercount;
 	}
 
+	//Question Bookmark
+	response.question.bookmarkcount = 0;
+	if(question.aggregate('bookmarkcount')){
+		response.question.bookmarkcount = _toInt(question.aggregate('bookmarkcount').all);
+		//delete the proerty from the JSON as it is not required by client
+		delete response.question.$bookmarkcount;
+	}
+
 	//Comments
 	if(question.children.comments && question.children.comments.length > 0) {
 		response.question.comments = [];

@@ -57,6 +57,7 @@
 .mls, .mhs, .mas { margin-left: 5px; }
 .mlm, .mhm, .mam { margin-left: 10px; }
 .mll, .mhl, .mal { margin-left: 20px; }
+.nowrap { white-space: nowrap;}
 .noborder { border:0px !important; }
 .noboxshadow { box-shadow:none !important; }
 .border-bottom {border-bottom: solid 1px #eee;}

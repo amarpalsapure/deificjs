@@ -4,6 +4,7 @@
 		hidevotecount: true,
 		hideanswercount: true,
 		hideviewcount: true,
+		hidebookmarkcount: true,
 
 		didInsertElement: function(){
 			//remove loader and show answer
@@ -44,14 +45,15 @@
 
 					//remove show more if there are no hidden comments
 					setTimeout(function(){
+						var $ele = $('#answer-' + model.get('id'));
 						var hiddenComments = model.get('comments').filter(function(comment) {
 							return comment.get('ishidden');
 						});
+
 						if(hiddenComments && hiddenComments.get('length') > 0) {
 							$ele.find('.showMore').removeClass('hide');
 							return;
 						}
-						var $ele = $('#answer-' + model.get('id'));
 						$ele.find('.showMore').parent().remove();			
 					}, 50);
 				});
@@ -64,11 +66,23 @@
 			}
 		},
 
-		showAllComment: function() {
+		acceptAnswer: function() {
+			//show the loader and disable the dropdown menu
+
+			//mark current answer as accepted answer
+			//if user is switching the answer, 
+			//then unaccept the initial answer (this will be done in the service)
+			//on client side just mark the original answer as unaccepted
+			this.controller.acceptAnswer(function(answer) {
+
+			}, function(error) {
+
+			});
+
+		},
+
+		unacceptAnswer: function() {
 			var model = this.controller.get('model');
-			var $ele = $('#answer-' + model.get('id'));
-			$ele.find('.comment').removeClass('hide');
-			$ele.find('.showMore').parent().remove();
 		},
 
 		notimplemented: function() {

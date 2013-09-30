@@ -113,14 +113,14 @@ exports.update = function(req, res) {
 			answer.voteconnid = connection.id();
 			onsuccess();
 		}, onfailure);
-	}
+	};
 
 	//updates 'answer_vote' relation between user and answer 
 	var answer_vote_Update = function(isupvote, onsuccess, onfailure) {
 		var relation = new Appacitive.Connection({ relation: 'answer_vote', __id: answer.voteconnid });
 		relation.set('isupvote', isupvote);
 		relation.save(onsuccess, onfailure);
-	}
+	};
 
 	//deletes 'answer_vote' relation between user and answer 
 	var answer_vote_Delete = function(onsuccess, onfailure) {
@@ -129,7 +129,47 @@ exports.update = function(req, res) {
 			answer.voteconnid = '';
 			onsuccess();
 		}, onfailure);
-	}
+	};
+
+	//check if correct_answer relation exists or not
+	//if yes delete it
+	var oldAcceptedAnswer = null;
+	var check_n_delete_correct_answer = function(onsuccess, onfailure) {
+		var question = new Appacitive.Article({ __id : answer.question, schema : 'entity' });
+		question.fetchConnectedArticles({
+			relation: 'correct_answer',
+			label : 'answer'
+		}, function(r) {
+			if(r && r.children && r.children['correct_answer'] && r.children['correct_answer'].length > 0) {
+				oldAcceptedAnswer = r.children['correct_answer'][0];
+				//delete the connection
+				var relation = new Appacitive.Connection({relation: 'correct_answer', __id: oldAcceptedAnswer.connection.id() });
+				relation.del(onsuccess, onfailure)
+			} else onsuccess();
+		}, onfailure);
+	};
+
+	//create a connection of 'correct_answer'
+	var correct_answer_Create = function(answerId, onsuccess, onfailure) {
+		var relation = new Appacitive.ConnectionCollection({ relation: 'correct_answer' });
+		var connection = relation.createNewConnection({ 
+		  endpoints: [{
+		      articleid: answer.question,
+		      label: 'question'
+		  }, {
+		      articleid: answerId,
+		      label: 'answer'
+		  }]
+		});
+		connection.save(onsuccess, onfailure);
+	};
+
+	//update the question and set isanswered to true
+	var update_question = function(onsuccess, onfailure) {
+		var question = new Appacitive.Article({ __id : answer.question, schema : 'entity' });
+		question.set('isanswered', true);
+		question.save(onsuccess, onfailure);
+	};
 
 	//saves the answer object on appacitive api
 	var save = function() {
@@ -137,6 +177,7 @@ exports.update = function(req, res) {
 			//transform the object
 			delete answer.id;
 			var response = transformer.toAnswer(aAnswer, state);
+			response.answer.question = answer.question;
 			response.answer.author = answer.author;
 			response.answer.comments = answer.comments;
 			response.answer.tags = answer.tags;
@@ -162,7 +203,7 @@ exports.update = function(req, res) {
 					aAnswer.increment('totalvotecount', 2);
 					save();
 				}, function(status){
-					throw Error('Failed to register downvote');
+					return res.status(502).json({ messsage: 'Failed to register upvote' });
 				});
 			}else {
 				answer_vote_Create(true, function(){
@@ -170,7 +211,7 @@ exports.update = function(req, res) {
 					aAnswer.increment('totalvotecount');
 					save();
 				}, function(status){
-					throw Error('Failed to register upvote');
+					return res.status(502).json({ messsage: 'Failed to register upvote' });
 				});
 			}
 			//has voted true
@@ -184,7 +225,7 @@ exports.update = function(req, res) {
 				aAnswer.decrement('totalvotecount');
 				save();
 			}, function(status){
-				throw Error('Failed to undo register upvote');
+				return res.status(502).json({ messsage: 'Failed to register upvote' });
 			});
 			//has removed vote
 			answer.voted = 0;
@@ -201,7 +242,7 @@ exports.update = function(req, res) {
 					aAnswer.decrement('totalvotecount', 2);
 					save();
 				}, function(status){
-					throw Error('Failed to register downvote');
+					return res.status(502).json({ messsage: 'Failed to register downvote' });
 				});
 			}else {
 				answer_vote_Create(false, function(){
@@ -209,7 +250,7 @@ exports.update = function(req, res) {
 					aAnswer.decrement('totalvotecount');
 					save();
 				}, function(status){
-					throw Error('Failed to register downvote');
+					return res.status(502).json({ messsage: 'Failed to register downvote' });
 				});
 			}
 			//has voted false
@@ -223,10 +264,46 @@ exports.update = function(req, res) {
 				aAnswer.increment('totalvotecount');
 				save();
 			}, function(status){
-				throw Error('Failed to undo register downvote');
+				return res.status(502).json({ messsage: 'Failed to register downvote' });
 			});
 			//has remove vote
 			answer.voted = 0;
+			break;
+		case 'do:accepted':
+			//Step 1: Check if question has any existing accepted answer
+			//Step 2: If yes; delete that connection
+			//Step 3: Create a new connection between current answer and question
+			//Step 4: If there was no earlier accepted answer, then update the question
+			// and set isanswered for the question as true
+			check_n_delete_correct_answer(function() {
+				//if oldAcceptedAnswer is null, means there was no earlier connection
+				//so if anything goes wrong after this, there is nothing to be rollbacked
+				correct_answer_Create(answer.id, function() {
+					//if oldAcceptedAnswer is null, means mark the question as answered
+					if(!oldAcceptedAnswer) update_question();
+
+					//set the score of old answer as zero
+					//which will reduce the reputation of repective user
+					oldAcceptedAnswer.set('score', 0);
+					oldAcceptedAnswer.save();
+
+					//set the score of current answer to one
+					//which will increase the reputation of respective user
+					aAnswer.set('score', 1);
+					save();
+				}, function() {
+					if(!oldAcceptedAnswer) return res.status(502).json({ messsage: 'Failed to accept the answer' });
+					//try to rollback the state
+					correct_answer_Create(oldAcceptedAnswer.id(), function() {
+						return res.status(502).json({ messsage: 'Failed to accept the answer' });
+					}, function() {
+						//TODO: Some error mechanism which will let user know something is gone wrong for which user might to refresh the page
+						return res.status(502).json({ messsage: 'Failed to accept the answer' });
+					});
+				});
+			}, function() {
+				return res.status(502).json({ messsage: 'Failed to accept the answer' });
+			});
 			break;
 		default:
 			throw Error('Invalid action provided');

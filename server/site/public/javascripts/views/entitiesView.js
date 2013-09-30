@@ -7,6 +7,7 @@
 		hidevotecount: false,
 		hideviewcount: true,
 		hideanswercount: true,
+		hidebookmarkcount: true,
 
 		didInsertElement: function(){
 			//remove loader

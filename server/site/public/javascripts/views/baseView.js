@@ -29,6 +29,17 @@
 					$(that).popover('hide');
 				})
 			}).popover('show');
-		}
+		},
+
+		showAllComment: function() {
+			var model = this.controller.get('model');
+			if(!model) return;
+
+			var type = model.get('type');
+
+			var $ele = $('#' + type + '-' + model.get('id'));
+			$ele.find('.comment').removeClass('hide');
+			$ele.find('.showMore').parent().remove();
+		},
 	});
 }).call(this);

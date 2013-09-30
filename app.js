@@ -54,19 +54,19 @@ if ('development' == app.get('env')) {
 app.get('/service/questions', questionApi.findAll);
 // get question by id
 app.get('/service/questions/:id', questionApi.findById);
+// save question
+app.post('/service/questions', questionApi.save);
 // update question
 app.put('/service/questions/:id', questionApi.update);
-// create question
-app.post('/service/questions', questionApi.create)
 
 
 // ################# answer api ####################
 // get answer
 app.get('/service/answers/:id', answerApi.findById);
-// update answer
-app.put('/service/answers/:id', answerApi.update);
 // save answer
 app.post('/service/answers', answerApi.save);
+// update answer
+app.put('/service/answers/:id', answerApi.update);
 
 
 // ################# user api ####################

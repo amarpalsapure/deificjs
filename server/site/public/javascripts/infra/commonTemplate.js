@@ -160,9 +160,10 @@
 					                        <div class='separator'></div>	\
 					                        <!-- Question stats goes here --> \
 					                        <div class='entity-details'>	\
-					                            <span {{bindAttr class=':mrs view.hidevotecount:hide'}}>{{votecount}} {{pluralize votecount s='vote'}}</span>	\
-					                            <span {{bindAttr class=':mrs view.hideviewcount:hide'}}><span {{bindAttr class='view.questionpage:hide'}}>&#8226;</span> {{answercount}} {{pluralize answercount s='answer'}} </span>	\
-					                            <span {{bindAttr class=':mrs view.hideanswercount:hide'}}>&#8226; {{viewcount}} {{pluralize viewcount s='view'}}</span>	\
+					                            <span {{bindAttr class=':mrs :nowrap view.hidevotecount:hide'}}>{{votecount}} {{pluralize votecount s='vote'}}</span>	\
+					                            <span {{bindAttr class=':mrs :nowrap view.hideviewcount:hide'}}><span {{bindAttr class='view.questionpage:hide'}}>&#8226;</span> {{answercount}} {{pluralize answercount s='answer'}} </span>	\
+					                            <span {{bindAttr class=':mrs :nowrap view.hideanswercount:hide'}}>&#8226; {{viewcount}} {{pluralize viewcount s='view'}}</span>	\
+					                            <span {{bindAttr class=':mrs :nowrap view.hidebookmarkcount:hide'}}>&#8226; {{bookmarkcount}} {{pluralize bookmarkcount s='bookmark'}}</span>	\
 					                        </div>	\
 					                        <!-- Question tags goes here --> \
 					                        <div {{bindAttr class=':question-tag view.hidetag:hide'}}>	\
@@ -182,9 +183,17 @@
   										</a>	\
   										<ul class='dropdown-menu' role='menu'>	\
   											{{#if iscorrectanswer}}	\
-  												<li><a href='#'><i class='icon-remove'></i> <span class='font9'>Unaccept</span></a></li>	\
+  												<li>	\
+  													<a href='javascript:void(0)' {{action 'unacceptAnswer' target=view}}>	\
+  														<i class='icon-remove'></i> <span class='font9'>Unaccept</span>	\
+													</a>	\
+												</li>	\
 											{{else}}	\
-										    	<li><a href='#'><i class='icon-ok'></i> <span class='font9'>Accept</span></a></li>	\
+										    	<li>	\
+										    		<a href='javascript:void(0)' {{action 'acceptAnswer' target=view}}>	\
+										    			<i class='icon-ok'></i> <span class='font9'>Accept</span>	\
+									    			</a>	\
+								    			</li>	\
 										    {{/if}} \
 									  	</ul>	\
 									</div>	\

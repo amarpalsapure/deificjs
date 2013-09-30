@@ -3,7 +3,7 @@
 		templateName: 'questions',
 
 		questionlist: true,
-		//questionpage: true,
+		hidebookmarkcount: true,
 
 		didInsertElement: function(){
 

@@ -399,7 +399,7 @@ exports.update = function(req, res) {
 	}
 };
 
-exports.create = function(req, res) {
+exports.save = function(req, res) {
 	var question = req.body.question;
 	if(!question) return res.status(400);
 

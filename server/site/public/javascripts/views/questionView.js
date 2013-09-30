@@ -152,13 +152,6 @@
 			}			
 		},
 		
-		showAllComment: function() {
-			var model = this.controller.get('model');
-			var $ele = $('#question-' + model.get('id'));
-			$ele.find('.comment').removeClass('hide');
-			$ele.find('.showMore').parent().remove();
-		},
-
 		newQuestionAddTag: function() {
 			var that = this;
 
