@@ -3,6 +3,7 @@
 
 		question: {},
 		hidevotecount: true,
+		isTogglingBookmark: false,
 
 		didInsertElement: function(){
 			//hide the answer containers
@@ -229,7 +230,17 @@
 		},
 
 		toggleBookmark: function() {
-			alert('not implemented');
+			var that = this;
+			if(that.isTogglingBookmark === true) return;
+			that.isTogglingBookmark = true;
+
+			this.controller.toggleBookmark(function() {
+				that.isTogglingBookmark = false;
+			}, function(error) {
+				that.isTogglingBookmark = false;
+				var alert = '<div class="alert alert-block alert-danger pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred. </div>';
+				$('#question-' + that.controller.get('model').get('id') + ' .action-toggle-bookmark-error').html(alert).alert();
+			});
 		}
 	});
 }).call(this);

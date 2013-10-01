@@ -126,6 +126,19 @@
 					model.save().then(onSuccess, onError);
 				});
 			});
-		}		
+		},
+
+		toggleBookmark: function(onSuccess, onError) {
+			var model = this.get('model');
+			model.set('isbookmarked', !model.get('isbookmarked'));
+			model.set('action', 'toggle:bookmark');
+			model.save().then(function(savedObj) {
+				onSuccess(savedObj);
+			}, function(error) {
+				//rollback state
+				model.set('isbookmarked', !model.get('isbookmarked'));
+				onError(Deific.localDataSource.handleError(error, 'Deific.QuestionController-toggleBookmark'));
+			});
+		}
 	});
 }).call(this);

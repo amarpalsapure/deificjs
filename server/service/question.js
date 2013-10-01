@@ -108,7 +108,9 @@ var _findById = function(req, qId, callback) {
 	// not voted =>  0
 	var voted = 0
 	var voteconnid = '';
-	var callCount = 3;
+	var isBookmarked = false;
+	var bookmarkConnId = '';
+	var callCount = 4;
 
 	//to update the view count
 	var isNewVisit = false;
@@ -139,6 +141,8 @@ var _findById = function(req, qId, callback) {
 		response.question['answersMeta'] = answersMeta;
 		response.question['voteconnid'] = voteconnid;
 		response.question['voted'] = voted;
+		response.question['isbookmarked'] = isBookmarked;
+		response.question['bookmarkconnid'] = bookmarkConnId;
 		callback(response);
 	};
 
@@ -209,9 +213,11 @@ var _findById = function(req, qId, callback) {
 		merge();
 	});
 
-	//PARALLEL CALL 3 
+	//PARALLEL CALL 3 & 4
 	//Check if logged in user had voted the question
+	//and question bookmark
 	if(state.isauth) {
+		//Question Vote
 		Appacitive.Connection.getBetweenArticlesForRelation({
 			relation: 'question_vote',
 			articleAId : state.userid, // id of logged in user
@@ -226,7 +232,25 @@ var _findById = function(req, qId, callback) {
 		}, function(err) {
 			merge();
 		});
-	}else {
+
+		//Question Bookmark
+		Appacitive.Connection.getBetweenArticlesForRelation({
+			relation: 'question_bookmark',
+			articleAId : state.userid, // id of logged in user
+			articleBId : qId // id of question
+		}, function(connection) {
+			if(connection) {
+				isBookmarked = true;
+				bookmarkConnId = connection.id();
+			}else isBookmarked = false;
+			merge();
+		}, function(err) {
+			merge();
+		});
+	} else {
+		//companset for question_vote
+		merge();
+		//companset for question_bookmark
 		merge();
 	}
 };
@@ -278,14 +302,14 @@ exports.update = function(req, res) {
 			question.voteconnid = connection.id();
 			onsuccess();
 		}, onfailure);
-	}
+	};
 
 	//updates 'question_vote' relation between user and question 
 	var question_vote_Update = function(isupvote, onsuccess, onfailure) {
 		var relation = new Appacitive.Connection({ relation: 'question_vote', __id: question.voteconnid });
 		relation.set('isupvote', isupvote);
 		relation.save(onsuccess, onfailure);
-	}
+	};
 
 	//deletes 'question_vote' relation between user and question 
 	var question_vote_Delete = function(onsuccess, onfailure) {
@@ -294,7 +318,33 @@ exports.update = function(req, res) {
 			question.voteconnid = '';
 			onsuccess();
 		}, onfailure);
-	}
+	};
+
+	//create 'question_bookmark' relation between question and user
+	var question_bookmark_Create = function(onsuccess, onfailure) {
+		var relation = new Appacitive.ConnectionCollection({ relation: 'question_bookmark' });
+		var connection = relation.createNewConnection({ 
+		  endpoints: [{
+		      articleid: question.id,
+		      label: 'question'
+		  }, {
+		      articleid: state.userid,
+		      label: 'user'
+		  }]
+		});
+		connection.save(function() {
+			question.bookmarkconnid = connection.id();
+			onsuccess();
+		}, onfailure);
+	};
+
+	var question_bookmark_Delete = function(onsuccess, onfailure) {
+		var relation = new Appacitive.Connection({ relation: 'question_bookmark', __id: question.bookmarkconnid });
+		relation.del(function() {
+			question.bookmarkconnid = '';
+			onsuccess();
+		}, onfailure);
+	};
 
 	//saves the question object on appacitive api
 	var save = function() {
@@ -308,6 +358,8 @@ exports.update = function(req, res) {
 			response.question.tags = question.tags;
 			response.question.voted = question.voted;
 			response.question.voteconnid = question.voteconnid;
+			response.question.isbookmarked = question.isbookmarked;
+			response.question.bookmarkconnid = question.bookmarkconnid;
 			return res.json(response);
 		}, function(status) {
 			return res.status(502).json({ messsage: status.message });
@@ -393,6 +445,24 @@ exports.update = function(req, res) {
 			});
 			//has remove vote
 			question.voted = 0;
+			break;
+		case 'toggle:bookmark':
+			//if question isbookmarked then create connection between user and question
+			if(question.isbookmarked === true) {
+				question_bookmark_Create(function() {
+					question.isbookmarked = true;
+					save();
+				}, function(error) {
+					return res.status(502).json({ messsage: 'Failed to bookmark the question' });	
+				});
+			} else {
+				question_bookmark_Delete(function() {
+					question.isbookmarked = false;
+					save();
+				}, function(error) {
+					return res.status(502).json({ messsage: 'Failed to undo bookmark the question' });	
+				});
+			}
 			break;
 		default:
 			return res.status(400).json({ message: 'Invalid action provided' });

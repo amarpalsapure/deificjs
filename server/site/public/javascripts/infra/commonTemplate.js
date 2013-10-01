@@ -129,8 +129,10 @@
 					                	<!-- Question bookmark goes here --> \
 					                    <div {{ bindAttr class='view.questionpage:question-bookmark:hide istypeanswer:hide'}}>	\
 					                        <a href='javascript:void(0)' {{action toggleBookmark target=view}}> \
-					                        	<i {{bindAttr class=':icon-star-empty isbookmarked:icon-star'}}></i>	\
+					                        	<i {{bindAttr class='isbookmarked:icon-star:icon-star-empty'}}></i>	\
 					                        </a>	\
+					                        <div class='alert-dismiss-container action-error position-absolute action-toggle-bookmark-error font9'>	\
+											</div>	\
 					                    </div>	\
 					                    <div class='entity-info'>	\
 					                    	<!-- Entity title goes here --> \

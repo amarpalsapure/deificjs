@@ -68,8 +68,9 @@ body { background-color: #eef0f3; }
 .entity-info-container h1, .entity-info > div { display: inline; }
 
 .entity-info-container h1 { padding: 0; margin: 0; font-size: 1.2em; line-height: 1.4; }
-.question-bookmark { width: 28px; }
+.question-bookmark { width: 28px; position: relative; }
 .question-bookmark a, .question-bookmark a:hover { color: #F7DF2C; font-size: 1.6em; text-decoration: none; line-height: 1.4em; }
+.action-toggle-bookmark-error { width: 160px; top: 32px; }
 .entity-info .entity-title { display: block;}
 .entity-title div { padding-bottom: 2px; }
 

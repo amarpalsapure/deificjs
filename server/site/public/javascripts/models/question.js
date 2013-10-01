@@ -18,6 +18,8 @@
 		voted: DS.attr('number'),
 		action: DS.attr('string'),
 		isowner: DS.attr('boolean'),
+		isbookmarked: DS.attr('boolean'),
+		bookmarkconnid: DS.attr('string'),
 
 		//relationship property
 		answers: DS.hasMany('answer'),
