@@ -81,6 +81,8 @@ app.post('/service/users/logout', userApi.logout);
 // ################# comment api ####################
 // save comment
 app.post('/service/comments', commentApi.save)
+// delete comment
+app.delete('/service/comments/:id', commentApi.del);
 
 // ################# tag api ####################
 // find tag

@@ -161,6 +161,8 @@ body { background-color: #eef0f3; }
     .comment-container .comment:nth-of-type(1) { border-top: dashed 1px #ccc; }
     .comment-container .comment { padding: 6px 8px 10px; overflow-x: hidden;}
         .comment-container .comment:hover { background-color: #f6f6f6; }
+        .comment-container .comment:hover a.action { color: #bbb; text-decoration: none; }
+    .comment-container a.action { color: transparent; text-decoration: none; }
 .comment-cancel { line-height: 21px; vertical-align: bottom; }
 .comment-error { position: relative; }
 .comment-error .alert { position: absolute; right: 0px; z-index: 1; }

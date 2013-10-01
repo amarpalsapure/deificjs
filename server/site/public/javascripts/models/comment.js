@@ -7,7 +7,6 @@
 
 		question: DS.belongsTo('question'),
 		answer: DS.belongsTo('answer'),
-		author: DS.belongsTo('user'),
-
+		author: DS.belongsTo('user')
 	});
 }).call(this);

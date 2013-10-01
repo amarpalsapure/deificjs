@@ -223,14 +223,19 @@
 			        <!-- Entity comments goes here --> \
 					<div {{bindAttr class=':comment-container :ptm view.questionpage:show:hide'}}>	\
 						{{#each comment in comments}}	\
-							<div {{bindAttr class='comment.ishidden:hide :comment'}}>	\
+							<div {{bindAttr id='comment.id'}} {{bindAttr class='comment.ishidden:hide :comment'}}>	\
 								<div class='row'>	\
-									<div class='col-lg-12'>	\
+									<div class='col-lg-12 position-relative'>	\
 										<span class='comment-text'>{{markdown comment.text}}</span> - 	\
 										<a {{bindAttr href='comment.author.url'}} {{bindAttr title='comment.author.fullname'}} class='commentor'>	\
 											{{comment.author.fullname}}	\
 										</a>	\
 										<span class='divTime'>{{sincetime comment.__utcdatecreated}}</span>	\
+										{{#if comment.isowner}}	\
+											<a {{action 'deletecomment' comment target=view}} title='Delete the comment' href='javascript:void(0)' class='action icon-remove-sign pas mlm'></a>	\
+										{{/if}}	\
+										<div class='alert-dismiss-container action-delete-comment-error'>	\
+										</div>	\
 									</div>	\
 								</div>	\
 							</div>	\

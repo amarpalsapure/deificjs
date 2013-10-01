@@ -191,6 +191,16 @@
 
 		__toggleVoteLoader: function(type, id) {
 			$('#'+ type + '-' + id +' .voteProgress').toggleClass('hide');
+		},
+
+		deletecomment: function(comment, onSuccess, onError) {
+			if(!comment) onError();
+			
+			comment.deleteRecord();
+			comment.save().then(onSuccess, function(error) {
+				comment.rollback();
+				onError(Deific.localDataSource.handleError(error, 'Deific.BaseController-deletecomment'));
+			});
 		}
 	});
 }).call(this);

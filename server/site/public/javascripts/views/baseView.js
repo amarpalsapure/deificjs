@@ -41,5 +41,24 @@
 			$ele.find('.comment').removeClass('hide');
 			$ele.find('.showMore').parent().remove();
 		},
+
+		deletecomment: function(comment) {
+			var that = this;
+			var model = that.controller.get('model');
+
+			//hide the comment
+			$('#' + comment.get('id')).addClass('hide');
+
+			that.controller.deletecomment(comment, function() {
+				//remove the comment object from list too
+				model.get('comments').removeObject(comment);
+			}, function(error) {
+				var alert = '<div style="width: 300px" class="alert alert-block alert-danger font9 pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred while deleting the comment. </div>';
+				//show the comment and error
+				$('#' + comment.get('id'))
+					.removeClass('hide')
+					.find('.action-delete-comment-error').html(alert).alert();
+			});
+		}
 	});
 }).call(this);
