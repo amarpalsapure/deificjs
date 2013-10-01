@@ -231,6 +231,15 @@
 
 		toggleBookmark: function() {
 			var that = this;
+
+			var model = that.controller.get('model');
+			//owner can't bookmark his own question
+			if(model.get('isowner') === true) {
+				var alert = '<div style="width: 275px;" class="alert alert-block alert-danger pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> You can\'t bookmark, your own question. </div>';
+				$('#question-' + model.get('id') + ' .action-toggle-bookmark-error').html(alert).alert();
+				return;
+			}
+
 			if(that.isTogglingBookmark === true) return;
 			that.isTogglingBookmark = true;
 
@@ -239,7 +248,7 @@
 			}, function(error) {
 				that.isTogglingBookmark = false;
 				var alert = '<div class="alert alert-block alert-danger pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred. </div>';
-				$('#question-' + that.controller.get('model').get('id') + ' .action-toggle-bookmark-error').html(alert).alert();
+				$('#question-' + model.get('id') + ' .action-toggle-bookmark-error').html(alert).alert();
 			});
 		}
 	});

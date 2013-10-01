@@ -7,7 +7,7 @@
 		},
 		downvote: function() {
 			var model = this.get('content').get('content');
-			this.__downvote('amswer', model);
+			this.__downvote('answer', model);
 		},
 		acceptAnswer: function(onSuccess, onError) {
 			var that = this;

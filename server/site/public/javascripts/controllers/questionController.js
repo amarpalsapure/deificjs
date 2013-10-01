@@ -11,7 +11,7 @@
 		},
 		downvote: function() {
 			var model = this.get('content');
-			this.__downvote('quesiton', model);
+			this.__downvote('question', model);
 		},
 		createAnswer: function() {
 			var text = this.get('newAnswer');

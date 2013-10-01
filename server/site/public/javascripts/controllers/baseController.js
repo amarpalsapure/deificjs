@@ -179,7 +179,7 @@
 		__validateVoteUser: function(type, model) {
 			if(model.get('isowner') === false) return false;
 			//show error
-			var alert = '<div class="alert alert-block alert-danger font9 pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> You can\'t vote on your own post. </div>';
+			var alert = '<div style="width: 240px" class="alert alert-block alert-danger font9 pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> You can\'t vote on your own post. </div>';
 			$('#'+ type + '-' + model.get('id') +' .voteError').html(alert).alert();
 			return true;
 		},
