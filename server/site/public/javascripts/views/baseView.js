@@ -70,6 +70,13 @@
 					resetView();
 				});
 			});
+		},
+
+		deleteEntity: function() {
+			var model = this.controller.get('model');
+
+			var type = model.get('type');
+			console.log(type)
 		}
 	});
 }).call(this);

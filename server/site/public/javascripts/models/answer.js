@@ -14,6 +14,7 @@
 		voted: DS.attr('number'),
 		action: DS.attr('string'),
 		isowner: DS.attr('boolean'),
+		ownsparent: DS.attr('boolean'),
 
 		//relation ship properties
 		question: DS.belongsTo('question'),

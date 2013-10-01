@@ -178,6 +178,7 @@
 					                    </div>	\
 					                </div>	\
 				                </div>	\
+				                {{#if ownsparent}}	\
 				                <div {{bindAttr class='istypeanswer:width-10p:hide :text-right :pull-right :mbxs :position-relative'}}> \
 				                	<div class='progress progress-striped active mts hide action-toggle-accept-progress position-absolute width-100p'>	\
 										<div class='progress-bar'  role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width: 100%'>	\
@@ -206,6 +207,7 @@
 									  	</ul>	\
 									</div>	\
 		                        </div>	\
+		                        {{/if}}	\
 	                        </div>	\
 			            </div>	\
 			        </div>	\
@@ -289,13 +291,13 @@
 													    </a>	\
 													    <ul class='dropdown-menu'>	\
 													    	{{#if isowner}}	\
-													      		<li>	\
+													      		<li class='hide'>	\
 													      			<a href='javascript:void(0)' {{action notimplemented target=view}}>	\
 													      				<i class='icon-edit mrm'></i><span class='font9'>Edit</span>	\
 												      				</a>	\
 											      				</li>	\
 													      		<li>	\
-													      			<a href='javascript:void(0)' {{action notimplemented target=view}}>	\
+													      			<a href='javascript:void(0)' {{action deleteEntity target=view}}>	\
 													      				<i class='icon-remove mrm'></i><span class='font9'> Delete</span>	\
 												      				</a>	\
 											      				</li>	\
