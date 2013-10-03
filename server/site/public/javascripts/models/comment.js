@@ -7,6 +7,10 @@
 
 		question: DS.belongsTo('question'),
 		answer: DS.belongsTo('answer'),
-		author: DS.belongsTo('user')
+		author: DS.belongsTo('user'),
+
+		rootElement: function() {
+			return $('#' + this.get('id'));
+		}.property('id')
 	});
 }).call(this);

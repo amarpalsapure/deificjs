@@ -402,6 +402,7 @@ exports.save = function(req, res) {
 				var response = transformer.toAnswer(aAnswer, state);
 				response.answer.author = state.userid;
 				response.answer.question = answer.question;
+				response.answer.isowner = true;
 				return res.json(response);
 			}, function(status) {
 				return rollbackAnswer();
@@ -427,3 +428,86 @@ exports.save = function(req, res) {
 	//initiate the create process
 	createAnswer();
 };
+
+//Step 1: Get the answer, check if owner is deleting answer (important)
+//Step 2: Get all the comments for the answer (optional)
+//Step 3: Delete the answer with all connections (important)
+//Step 4: Multi-Delete the comments	(optional)
+//Step 5: If current answer is accepted answer, then marked question as unanswered (optional)
+exports.del = function(req, res) {
+	if(!req.param('id')) return res.status(400).json({ messsage: 'Answer Id is required' });
+	_deleteAnswer(req.param('id'), req, res);
+};
+var _deleteAnswer = function (answerId, req, res) {
+	if(!answerId) return;
+
+	//get the state of app
+	var app = require('../shared/app.init');
+	var state = app.init(req);
+
+	//intialize SDK
+	var sdk = require('./appacitive.init');
+	var Appacitive = sdk.init(state.debug);
+
+	//get the transformer
+	var transformer = require('./infra/transformer');
+
+	if(!state.userid) return res.status(401).json({ message: 'Session expired' });
+
+	//get the answer details
+	var getAnswerDetails = function(onsuccess, onfailure) {
+		var query = new Appacitive.Queries.GraphProjectQuery('answer', [answerId]);
+		query.fetch(function (answers) {
+			//if no data found
+			if(!answers && answers.length == 0) onsuccess();
+			
+			var response = transformer.toAnswer(answers[0], state);
+			onsuccess(response.answer);
+		}, onfailure);
+	};
+
+	var delete_Answer = function(answerId, onsuccess, onfailure) {
+		var answer = new Appacitive.Article({ schema: 'entity', __id: answerId });
+		answer.del(onsuccess, onfailure, true);
+	};
+
+	//multi delete the comments
+	var multi_delete_comments = function(comments) {
+		if(!comments || comments.length === 0) return;
+
+		Appacitive.Article.multiDelete({    
+		    schema: 'comment',
+		    ids: comments
+		});
+	};
+
+	//update the question
+	var update_question = function(questionId) {
+		var question = new Appacitive.Article({ schema: 'entity', __id: questionId });
+		question.set('isanswered', false);
+		question.save();
+	};
+
+	getAnswerDetails(function(answer) {
+		//check the ownership of answer
+		if(!answer.isowner) return res.status(403).json({messsage: 'You are not authorized for this action.'});
+
+		//delete the answer with all connections
+		delete_Answer(answer.__id, function() {
+			//delete the comments
+			multi_delete_comments(answer.comments);
+
+			//update question if required
+			if(answer.iscorrectanswer) update_question(answer.question);
+
+			//return empty response
+			return res.status(204).json({});
+		}, function(status) {
+			return res.status(502).json({messsage: 'Failed to delete the answer.'});
+		});
+	}, function(status) {
+		return res.status(502).json({messsage: 'Failed to delete the answer.'});
+	});
+
+};
+exports.deleteAnswer = _deleteAnswer;

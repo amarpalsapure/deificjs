@@ -61,6 +61,10 @@
 
 		postedaction: function() {
 			return 'asked';
-		}.property('type')
+		}.property('type'),
+
+		rootElement: function() {
+			return $('#question' + '-' + this.get('id'));
+		}.property('id')
 	});
 }).call(this);

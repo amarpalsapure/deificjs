@@ -73,6 +73,10 @@
 
 		postedaction: function() {
 			return 'Answered';
-		}.property('type')
+		}.property('type'),
+
+		rootElement: function() {
+			return $('#answer' + '-' + this.get('id'));
+		}.property('id')
 	});
 }).call(this);

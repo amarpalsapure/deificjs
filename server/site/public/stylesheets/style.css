@@ -104,6 +104,7 @@ body { background-color: #eef0f3; }
 .entity-action-menu .popover-content { padding: 7px 12px; }
 .comment-add { display: inline-block; }
 .comment-add-action { width: 16px; height: 16px; background: transparent url('../images/comment-add.png') no-repeat; display: block; }
+.action-delete-entity-error { position: absolute; right: 15px; top: 35px; z-index: 100; }
 
 .share-popup, .share-popup input { width: 200px; font-size: 0.9em; }
 

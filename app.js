@@ -67,6 +67,8 @@ app.get('/service/answers/:id', answerApi.findById);
 app.post('/service/answers', answerApi.save);
 // update answer
 app.put('/service/answers/:id', answerApi.update);
+// delete comment
+app.delete('/service/answers/:id', answerApi.del);
 
 
 // ################# user api ####################

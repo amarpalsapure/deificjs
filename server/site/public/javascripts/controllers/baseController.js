@@ -193,13 +193,25 @@
 			$('#'+ type + '-' + id +' .voteProgress').toggleClass('hide');
 		},
 
-		deletecomment: function(comment, onSuccess, onError) {
+		deleteComment: function(comment, onSuccess, onError) {
 			if(!comment) onError();
 			
 			comment.deleteRecord();
 			comment.save().then(onSuccess, function(error) {
 				comment.rollback();
-				onError(Deific.localDataSource.handleError(error, 'Deific.BaseController-deletecomment'));
+				onError(Deific.localDataSource.handleError(error, 'Deific.BaseController-deleteComment'));
+			});
+		},
+
+		deleteEntity: function(onSuccess, onError) {
+			var that = this;
+			var model = that.get('model');
+			if(model.get('type') === 'answer') model = model.get('content');
+
+			model.deleteRecord();
+			model.save().then(onSuccess, function(error) {
+				model.rollback();
+				onError(Deific.localDataSource.handleError(error, 'Deific.BaseController-deleteEntity'));
 			});
 		}
 	});

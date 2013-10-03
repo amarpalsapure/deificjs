@@ -9,8 +9,8 @@
 
 			var type = model.get('type');
 
-			var $parent = $('#' + type + '-' + model.get('id'));
-			var $ele = $parent.find('.entity-action .share a');
+			var $rootElement = model.get('rootElement');
+			var $ele = $rootElement.find('.entity-action .share a');
 			var content = '<div class=\"share-popup\">	\
 								<span class=\"pbxs pull-left\">share a link to this ' + type + '</span>	\
 								<input type=\"text\" value=' + model.get('murl') + '>	\
@@ -37,46 +37,91 @@
 
 			var type = model.get('type');
 
-			var $ele = $('#' + type + '-' + model.get('id'));
-			$ele.find('.comment').removeClass('hide');
-			$ele.find('.showMore').parent().remove();
+			var $rootElement = model.get('rootElement');
+			$rootElement.find('.comment').removeClass('hide');
+			$rootElement.find('.showMore').parent().remove();
 		},
 
-		deletecomment: function(comment) {
+		deleteComment: function(comment) {
 			var that = this;
 			var model = that.controller.get('model');
 
-			$('#divDeleteCommentModal').modal('show');
+			//show the confirmation modal
+			$('#divDeleteModal .modal-title').html('Delete the Comment');
+			$('#divDeleteModal .modal-body').html('<p>Are you sure you want to delete the comment?</p><p>This action cannot be undone.</p>');
 
-			$('#divDeleteCommentModal .btn-danger').unbind('click').click(function(e) {
+			$('#divDeleteModal').modal('show');
+
+			//on confirmation delete the comment
+			$('#divDeleteModal .btn-danger').unbind('click').click(function(e) {
 				//reset the state of the view
 				var resetView = function() {
-					$('#divDeleteCommentModal .btn-danger').button('reset');
-					$('#divDeleteCommentModal').modal('hide');
+					$('#divDeleteModal .btn-danger').button('reset');
+					$('#divDeleteModal').modal('hide');
 				}
 
 				//set the state of button to loading
-				$('#divDeleteCommentModal .btn-danger').button('loading');
+				$('#divDeleteModal .btn-danger').button('loading');
 
-				that.controller.deletecomment(comment, function() {
+				that.controller.deleteComment(comment, function() {
 					//remove the comment object from list too
 					model.get('comments').removeObject(comment);
+
+					//reset the view
 					resetView();
 				}, function(error) {
 					var alert = '<div style="width: 300px" class="alert alert-block alert-danger font9 pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred while deleting the comment. </div>';
+
 					//show the comment and error
-					$('#' + comment.get('id'))
-						.find('.action-delete-comment-error').html(alert).alert();
+					$rootElement = model.get('rootElement');
+					$rootElement.find('.action-delete-comment-error').html(alert).alert();
+
+					//reset the view
 					resetView();
 				});
 			});
 		},
 
 		deleteEntity: function() {
-			var model = this.controller.get('model');
+			var that = this;
+			var model = that.controller.get('model');
 
 			var type = model.get('type');
-			console.log(type)
+			if(type === 'question') return;
+			else {
+				//show the confirmation modal
+				$('#divDeleteModal .modal-title').html('Delete the Answer');
+				$('#divDeleteModal .modal-body').html('<p>Are you sure you want to delete the Answer?</p><p>You will loose all the points you earned on this answer.</p><p>This action cannot be undone.</p>');
+
+				$('#divDeleteModal').modal('show');
+
+				//on confirmation delete the entity
+				$('#divDeleteModal .btn-danger').unbind('click').click(function(e) {
+					//reset the state of the view
+					var resetView = function() {
+						$('#divDeleteModal .btn-danger').button('reset');
+						$('#divDeleteModal').modal('hide');
+					}
+
+					//set the state of button to loading
+					$('#divDeleteModal .btn-danger').button('loading');
+
+					that.controller.deleteEntity(function() {
+						//On success reload the page according to type of entity
+						if(type === 'question') window.location = window.host;
+						else window.location.reload();
+					}, function(error) {
+						var alert = '<div style="width: 300px" class="alert alert-block alert-danger font9 pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred while deleting the ' + type + '. </div>';
+						
+						//show error
+						var $rootElement = model.get('rootElement');
+						$rootElement.find('.action-delete-entity-error').html(alert).alert();
+
+						//reset the view
+						resetView();
+					});
+				});
+			}
 		}
 	});
 }).call(this);

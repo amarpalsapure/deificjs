@@ -234,7 +234,7 @@
 										</a>	\
 										<span class='divTime'>{{sincetime comment.__utcdatecreated}}</span>	\
 										{{#if comment.isowner}}	\
-											<a {{action 'deletecomment' comment target=view}} title='Delete the comment' href='javascript:void(0)' class='action icon-remove-sign pas mlm'></a>	\
+											<a {{action 'deleteComment' comment target=view}} title='Delete the comment' href='javascript:void(0)' class='action icon-remove-sign pas mlm'></a>	\
 										{{/if}}	\
 										<div class='alert-dismiss-container action-delete-comment-error'>	\
 										</div>	\
@@ -243,7 +243,7 @@
 							</div>	\
 						{{/each}}	\
 						<div class='mtm mbm'>	\
-							<a href='javascript:void(0)' title='Show more Comments' class='showMore' {{action showAllComment target=view}}>	\
+							<a href='javascript:void(0)' title='Show more Comments' class='showMore hide' {{action showAllComment target=view}}>	\
 								<i class='icon-ellipsis-horizontal'></i> \
 							</a>	\
 						</div>	\
@@ -308,6 +308,8 @@
 											</div>	\
 										</div>	\
 									{{/if}}	\
+									<div class='alert-dismiss-container action-delete-entity-error'>	\
+									</div>	\
 								</div>	\
 							</div>	\
 						</div>	\

@@ -21,7 +21,7 @@
 		}.property('type'),
 
 		postedaction: function() {
-			return this.get('type') === 'question' ? 'asked by' : 'answered by';
+			return this.get('type') === 'question' ? 'asked' : 'answered';
 		}.property('type')
 	});
 }).call(this);

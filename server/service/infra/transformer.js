@@ -225,6 +225,11 @@ var _toAnswer = function(answer, state) {
 		if(state) response.answer.isowner = author['__id'] === state.userid;
 		response.users.push(author);
 	}
+
+	//answer question
+	if(answer.children.question && answer.children.question.length > 0) {
+		response.answer.question = answer.children.question[0]['__id'];
+	}
 				
 	return response;
 };
