@@ -5,7 +5,7 @@
 		type: DS.attr('string'),
 		title: DS.attr('string'),
 		text: DS.attr('string'),
-
+		
 		url: DS.attr('string'),
 		totalvotecount: DS.attr('number', { defaultValue: 0 }),
 		isanswered: DS.attr('boolean'),
@@ -18,7 +18,10 @@
 
 		isquestion: function() {
 			return this.get('type') === 'question';
-		}.property('type')
+		}.property('type'),
 
+		postedaction: function() {
+			return this.get('type') === 'question' ? 'asked' : 'answered';
+		}.property('type')
 	});
 }).call(this);
