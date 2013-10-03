@@ -90,7 +90,7 @@
               </div>
               <div class='row'>
                 <div class='col-xs-12 col-sm-12 col-lg-10 col-lg-offset-1'>
-                  {{view Ember.TextArea class='resizable' id='wmd-input' name='wmd-input' placeholder='You can use Markdown language to write your answer. Click on help for more information.' valueBinding='newAnswer'}}
+                  {{view Ember.TextArea class='resizable' id='wmd-input' name='wmd-input' placeholder='You can use Markdown language to write your answer. Click on help for more information.' valueBinding='view.newAnswer'}}
                 </div>
               </div>
               <div class='row mts'>
@@ -107,7 +107,7 @@
               </div>
               <div class='row mtm'>
                 <div class='col-xs-12 col-sm-12 col-lg-10 col-lg-offset-1'>
-                  <button id='btnSubmitAnswer' disabled='disabled' class='btn btn-large btn-primary mrm' data-loading-text='Submitting Your Answer' href='javascript:void(0)' {{action 'createAnswer'}}>Submit Your Answer</button>
+                  <button id='btnSubmitAnswer' disabled='disabled' class='btn btn-large btn-primary mrm' data-loading-text='Submitting Your Answer' href='javascript:void(0)' {{action saveAnswer target=view}}>Submit Your Answer</button>
                   <div class='alert-dismiss-container answerError'>
                   </div>
                 </div>
