@@ -7,7 +7,10 @@ exports.load = function () {
         host: '',
         upvotepts: 10,
         downvotepts: 5,
-        answerpts: 20
+        answerpts: 20,
+        pagesize: 5,                      //max items per page
+        maxpagecount: 3,                  //on paging control maximum page counter will be visible
+        comments: 4                       //max comments will be visible by default
    };
    if(config.host == '') throw Error('Set the host in config');
 
