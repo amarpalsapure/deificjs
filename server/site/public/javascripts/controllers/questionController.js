@@ -3,8 +3,6 @@
 		//answers grouped by date
 		groupedAnswers: [],
 
-		createComment: function() { this.__saveComment('question');	},
-				
 		createAnswer: function() {
 			var text = this.get('newAnswer');
 

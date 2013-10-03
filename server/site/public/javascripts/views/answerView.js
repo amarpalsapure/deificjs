@@ -66,52 +66,32 @@
 			}
 		},
 
-		acceptAnswer: function() {
+		toggleAnswer: function(isAccepted) {
 			var model = this.controller.get('model');
-			var parentId = model.get('id');
+			
 			//show the loader and disable the dropdown menu
 			var toggleView = function() {
-				$('#answer-' + parentId + ' .action-toggle-accept').toggleClass('hide');
-				$('#answer-' + parentId + ' .action-toggle-accept-progress').toggleClass('hide');
+				model.get('rootElement').find('.action-toggle-accept').toggleClass('hide');
+				model.get('rootElement').find('.action-toggle-accept-progress').toggleClass('hide');
 			};
 
+			//hide action button and show the loader
 			toggleView();
 
-			//mark current answer as accepted answer
+			//toggle the current state of the answer as accepted/unaccepted answer
 			//if user is switching the answer, 
 			//then unaccept the initial answer (this will be done in the service)
 			//on client side just mark the original answer as unaccepted
-			this.controller.acceptAnswer(function(answer) {
+			this.controller.toggleAnswer(isAccepted, function(answer) {
 				toggleView();
-			}, function(error) {
+			}, function(message) {
+				//show error message
+				message = message || 'An error occurred during unaccepting answer.';
+				var alert = '<div class="alert alert-block alert-danger pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' + message + '</div>';
+				model.get('rootElement').find('.action-toggle-accept-error').html(alert).alert();
+
+				//hide loader and show action button
 				toggleView();
-				var alert = '<div class="alert alert-block alert-danger pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred during accepting answer. </div>';
-				$('#answer-' + parentId + ' .action-toggle-accept-error').html(alert).alert();
-			});
-
-		},
-
-		unacceptAnswer: function() {
-			var model = this.controller.get('model');
-			var parentId = model.get('id');
-			//show the loader and disable the dropdown menu
-			var toggleView = function() {
-				$('#answer-' + parentId + ' .action-toggle-accept').toggleClass('hide');
-				$('#answer-' + parentId + ' .action-toggle-accept-progress').toggleClass('hide');
-			};
-
-			toggleView();
-
-			//mark current answer as accepted answer
-			//if user is switching the answer, 
-			//then unaccept the initial answer (this will be done in the service)
-			//on client side just mark the original answer as unaccepted
-			this.controller.unacceptAnswer(function(answer) {
-				toggleView();
-			}, function(error) {
-				toggleView();
-				var alert = '<div class="alert alert-block alert-danger pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred during unaccepting answer. </div>';
-				$('#answer-' + parentId + ' .action-toggle-accept-error').html(alert).alert();
 			});
 		},
 

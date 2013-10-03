@@ -1,16 +1,6 @@
 (function(){
 	Deific.BaseController = Deific.HeaderController.extend({
 
-		isCommenting: false,
-		isVoteOpen: false,
-		updateInProgress: false,
-
-		//action handlers
-		commentAction: function() {	this.set('isCommenting', !this.get('isCommenting')); },
-
-		//vote details are open or not
-		votedetails: function() { this.set('isVoteOpen', true);	},
-
 		//common functionality of vote
 		registerVote: function(isUpVote, onSuccess, onError) {
 			var that = this;
@@ -86,61 +76,33 @@
 			});
 		},
 
-		//for internal use
-		__saveComment: function(type){
-			var text = this.get('newComment');
-
-			//validation
-			if (!text || !text.trim()) return;
-
+		//save the comment
+		saveComment: function(text, onSuccess, onError) {
 			var that = this;
-			this.get('store').find('user', Deific.AccountController.user.userid).then(function(user){
+			var parentModel = that.get('model');
+			var type = parentModel.get('type');
+			if(type === 'answer') parentModel = parentModel.get('content');
+
+			that.get('store').find('user', Deific.AccountController.user.userid).then(function(user){
 				// Create the new Comment model
-				var parentId = '';
 				var comment = that.get('store').createRecord('comment');
 				comment.set('text', text);
 				comment.set('author', user);
+				comment.set(type, parentModel);
 				
-				if(type == 'question'){
-					comment.set('question', that.get('model'));
-					parentId = that.get('model').get('id');
-				}
-				else {
-					comment.set('answer', that.get('model').get('content'));
-					parentId = that.get('model').get('content').get('id');
-				}
-
-				// Clear the "New Comment" text field
-				that.set('newComment', '');
-				that.set('isCommenting', false);
-
-				var toggleView = function() {
-					setTimeout(function(){
-						$('#'+ type + '-' + parentId +' .actionProgress').toggleClass('hide');
-						$('#'+ type + '-' + parentId +' .entity-action').toggleClass('hide');
-					}, 10);
-				}
-
-				toggleView();
-
 				// Save the new model
 				comment.save().then(function(savedObj){
-					var model = null;
-					if(type == 'question') model = that.get('model');
-					else model = that.get('model').get('content');
 					savedObj.set('author', user);
-					model.get('comments').pushObject(savedObj);
-					toggleView();
-				}, function(){
-					//in case of any error roll back the changes
-					//and show an error message
-					var alert = '<div class="alert alert-block alert-danger pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred during saving comment. </div>';
-					$('#'+ parentId +' .commentError').html(alert).alert();
-					toggleView();
+					parentModel.get('comments').pushObject(savedObj);
+					onSuccess(savedObj);
+				}, function(error){
+					//in case of any error roll back the changes, in this case there is nothing to rollback
+					onError(Deific.localDataSource.handleError(error, 'Deific.BaseController-saveComment'));
 				});
 			});
 		},
 
+		//delete the comment
 		deleteComment: function(comment, onSuccess, onError) {
 			if(!comment) onError();
 			
@@ -151,12 +113,16 @@
 			});
 		},
 
+		//delete the entity, entity can be answer or question
 		deleteEntity: function(onSuccess, onError) {
 			var that = this;
 			var model = that.get('model');
 			if(model.get('type') === 'answer') model = model.get('content');
 
+			//change the state of model to deleted
 			model.deleteRecord();
+
+			//save the changes to the model
 			model.save().then(onSuccess, function(error) {
 				model.rollback();
 				onError(Deific.localDataSource.handleError(error, 'Deific.BaseController-deleteEntity'));

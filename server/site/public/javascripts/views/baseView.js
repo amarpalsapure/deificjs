@@ -1,8 +1,17 @@
 (function(){
 	Deific.BaseView = Ember.View.extend({
 
+		isCommenting: false,
+		isVoteOpen: false,
+
 		questionpage: true,
 		updateInProgress: false,
+
+		//action handlers
+		commentAction: function() {	this.set('isCommenting', !this.get('isCommenting')); },
+
+		//vote details are open or not
+		voteDetails: function() { this.set('isVoteOpen', true);	},
 
 		showShare: function() {
 			var model = this.controller.get('model');
@@ -92,6 +101,48 @@
 			});
 		},
 
+		saveComment: function() {
+			var text = this.get('newComment');
+
+			//validation
+			if (!text || !text.trim()) return;
+
+			var that = this;
+			var parentModel = that.controller.get('model');
+
+			var toggleView = function() {
+				setTimeout(function(){
+					parentModel.get('rootElement').find('.actionProgress').toggleClass('hide');
+					parentModel.get('rootElement').find('.entity-action').toggleClass('hide');
+				}, 10);
+			};
+
+			//show progress bar
+			toggleView();
+
+			//hide the text area and command buttons
+			that.set('isCommenting', false);
+
+			that.controller.saveComment(text, function(comment) {
+				// Clear the "New Comment" text field
+				that.set('newComment', '');
+				toggleView();
+			}, function(message) {
+				//hide the progress bar
+				toggleView();
+
+				//show the text area and command buttons
+				that.set('isCommenting', true);
+
+				//show an error message
+				setTimeout(function() {
+					message = message || 'An error occurred during saving comment.';
+					var alert = '<div class="alert alert-block alert-danger pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> ' + message + ' </div>';
+					parentModel.get('rootElement').find('.action-save-comment-error').html(alert).alert();
+				}, 50);
+			});
+		},
+
 		deleteComment: function(comment) {
 			var that = this;
 			var model = that.controller.get('model');
@@ -119,12 +170,12 @@
 
 					//reset the view
 					resetView();
-				}, function(error) {
-					var alert = '<div style="width: 300px" class="alert alert-block alert-danger font9 pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred while deleting the comment. </div>';
+				}, function(message) {
+					message = message || 'An error occurred while deleting the comment.';
+					var alert = '<div style="width: 300px" class="alert alert-block alert-danger font9 pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' + message + '</div>';
 
 					//show the comment and error
-					$rootElement = model.get('rootElement');
-					$rootElement.find('.action-delete-comment-error').html(alert).alert();
+					comment.get('rootElement').find('.action-delete-comment-error').html(alert).alert();
 
 					//reset the view
 					resetView();
@@ -159,8 +210,9 @@
 					//On success reload the page according to type of entity
 					if(type === 'question') window.location = window.host;
 					else window.location.reload();
-				}, function(error) {
-					var alert = '<div style="width: 300px" class="alert alert-block alert-danger font9 pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred while deleting the ' + type + '. </div>';
+				}, function(message) {
+					message = message || 'An error occurred while deleting the ' + type + '.';
+					var alert = '<div class="alert alert-block alert-danger font9 pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' + message + '</div>';
 					
 					//show error
 					var $rootElement = model.get('rootElement');
@@ -171,7 +223,6 @@
 				});
 			});
 		},
-
 		
 	});
 }).call(this);
