@@ -58,6 +58,8 @@ app.get('/service/questions/:id', questionApi.findById);
 app.post('/service/questions', questionApi.save);
 // update question
 app.put('/service/questions/:id', questionApi.update);
+// delete question
+app.delete('/service/questions/:id', questionApi.del);
 
 
 // ################# answer api ####################

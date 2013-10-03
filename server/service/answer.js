@@ -436,10 +436,6 @@ exports.save = function(req, res) {
 //Step 5: If current answer is accepted answer, then marked question as unanswered (optional)
 exports.del = function(req, res) {
 	if(!req.param('id')) return res.status(400).json({ messsage: 'Answer Id is required' });
-	_deleteAnswer(req.param('id'), req, res);
-};
-var _deleteAnswer = function (answerId, req, res) {
-	if(!answerId) return;
 
 	//get the state of app
 	var app = require('../shared/app.init');
@@ -453,6 +449,16 @@ var _deleteAnswer = function (answerId, req, res) {
 	var transformer = require('./infra/transformer');
 
 	if(!state.userid) return res.status(401).json({ message: 'Session expired' });
+
+	_deleteAnswer(req.param('id'), false, Appacitive, state, transformer, function(status) {
+		return res.status(status).json({});
+	}, function(status, message) {
+		return res.status(status).json({ message: message });
+	});
+};
+
+var _deleteAnswer = function (answerId, overrideOwner, Appacitive, state, transformer, onSuccess, onFailure) {
+	if(!answerId) return;
 
 	//get the answer details
 	var getAnswerDetails = function(onsuccess, onfailure) {
@@ -490,7 +496,10 @@ var _deleteAnswer = function (answerId, req, res) {
 
 	getAnswerDetails(function(answer) {
 		//check the ownership of answer
-		if(!answer.isowner) return res.status(403).json({messsage: 'You are not authorized for this action.'});
+		if(!overrideOwner && !answer.isowner) {
+			onFailure(403, 'You are not authorized for this action.')
+			return;
+		}
 
 		//delete the answer with all connections
 		delete_Answer(answer.__id, function() {
@@ -498,16 +507,16 @@ var _deleteAnswer = function (answerId, req, res) {
 			multi_delete_comments(answer.comments);
 
 			//update question if required
-			if(answer.iscorrectanswer) update_question(answer.question);
+			//if overrideOwner is false then only try to update the question
+			if(!overrideOwner && answer.iscorrectanswer) update_question(answer.question);
 
 			//return empty response
-			return res.status(204).json({});
+			onSuccess(204);
 		}, function(status) {
-			return res.status(502).json({messsage: 'Failed to delete the answer.'});
+			onFailure(502, 'Failed to delete the answer.')
 		});
 	}, function(status) {
-		return res.status(502).json({messsage: 'Failed to delete the answer.'});
+		onFailure(502, 'Failed to delete the answer.')
 	});
-
 };
 exports.deleteAnswer = _deleteAnswer;

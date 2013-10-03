@@ -575,3 +575,111 @@ exports.save = function(req, res) {
 	//initiate the create process
     createQuestion();
 };
+
+//Step 1: Get the question, check if owner is deleting question (important)
+//Step 2: Get all the comments for the question (optional)
+//Step 3: Delete the question with all connections (important)
+//Step 4: Multi-Delete the comments	(optional)
+//Step 5: Delete all the answers
+exports.del= function(req, res) {
+	var qId = req.param('id');
+	if(!qId) return res.status(400).json({ messsage: 'Question Id is required' });
+
+	//get the state of app
+	var app = require('../shared/app.init');
+	var state = app.init(req);
+
+	//intialize SDK
+	var sdk = require('./appacitive.init');
+	var Appacitive = sdk.init(state.debug);
+
+	//get the transformer
+	var transformer = require('./infra/transformer');
+
+	//get the answer api so that answers can be deleted
+	var answerApi = require('./answer');
+
+	if(!state.userid) return res.status(401).json({ message: 'Session expired' });
+
+	//get the question details
+	var getQuestionDetails = function(onsuccess, onfailure) {
+		var query = new Appacitive.Queries.GraphProjectQuery('question', [qId]);
+		query.fetch(function (questions) {
+			//if no data found
+			if(!questions && questions.length == 0) return res.status(400).json({ messsage: 'Question not found' });
+			
+			var response = transformer.toQuestion(questions[0], state);
+			var question = response.question;
+			var aQuestion = new Appacitive.Article({ __id : question.__id, schema : 'entity' });
+			question.answers = [];
+
+			//get the answers according to page number
+			var getAnswers = function(pagenumber) {
+				aQuestion.fetchConnectedArticles({ 
+				    relation : 'question_answer',
+				    label: 'answer',
+				    fields: ['__id'],
+				    pageSize: 200
+				}, function(obj, pi) {
+					aQuestion.children["question_answer"].forEach(function(answer) {
+						question.answers.push(answer.id());
+					});
+					if(pi.pagenumber * pi.pagesize >= pi.totalrecords) {
+						onsuccess(response.question);
+					} else getAnswers(pi.pagenumber + 1);
+				}, function (obj, error) {
+				    onsuccess(response.question);
+				});
+			};
+
+			//fetch all the answers
+			getAnswers(1);
+		}, onfailure);
+	};
+
+	//delete the question with all connections
+	var delete_Question = function(questionId, onsuccess, onfailure) {
+		var question = new Appacitive.Article({ schema: 'entity', __id: questionId });
+		question.del(onsuccess, onfailure, true);
+	};
+
+	//delete all answers
+	var delete_Answers = function(answers) {
+		if(!answers || answers.length === 0) return;
+		for (var i = 0; i < answers.length; i++) {
+			answerApi.deleteAnswer(answers[i], true, Appacitive, state, transformer, function(s) {}, function(s, m) {});
+		};
+	};
+
+	//multi delete the comments
+	var multi_delete_comments = function(comments) {
+		if(!comments || comments.length === 0) return;
+
+		Appacitive.Article.multiDelete({    
+		    schema: 'comment',
+		    ids: comments
+		});
+	};
+
+	getQuestionDetails(function(question) {
+		//check the ownership of question
+		if(!question.isowner)
+			return res.status(403).json({ message: 'You are not authorized for this action.' });
+
+		//delete the question with all connections
+		delete_Question(question.__id, function() {
+			//delete the comments
+			multi_delete_comments(question.comments);
+
+			//delete answers
+			delete_Answers(question.answers);
+
+			//return empty response
+			return res.status(204).json({});
+		}, function(status) {
+			return res.status(502).json({ message: 'Failed to delete the answer.' });
+		});
+	}, function(status) {
+		return res.status(502).json({ message: 'Failed to delete the answer.' });
+	});	
+};

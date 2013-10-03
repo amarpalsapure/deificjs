@@ -87,41 +87,39 @@
 			var model = that.controller.get('model');
 
 			var type = model.get('type');
-			if(type === 'question') return;
-			else {
-				//show the confirmation modal
-				$('#divDeleteModal .modal-title').html('Delete the Answer');
-				$('#divDeleteModal .modal-body').html('<p>Are you sure you want to delete the Answer?</p><p>You will loose all the points you earned on this answer.</p><p>This action cannot be undone.</p>');
+			//show the confirmation modal
+			var entity = type === 'question' ? 'Question' : 'Answer';
+			$('#divDeleteModal .modal-title').html('Delete the ' + entity);
+			$('#divDeleteModal .modal-body').html('<p>Are you sure you want to delete the ' + entity + '?</p><p>You will loose all the points you earned on this ' + type + '.</p><p>This action cannot be undone.</p>');
 
-				$('#divDeleteModal').modal('show');
+			$('#divDeleteModal').modal('show');
 
-				//on confirmation delete the entity
-				$('#divDeleteModal .btn-danger').unbind('click').click(function(e) {
-					//reset the state of the view
-					var resetView = function() {
-						$('#divDeleteModal .btn-danger').button('reset');
-						$('#divDeleteModal').modal('hide');
-					}
+			//on confirmation delete the entity
+			$('#divDeleteModal .btn-danger').unbind('click').click(function(e) {
+				//reset the state of the view
+				var resetView = function() {
+					$('#divDeleteModal .btn-danger').button('reset');
+					$('#divDeleteModal').modal('hide');
+				}
 
-					//set the state of button to loading
-					$('#divDeleteModal .btn-danger').button('loading');
+				//set the state of button to loading
+				$('#divDeleteModal .btn-danger').button('loading');
 
-					that.controller.deleteEntity(function() {
-						//On success reload the page according to type of entity
-						if(type === 'question') window.location = window.host;
-						else window.location.reload();
-					}, function(error) {
-						var alert = '<div style="width: 300px" class="alert alert-block alert-danger font9 pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred while deleting the ' + type + '. </div>';
-						
-						//show error
-						var $rootElement = model.get('rootElement');
-						$rootElement.find('.action-delete-entity-error').html(alert).alert();
+				that.controller.deleteEntity(function() {
+					//On success reload the page according to type of entity
+					if(type === 'question') window.location = window.host;
+					else window.location.reload();
+				}, function(error) {
+					var alert = '<div style="width: 300px" class="alert alert-block alert-danger font9 pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred while deleting the ' + type + '. </div>';
+					
+					//show error
+					var $rootElement = model.get('rootElement');
+					$rootElement.find('.action-delete-entity-error').html(alert).alert();
 
-						//reset the view
-						resetView();
-					});
+					//reset the view
+					resetView();
 				});
-			}
+			});
 		}
 	});
 }).call(this);
