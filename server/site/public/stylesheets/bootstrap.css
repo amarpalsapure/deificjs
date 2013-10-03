@@ -727,7 +727,6 @@ pre.prettyprint {
 
 pre code {
   padding: 0;
-  font-size: inherit;
   color: inherit;
   background-color: transparent;
   border: 0;
@@ -4986,7 +4985,7 @@ a.thumbnail:focus {
 }
 
 .alert {
-  padding: 15px;
+  padding: 10px;
   margin-bottom: 20px;
   border: 1px solid transparent;
   border-radius: 4px;

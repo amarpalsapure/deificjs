@@ -2,6 +2,7 @@ exports.init = function (req) {
 	var config = require('../shared/configuration').load();
 
 	var state =  {
+		debug: false,
 		brand: process.config.brand,
 		title: process.config.brand,
 		hidelogin: '',
@@ -9,7 +10,7 @@ exports.init = function (req) {
 		isauth: false,
 		userid: '',
 		fullname: '',
-		user: '',
+		context: 'window.init = {};',
 		token: ''
 	};
 	if(req && req.signedCookies && req.signedCookies.u){
@@ -18,13 +19,23 @@ exports.init = function (req) {
 		state.isauth = true;
 		state.userid = req.signedCookies.u.i;
 		state.fullname = req.signedCookies.u.f + ' ' + req.signedCookies.u.l;
-		state.user = "window.init = {};" +
-					 "window.init.user = { "+
-					 "id: '"+ req.signedCookies.u.i +"', "+
-					 "fname: '" + req.signedCookies.u.f + "', "+
-					 "lname: '"+ req.signedCookies.u.l +"'};" +
-					 "window.host = '" + config.host + "'";
+		state.context += "window.init.user = { "+
+						"id: '"+ req.signedCookies.u.i +"', "+
+						"fname: '" + req.signedCookies.u.f + "', "+
+						"lname: '"+ req.signedCookies.u.l + "'" +
+					 "};";
+					 
+
 		state.token = req.signedCookies.u.t;
 	}
+	state.context += "window.init.config = { " +
+					 	"maxpagecount: " + parseInt(process.config.maxpagecount) +
+					 "};" +
+					 "window.host = '" + config.host + "'";
+	if(req.param('debug')) {
+		if(req.param('debug') === 'on') req.session.debug = true;
+		else if(req.param('debug') === 'off') req.session.debug = false;
+	}
+	state.debug = req.session.debug;
 	return state;
 };

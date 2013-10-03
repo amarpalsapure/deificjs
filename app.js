@@ -32,6 +32,7 @@ app.engine('ejs', engine);
 //app.use(googlebot());
 app.use(express.favicon());
 app.use(express.logger('dev'));
+app.use(express.compress());
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.cookieParser('9b7c1f44590b46e509db'));
@@ -53,19 +54,23 @@ if ('development' == app.get('env')) {
 app.get('/service/questions', questionApi.findAll);
 // get question by id
 app.get('/service/questions/:id', questionApi.findById);
+// save question
+app.post('/service/questions', questionApi.save);
 // update question
 app.put('/service/questions/:id', questionApi.update);
-// create question
-app.post('/service/questions', questionApi.create)
+// delete question
+app.delete('/service/questions/:id', questionApi.del);
 
 
 // ################# answer api ####################
 // get answer
 app.get('/service/answers/:id', answerApi.findById);
-// update answer
-app.put('/service/answers/:id', answerApi.update);
 // save answer
 app.post('/service/answers', answerApi.save);
+// update answer
+app.put('/service/answers/:id', answerApi.update);
+// delete comment
+app.delete('/service/answers/:id', answerApi.del);
 
 
 // ################# user api ####################
@@ -80,6 +85,8 @@ app.post('/service/users/logout', userApi.logout);
 // ################# comment api ####################
 // save comment
 app.post('/service/comments', commentApi.save)
+// delete comment
+app.delete('/service/comments/:id', commentApi.del);
 
 // ################# tag api ####################
 // find tag

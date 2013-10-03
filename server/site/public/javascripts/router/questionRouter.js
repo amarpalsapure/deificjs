@@ -38,6 +38,7 @@ Deific.QuestionRoute = Ember.Route.extend({
 				var answer = this.get('store').find('answer', answersMeta[i].__id);
 				answer.then(function(gAnswer){
 					gAnswer.set('question', model);
+					gAnswer.set('ownsparent', model.get('isowner'));
 					//if url has hash (in case of answer id), then reload the page
 					if(--loadedanswercount == 0 && window.location.hash != '') 
 						setTimeout(function(){
@@ -64,5 +65,7 @@ Deific.QuestionRoute = Ember.Route.extend({
 	renderTemplate: function() {
 		this.render('question');
 		this.render('header', {	into: 'question', outlet: 'headerBar', controller: 'header' });
+		this.render('entity', { into: 'question', outlet: 'questionDetails' });
+		this.render('time', { into: 'question', outlet: 'questionDate' });
 	}
 });

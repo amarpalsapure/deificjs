@@ -37,7 +37,6 @@
 	Deific.localDataSource = Ember.Object.create({
 		debug: true,
 		getCurrentUser: function() {
-			
 			if (window.init && window.init.user) {
 				var user = window.init.user;
 				var lUser = Deific.LocalUser.create();
@@ -56,7 +55,11 @@
 							  '\n\tResponse: ' + promiseError.responseText + 
 							  '\n\tSource: ' + source);
 			}
-			return JSON.parse(promiseError.responseText);
+			try {
+				return JSON.parse(promiseError.responseText);	
+			}catch(e){
+				return 'Network failure';
+			}			
 		}
 	});
 }).call(this);
