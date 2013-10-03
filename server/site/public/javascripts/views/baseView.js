@@ -2,6 +2,7 @@
 	Deific.BaseView = Ember.View.extend({
 
 		questionpage: true,
+		updateInProgress: false,
 
 		showShare: function() {
 			var model = this.controller.get('model');
@@ -35,11 +36,60 @@
 			var model = this.controller.get('model');
 			if(!model) return;
 
-			var type = model.get('type');
-
 			var $rootElement = model.get('rootElement');
 			$rootElement.find('.comment').removeClass('hide');
 			$rootElement.find('.showMore').parent().remove();
+		},
+
+		registerVote: function(isUpVote) {
+			var that = this;
+			var model = that.controller.get('model');
+
+			//private functions
+			var validateVoteUser = function() {
+				if(model.get('isowner') === false) return false;
+				//show error
+				var alert = '<div style="width: 240px" class="alert alert-block alert-danger font9 pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> You can\'t vote on your own post. </div>';
+				model.get('rootElement').find('.voteError').html(alert).alert();
+				return true;
+			};
+
+			var showVoteError = function(message) {
+				message = message || 'An error occurred during saving your vote.';
+				var alert = '<div class="alert alert-block alert-danger font9 pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> ' + message + ' </div>';
+				model.get('rootElement').find('.voteError').html(alert).alert();
+			};
+
+			var toggleVoteLoader = function() {
+				model.get('rootElement').find('.voteProgress').toggleClass('hide');
+			};
+
+			//check if the owner of entity is not voting
+			if(validateVoteUser()) return;
+
+			//keep a local flag to track the progress
+			if(that.updateInProgress) return;
+			that.set('updateInProgress', true);
+
+			//show the loader
+			toggleVoteLoader();
+			
+			//reset the view
+			var reset = function() {
+				toggleVoteLoader();
+				that.set('updateInProgress', false);
+				model.set('action', '');
+			};
+
+			that.controller.registerVote(isUpVote, function(savedObj) {
+				//reset the view
+				reset();
+			}, function(message) {
+				//reset the view
+				reset();
+				//show error message
+				showVoteError(message);
+			});
 		},
 
 		deleteComment: function(comment) {
@@ -120,6 +170,8 @@
 					resetView();
 				});
 			});
-		}
+		},
+
+		
 	});
 }).call(this);

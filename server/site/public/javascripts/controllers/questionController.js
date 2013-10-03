@@ -4,15 +4,7 @@
 		groupedAnswers: [],
 
 		createComment: function() { this.__saveComment('question');	},
-		votedetails: function() { this.set('isVoteOpen', true);	},
-		upvote: function() {
-			var model = this.get('content');
-			this.__upvote('question', model);
-		},
-		downvote: function() {
-			var model = this.get('content');
-			this.__downvote('question', model);
-		},
+				
 		createAnswer: function() {
 			var text = this.get('newAnswer');
 

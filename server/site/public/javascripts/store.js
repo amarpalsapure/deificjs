@@ -56,7 +56,7 @@
 							  '\n\tSource: ' + source);
 			}
 			try {
-				return JSON.parse(promiseError.responseText);	
+				return JSON.parse(promiseError.responseText).message;	
 			}catch(e){
 				return 'Network failure';
 			}			

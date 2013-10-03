@@ -75,7 +75,7 @@
 			       	<div {{bindAttr class=':col-xs-5 :plni :col-sm-12 :col-lg-12 view.questionpage:show:hide'}}>	\
 			       		<div class='vote-panel'>	\
 				       		{{#if isLoggedIn}}	\
-								<a {{action upvote}} {{bindAttr class='hasupvoted'}} href='javascript:void(0)'>	\
+								<a {{action registerVote true target=view}} {{bindAttr class='hasupvoted'}} href='javascript:void(0)'>	\
 									<i class='icon-large icon-thumbs-up'></i>	\
 								</a>	\
 								<div class='vote-cast'>	\
@@ -89,7 +89,7 @@
 										</a>	\
 									{{/if}}	\
 								</div>	\
-								<a {{action downvote}} {{bindAttr class='hasdownvoted'}} href='javascript:void(0)'>	\
+								<a {{action registerVote false target=view}} {{bindAttr class='hasdownvoted'}} href='javascript:void(0)'>	\
 									<i class='icon-large icon-thumbs-down'></i>	\
 								</a>	\
 							{{else}}	\

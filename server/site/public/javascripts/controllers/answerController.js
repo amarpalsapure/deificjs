@@ -1,14 +1,7 @@
 (function(){
 	Deific.AnswerController = Deific.BaseController.extend({
 		createComment: function() { this.__saveComment('answer'); },
-		upvote: function() {
-			var model = this.get('content').get('content');
-			this.__upvote('answer', model);
-		},
-		downvote: function() {
-			var model = this.get('content').get('content');
-			this.__downvote('answer', model);
-		},
+		
 		acceptAnswer: function(onSuccess, onError) {
 			var that = this;
 			var model = that.get('content').get('content');
@@ -35,14 +28,15 @@
 				onError(Deific.localDataSource.handleError(error, 'Deific.AnswerController-acceptAnswer'));
 			});
 		},
-		unacceptAnswer: function() {
+
+		unacceptAnswer: function(onSuccess, onError) {
 			var that = this;
 			var model = that.get('content').get('content');
 			model.set('action', 'undo:accepted');
 			model.save().then(function(savedObj){
 				onSuccess(savedObj);
 			}, function(error){
-				onError(Deific.localDataSource.handleError(error, 'Deific.AnswerController-acceptAnswer'));
+				onError(Deific.localDataSource.handleError(error, 'Deific.AnswerController-unacceptAnswer'));
 			});
 		}
 	});
