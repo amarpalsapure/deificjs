@@ -2,6 +2,12 @@
 	Deific.LoginView =  Ember.View.extend({
 		login: {},
 
+		submitTextField: Ember.TextField.extend({
+			insertNewline: function() {
+		        return this.get('parentView').login();
+	   		}
+		}),
+
 		didInsertElement: function(){
 			//remove loader
 			$('#rootProgress').remove();
@@ -11,12 +17,7 @@
 			if(isSessionExpired == '1') {
 				$('#modalSessionExpired').modal('show');
 			}
-		},
-		submitTextField: Ember.TextField.extend({
-			insertNewline: function() {
-		        return this.get('parentView').login();
-	   		}
-		}),
+		},		
 		
 		signIn: function() {
 			var that = this;

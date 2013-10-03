@@ -2,10 +2,10 @@
 	Deific.Answer = DS.Model.extend({
 		__utcdatecreated: DS.attr('date'),
 		__createdby: DS.attr('string'),
+		murl: DS.attr('string'),
 		
 		title: DS.attr('string'), //question title, will be used when new answer is created
 		text: DS.attr('string'),
-		url: DS.attr('string'),
 		murl: DS.attr('string'),
 		iscorrectanswer: DS.attr('boolean'),
 		voteconnid: DS.attr('string'),
@@ -13,12 +13,17 @@
 		downvotecount: DS.attr('number', { defaultValue: 0 }),
 		voted: DS.attr('number'),
 		action: DS.attr('string'),
+		isowner: DS.attr('boolean'),
+		ownsparent: DS.attr('boolean'),
 
 		//relation ship properties
 		question: DS.belongsTo('question'),
 		author: DS.belongsTo('user'),
 		comments: DS.hasMany('comment'),
 
+		istypeanswer: true,
+		type: 'answer',
+				
 		//observing functions
 		entityid: function() {
 			return 'answer-' + this.get('id');
@@ -64,6 +69,14 @@
 
 		votecount: function(){
 			return this.get('upvotecount') - this.get('downvotecount');
-		}.property('upvotecount', 'downvotecount')
+		}.property('upvotecount', 'downvotecount'),
+
+		postedaction: function() {
+			return 'Answered';
+		}.property('type'),
+
+		rootElement: function() {
+			return $('#answer' + '-' + this.get('id'));
+		}.property('id')
 	});
 }).call(this);

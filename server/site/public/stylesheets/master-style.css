@@ -1,4 +1,4 @@
-.font120 {font-size: 1.2em;}
+.font120 {font-size: 1.2em; line-height: 1.6em;}
 .font110 {font-size: 1.1em;}
 .font105 {font-size: 1.05em;}
 .font95 { font-size: 0.95em;}
@@ -16,8 +16,11 @@
 .ptxxl {padding-top: 25px;}
 .ptxxli {padding-top: 25px !important;}
 .pbxs {padding-bottom: 3px;}
+.plxl {	padding-left: 20px;}
+.prxl {	padding-right: 20px;}
 .pbxl {	padding-bottom: 20px;}
 .pbxli {padding-bottom: 20px !important;}
+.pbsi {padding-bottom: 5px !important;}
 .clear {clear:both;}
 .ptn, .pvn, .pan { padding-top: 0px; }
 .paxs { padding: 3px;}
@@ -56,16 +59,26 @@
 .mls, .mhs, .mas { margin-left: 5px; }
 .mlm, .mhm, .mam { margin-left: 10px; }
 .mll, .mhl, .mal { margin-left: 20px; }
+.nowrap { white-space: nowrap;}
 .noborder { border:0px !important; }
 .noboxshadow { box-shadow:none !important; }
-.border-bottom {border-bottom: solid 1px #ddd;}
+.border-bottom {border-bottom: solid 1px #eee;}
 .border-bottom-dark {border-bottom: solid 1px #aaa;}
 .border-bottom-dashed{border-bottom: dashed 1px #ccc;}
+.border-top-dashed {border-top: dashed 1px #ccc;}
 .border-all-dashed {border: dashed 1px #ccc;}
-.muted { color: #bbb; font-style: italic; }
+.muted { color: #ccc; font-style: italic; }
 .no-radius { border-radius: 0px; }
+.separator { border-left: solid 1px #bbb; margin: 0 10px 0 5px; }
 .width-100p { width: 100%; }
+.width-90p	{ width: 90%; }
+.width-10p	{ width: 10%; }
+.position-absolute { position: absolute;}
+.position-relative { position: relative;}
 .input-large { padding: 3px 5px; line-height: 1.6em; height: 34px; }
+.z-index-0 { z-index: 0; }
+.z-index-1 { z-index: 1; }
+.transform-lower { text-transform: lowercase !important;}
 .alert-sm { padding: 8px; }
 .alert-error { border: solid 1px #b94a48; }
 .alert-dismiss-container .close {

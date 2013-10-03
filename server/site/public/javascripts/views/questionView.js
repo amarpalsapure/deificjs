@@ -1,6 +1,14 @@
 (function() {
-	Deific.QuestionView =  Ember.View.extend({
+	Deific.QuestionView =  Deific.BaseView.extend({
+
+		question: {},
+		hidevotecount: true,
+		isTogglingBookmark: false,
+
 		didInsertElement: function(){
+			//hide the answer containers
+			$('.answer-section .question').addClass('hide');
+
 			var that = this;
 			//remove loader
 			$('#rootProgress').remove();
@@ -77,6 +85,7 @@
 				$(window).trigger('deificloaded');
 			}, 100);
 
+
 			if($('#tagSearch').length > 0) {
 				function tagFormatResult(tag) {
 					//add tags to local store, so that api called is not made, when find is done on them
@@ -148,13 +157,6 @@
 			}			
 		},
 		
-		showAllComment: function() {
-			var model = this.controller.get('model');
-			var $ele = $('#question-' + model.get('id'));
-			$ele.find('.comment').removeClass('hide');
-			$ele.find('.showMore').parent().remove();
-		},
-
 		newQuestionAddTag: function() {
 			var that = this;
 
@@ -190,8 +192,6 @@
 			this.__checkQuestionFormIsComplete();
 		},
 
-		question: {},
-
 		createQuestion: function() {
 			var title = this.get('question').title.trim();
 			var text = this.get('question').text.trim();
@@ -223,6 +223,33 @@
 	        	return;
 	     	}
 	     	$('#btnSubmitQuestion').removeAttr('disabled');
+		},
+
+		notimplemented: function() {
+			alert('not implemented');
+		},
+
+		toggleBookmark: function() {
+			var that = this;
+
+			var model = that.controller.get('model');
+			//owner can't bookmark his own question
+			if(model.get('isowner') === true) {
+				var alert = '<div style="width: 275px;" class="alert alert-block alert-danger pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> You can\'t bookmark, your own question. </div>';
+				$('#question-' + model.get('id') + ' .action-toggle-bookmark-error').html(alert).alert();
+				return;
+			}
+
+			if(that.isTogglingBookmark === true) return;
+			that.isTogglingBookmark = true;
+
+			this.controller.toggleBookmark(function() {
+				that.isTogglingBookmark = false;
+			}, function(error) {
+				that.isTogglingBookmark = false;
+				var alert = '<div class="alert alert-block alert-danger pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred. </div>';
+				$('#question-' + model.get('id') + ' .action-toggle-bookmark-error').html(alert).alert();
+			});
 		}
 	});
 }).call(this);
