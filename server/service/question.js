@@ -27,9 +27,13 @@ exports.findAll = function(req, res) {
 	} else {
 		var questionIds = [];
 
+		//get the state of app
+		var app = require('../shared/app.init');
+		var state = app.init(req);
+
 		//initialize the SDK
 		var sdk = require('./appacitive.init');
-		var Appacitive = sdk.init();
+		var Appacitive = sdk.init(state.debug);
 
 		//get the transformer
 		var transformer = require('./infra/transformer');
@@ -37,7 +41,7 @@ exports.findAll = function(req, res) {
 		//First get the question according to the query
 		//then get the question details by making a graph query call
 		var orderBy = '__utcdatecreated',
-			filter = "*issearchable == true and *type == 'question'";
+			filter = "*issearchable==true and *type=='question'";
 
 
 		var sort = req.query.sort;
@@ -104,7 +108,9 @@ var _findById = function(req, qId, callback) {
 	// not voted =>  0
 	var voted = 0
 	var voteconnid = '';
-	var callCount = 3;
+	var isBookmarked = false;
+	var bookmarkConnId = '';
+	var callCount = 4;
 
 	//to update the view count
 	var isNewVisit = false;
@@ -135,19 +141,21 @@ var _findById = function(req, qId, callback) {
 		response.question['answersMeta'] = answersMeta;
 		response.question['voteconnid'] = voteconnid;
 		response.question['voted'] = voted;
+		response.question['isbookmarked'] = isBookmarked;
+		response.question['bookmarkconnid'] = bookmarkConnId;
 		callback(response);
 	};
 
-	//initialize the SDK
-  	var sdk = require('./appacitive.init');
-	var Appacitive = sdk.init();
-
-	var transformer = require('./infra/transformer');
-
 	//get the state of app
-	//to check if user is logged in or not
 	var app = require('../shared/app.init');
 	var state = app.init(req);
+
+	//initialize the SDK
+  	var sdk = require('./appacitive.init');
+	var Appacitive = sdk.init(state.debug);
+
+	//get the transformer
+	var transformer = require('./infra/transformer');
 
 	//PARALLEL CALL 1 
 	//Get the question details
@@ -157,7 +165,7 @@ var _findById = function(req, qId, callback) {
 		if(!questions && questions.length == 0) callback(response);
 		
 		var question = questions[0]
-		response = transformer.toQuestion(question);
+		response = transformer.toQuestion(question, state);
 		merge();
 
 		//update the view count, fire and forget save call
@@ -205,9 +213,11 @@ var _findById = function(req, qId, callback) {
 		merge();
 	});
 
-	//PARALLEL CALL 3 
+	//PARALLEL CALL 3 & 4
 	//Check if logged in user had voted the question
+	//and question bookmark
 	if(state.isauth) {
+		//Question Vote
 		Appacitive.Connection.getBetweenArticlesForRelation({
 			relation: 'question_vote',
 			articleAId : state.userid, // id of logged in user
@@ -222,7 +232,25 @@ var _findById = function(req, qId, callback) {
 		}, function(err) {
 			merge();
 		});
-	}else {
+
+		//Question Bookmark
+		Appacitive.Connection.getBetweenArticlesForRelation({
+			relation: 'question_bookmark',
+			articleAId : state.userid, // id of logged in user
+			articleBId : qId // id of question
+		}, function(connection) {
+			if(connection) {
+				isBookmarked = true;
+				bookmarkConnId = connection.id();
+			}else isBookmarked = false;
+			merge();
+		}, function(err) {
+			merge();
+		});
+	} else {
+		//companset for question_vote
+		merge();
+		//companset for question_bookmark
 		merge();
 	}
 };
@@ -242,17 +270,16 @@ exports.update = function(req, res) {
 	//set question id, froam param
 	question.id = question.__id = req.param('id');
 
+	//get the state of app
+	var app = require('../shared/app.init');
+	var state = app.init(req);
+
 	//initialize appacitive sdk
 	var sdk = require('./appacitive.init');
-	var Appacitive = sdk.init();
+	var Appacitive = sdk.init(state.debug);
 
 	//get the transformer
 	var transformer = require('./infra/transformer');
-
-	//get the state of app
-	//to check if user is logged in or not
-	var app = require('../shared/app.init');
-	var state = app.init(req);
 
 	if(!state.userid) return res.status(401).json({ message: 'Session expired' });
 
@@ -275,14 +302,14 @@ exports.update = function(req, res) {
 			question.voteconnid = connection.id();
 			onsuccess();
 		}, onfailure);
-	}
+	};
 
 	//updates 'question_vote' relation between user and question 
 	var question_vote_Update = function(isupvote, onsuccess, onfailure) {
 		var relation = new Appacitive.Connection({ relation: 'question_vote', __id: question.voteconnid });
 		relation.set('isupvote', isupvote);
 		relation.save(onsuccess, onfailure);
-	}
+	};
 
 	//deletes 'question_vote' relation between user and question 
 	var question_vote_Delete = function(onsuccess, onfailure) {
@@ -291,20 +318,48 @@ exports.update = function(req, res) {
 			question.voteconnid = '';
 			onsuccess();
 		}, onfailure);
-	}
+	};
+
+	//create 'question_bookmark' relation between question and user
+	var question_bookmark_Create = function(onsuccess, onfailure) {
+		var relation = new Appacitive.ConnectionCollection({ relation: 'question_bookmark' });
+		var connection = relation.createNewConnection({ 
+		  endpoints: [{
+		      articleid: question.id,
+		      label: 'question'
+		  }, {
+		      articleid: state.userid,
+		      label: 'user'
+		  }]
+		});
+		connection.save(function() {
+			question.bookmarkconnid = connection.id();
+			onsuccess();
+		}, onfailure);
+	};
+
+	var question_bookmark_Delete = function(onsuccess, onfailure) {
+		var relation = new Appacitive.Connection({ relation: 'question_bookmark', __id: question.bookmarkconnid });
+		relation.del(function() {
+			question.bookmarkconnid = '';
+			onsuccess();
+		}, onfailure);
+	};
 
 	//saves the question object on appacitive api
 	var save = function() {
 		aQuestion.save(function(){
 			//transform the object
 			delete question.id;
-			var response = transformer.toQuestion(aQuestion);
+			var response = transformer.toQuestion(aQuestion, state);
 			response.question.answercount = question.answercount;
 			response.question.author = question.author;
 			response.question.comments = question.comments;
 			response.question.tags = question.tags;
 			response.question.voted = question.voted;
 			response.question.voteconnid = question.voteconnid;
+			response.question.isbookmarked = question.isbookmarked;
+			response.question.bookmarkconnid = question.bookmarkconnid;
 			return res.json(response);
 		}, function(status) {
 			return res.status(502).json({ messsage: status.message });
@@ -391,27 +446,46 @@ exports.update = function(req, res) {
 			//has remove vote
 			question.voted = 0;
 			break;
+		case 'toggle:bookmark':
+			//if question isbookmarked then create connection between user and question
+			if(question.isbookmarked === true) {
+				question_bookmark_Create(function() {
+					question.isbookmarked = true;
+					save();
+				}, function(error) {
+					return res.status(502).json({ messsage: 'Failed to bookmark the question' });	
+				});
+			} else {
+				question_bookmark_Delete(function() {
+					question.isbookmarked = false;
+					save();
+				}, function(error) {
+					return res.status(502).json({ messsage: 'Failed to undo bookmark the question' });	
+				});
+			}
+			break;
 		default:
 			return res.status(400).json({ message: 'Invalid action provided' });
 	}
 };
 
-exports.create = function(req, res) {
+exports.save = function(req, res) {
 	var question = req.body.question;
 	if(!question) return res.status(400);
 
+	//get the state of app
+	var app = require('../shared/app.init');
+	var state = app.init(req);
+
 	//initialize appacitive sdk
 	var sdk = require('./appacitive.init');
-	var Appacitive = sdk.init();
+	var Appacitive = sdk.init(state.debug);
 
 	//get the transformer
 	var transformer = require('./infra/transformer');
 
-	//get the state of app
-	//to check if user is logged in or not
-	var app = require('../shared/app.init');
-	var state = app.init(req);
-
+	//from the state of app
+	//check if user is logged in or not
 	if(!state.userid) {
 		res.clearCookie('u');
 		return res.status(401).json({ message: 'Session expired' });
@@ -468,7 +542,7 @@ exports.create = function(req, res) {
 			aQuestion.set('issearchable', true);
 			aQuestion.save(function(){
 				//return the response
-				var response = transformer.toQuestion(aQuestion);
+				var response = transformer.toQuestion(aQuestion, state);
 				response.question.answercount = 0;
 				response.question.author = question.author;
 				response.question.comments = [];
@@ -500,4 +574,112 @@ exports.create = function(req, res) {
 
 	//initiate the create process
     createQuestion();
+};
+
+//Step 1: Get the question, check if owner is deleting question (important)
+//Step 2: Get all the comments for the question (optional)
+//Step 3: Delete the question with all connections (important)
+//Step 4: Multi-Delete the comments	(optional)
+//Step 5: Delete all the answers
+exports.del= function(req, res) {
+	var qId = req.param('id');
+	if(!qId) return res.status(400).json({ messsage: 'Question Id is required' });
+
+	//get the state of app
+	var app = require('../shared/app.init');
+	var state = app.init(req);
+
+	//intialize SDK
+	var sdk = require('./appacitive.init');
+	var Appacitive = sdk.init(state.debug);
+
+	//get the transformer
+	var transformer = require('./infra/transformer');
+
+	//get the answer api so that answers can be deleted
+	var answerApi = require('./answer');
+
+	if(!state.userid) return res.status(401).json({ message: 'Session expired' });
+
+	//get the question details
+	var getQuestionDetails = function(onsuccess, onfailure) {
+		var query = new Appacitive.Queries.GraphProjectQuery('question', [qId]);
+		query.fetch(function (questions) {
+			//if no data found
+			if(!questions && questions.length == 0) return res.status(400).json({ messsage: 'Question not found' });
+			
+			var response = transformer.toQuestion(questions[0], state);
+			var question = response.question;
+			var aQuestion = new Appacitive.Article({ __id : question.__id, schema : 'entity' });
+			question.answers = [];
+
+			//get the answers according to page number
+			var getAnswers = function(pagenumber) {
+				aQuestion.fetchConnectedArticles({ 
+				    relation : 'question_answer',
+				    label: 'answer',
+				    fields: ['__id'],
+				    pageSize: 200
+				}, function(obj, pi) {
+					aQuestion.children["question_answer"].forEach(function(answer) {
+						question.answers.push(answer.id());
+					});
+					if(pi.pagenumber * pi.pagesize >= pi.totalrecords) {
+						onsuccess(response.question);
+					} else getAnswers(pi.pagenumber + 1);
+				}, function (obj, error) {
+				    onsuccess(response.question);
+				});
+			};
+
+			//fetch all the answers
+			getAnswers(1);
+		}, onfailure);
+	};
+
+	//delete the question with all connections
+	var delete_Question = function(questionId, onsuccess, onfailure) {
+		var question = new Appacitive.Article({ schema: 'entity', __id: questionId });
+		question.del(onsuccess, onfailure, true);
+	};
+
+	//delete all answers
+	var delete_Answers = function(answers) {
+		if(!answers || answers.length === 0) return;
+		for (var i = 0; i < answers.length; i++) {
+			answerApi.deleteAnswer(answers[i], true, Appacitive, state, transformer, function(s) {}, function(s, m) {});
+		};
+	};
+
+	//multi delete the comments
+	var multi_delete_comments = function(comments) {
+		if(!comments || comments.length === 0) return;
+
+		Appacitive.Article.multiDelete({    
+		    schema: 'comment',
+		    ids: comments
+		});
+	};
+
+	getQuestionDetails(function(question) {
+		//check the ownership of question
+		if(!question.isowner)
+			return res.status(403).json({ message: 'You are not authorized for this action.' });
+
+		//delete the question with all connections
+		delete_Question(question.__id, function() {
+			//delete the comments
+			multi_delete_comments(question.comments);
+
+			//delete answers
+			delete_Answers(question.answers);
+
+			//return empty response
+			return res.status(204).json({});
+		}, function(status) {
+			return res.status(502).json({ message: 'Failed to delete the answer.' });
+		});
+	}, function(status) {
+		return res.status(502).json({ message: 'Failed to delete the answer.' });
+	});	
 };

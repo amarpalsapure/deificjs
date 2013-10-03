@@ -1,5 +1,6 @@
 (function() {
 	Deific.PagingController = Ember.ObjectController.extend({
+		isvisible: false,
 		pages: null,
 		totalpages: 0,
 		totalrecords: 0,

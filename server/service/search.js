@@ -8,9 +8,13 @@ exports.freeText = function (req, res) {
 	var query = req.param('q');
 	if(!query || query === '') return res.json(response);
 
+	//get the state of app
+	var app = require('../shared/app.init');
+	var state = app.init(req);
+
 	//initialize the SDK
 	var sdk = require('./appacitive.init');
-	var Appacitive = sdk.init();
+	var Appacitive = sdk.init(state.debug);
 
 	//get the transformer
 	var transformer = require('./infra/transformer');
@@ -18,7 +22,7 @@ exports.freeText = function (req, res) {
 	//First get the question according to the query
 	//then get the question details by making a graph query call
 	var orderBy = '__utcdatecreated',
-		filter = "*issearchable == true and (*title like '*" + query + "*' or *text like '*" + query + "*')",
+		filter = "*issearchable==true and (*title like '*" + query + "*' or *text like '*" + query + "*')",
 		pagenumber = req.param('page');
 
 	if(!pagenumber) pagenumber = 1;

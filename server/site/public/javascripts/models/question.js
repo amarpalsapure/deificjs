@@ -13,15 +13,21 @@
 		upvotecount: DS.attr('number', { defaultValue: 0 }),
 		downvotecount: DS.attr('number', { defaultValue: 0 }),
 		viewcount: DS.attr('number', { defaultValue: 0 }),
+		bookmarkcount: DS.attr('number', { defaultValue: 0 }),
 		isanswered: DS.attr('boolean'),
 		voted: DS.attr('number'),
 		action: DS.attr('string'),
+		isowner: DS.attr('boolean'),
+		isbookmarked: DS.attr('boolean'),
+		bookmarkconnid: DS.attr('string'),
 
 		//relationship property
 		answers: DS.hasMany('answer'),
 		comments: DS.hasMany('comment'),
 		author: DS.belongsTo('user'),
 		tags: DS.hasMany('tag'),
+
+		type: 'question',
 
 		//observing functions
 		commentsArray: function() {
@@ -51,6 +57,14 @@
 
 		votecount: function(){
 			return this.get('upvotecount') - this.get('downvotecount');
-		}.property('upvotecount', 'downvotecount')
+		}.property('upvotecount', 'downvotecount'),
+
+		postedaction: function() {
+			return 'asked';
+		}.property('type'),
+
+		rootElement: function() {
+			return $('#question' + '-' + this.get('id'));
+		}.property('id')
 	});
 }).call(this);

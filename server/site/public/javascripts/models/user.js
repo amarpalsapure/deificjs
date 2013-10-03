@@ -15,7 +15,7 @@
 
 		//observing functions
 		smallimgurl: function() {
-			if(this.get('gravtarurl')) return this.get('gravtarurl') + '?s=36';//&d='+ encodeURI(window.host + '/images/user-default.png');
+			if(this.get('gravtarurl')) return this.get('gravtarurl') + '?s=40';//&d='+ encodeURI(window.host + '/images/user-default.png');
 			else return '/images/user-default.png';
 		}.property('gravtarurl'),
 

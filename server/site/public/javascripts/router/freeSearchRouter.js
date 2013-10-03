@@ -29,6 +29,6 @@ Deific.EntitiesRoute = Deific.BaseRoute.extend({
 	renderTemplate: function() {
 		this.render('entities');
 		this.render('header', {	into: 'entities', outlet: 'headerBar', controller: 'header' });
-		this.render('paging', { into: 'entities', outlet: 'pagerBar', controller: 'paging'})
+		this.render('paging', { into: 'entities', outlet: 'pagerBar', controller: 'paging'});
 	}
 });
