@@ -47,6 +47,8 @@ body { background-color: #eef0f3; }
 
 .entity-details span { font-size: 0.95em; color: #888; }
 
+.tag-page .abbreviation {display: none;}
+
 .mainSection .row { padding: 2px 0 6px; }
 
 .contentTitle { border-bottom: solid 1px #cdcdcd; }

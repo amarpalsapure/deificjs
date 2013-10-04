@@ -94,7 +94,7 @@ app.get('/service/tags', tagApi.find)
 
 // ################# search api ####################
 // free text search
-app.get('/service/entities', searchApi.freeText);
+app.get('/service/entities', searchApi.search);
 
 
 // *************************************************
@@ -108,14 +108,14 @@ app.get('/', routes.index);
 //ask a question
 app.get('/questions/ask', questionRoute.ask);
 
+// question list page by tag
+app.get('/questions/tagged/:tag', questionRoute.tagged);
+
 // question page without title in url
 app.get('/questions/:id', questionRoute.index);
 
 // question page with title in url
 app.get('/questions/:id/:title', questionRoute.index);
-
-// question list page by tag
-app.get('/questions/tagged/:tag', questionRoute.index);
 
 // short url for question
 app.get('/q/:qid', questionRoute.miniindex);

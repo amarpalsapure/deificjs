@@ -5,7 +5,7 @@ Deific.BaseRoute = Ember.Route.extend({
 		
 		if(meta && meta.paginginfo) {
 			var maxpagecount = Math.ceil(meta.paginginfo.totalrecords / meta.paginginfo.pagesize);
-			if(maxpagecount > 0) {
+			if(maxpagecount > 1) {
 				//paging control will have only 5 pages max, (try to read from server)
 				var maxallowedpagecount = 5;
 				if(isNaN(window.init.config.maxpagecount) === false) maxallowedpagecount = window.init.config.maxpagecount;
@@ -31,11 +31,11 @@ Deific.BaseRoute = Ember.Route.extend({
 				Ember.RSVP.all(idPromise).then(function(pages) {
 					that.controllerFor('paging').set('pages', pages);
 					that.controllerFor('paging').set('totalpages', maxpagecount);
-					that.controllerFor('paging').set('totalrecords', meta.paginginfo.totalrecords);
-					if(totalRecordPlaceholder)
-						that.controllerFor('paging').set('totalRecordPlaceholder', totalRecordPlaceholder);
 				});
 			}
+			this.controllerFor('paging').set('totalrecords', meta.paginginfo.totalrecords);
+			if(totalRecordPlaceholder)
+				this.controllerFor('paging').set('totalRecordPlaceholder', totalRecordPlaceholder);
 		}
 	}
 });

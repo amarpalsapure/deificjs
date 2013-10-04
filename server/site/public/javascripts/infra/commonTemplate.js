@@ -4,11 +4,11 @@
 		var _pagingTemplate =
 		"{{#if isvisible}}	\
 	  		<ul class='pagination'>	\
-	    		<li {{bindAttr class='view.disableprepage:disabled'}}><a {{bindAttr href='view.jumpfirstpage'}}>&laquo;</a></li>	\
+	    		<li {{bindAttr class='view.disableprepage:disabled view.hiddenprepage:hide'}}><a {{bindAttr href='view.jumpfirstpage'}}>&laquo;</a></li>	\
 				{{#each page in pages itemController='paging'}}	\
 	      			<li {{bindAttr class='isactivepage:active'}}><a {{bindAttr href='jumptopage'}}>{{pagenumber}}</a></li>	\
 	    		{{/each}}	\
-	    		<li {{bindAttr class='view.disablenextpage:disabled'}}><a {{bindAttr href='view.jumplastpage'}}>&raquo;</a></li>	\
+	    		<li {{bindAttr class='view.disablenextpage:disabled view.hiddennextpage:hide'}}><a {{bindAttr href='view.jumplastpage'}}>&raquo;</a></li>	\
 	  		</ul>	\
 	  	{{/if}}";
 
@@ -141,11 +141,13 @@
 					                                <h1>	\
 					                                    <a {{bindAttr title='text'}} {{bindAttr href='url'}} {{bindAttr class='view.questionpage:font120'}}>	\
 					                                        {{#if view.entitylist}}	\
+					                                        	<span class='abbreviation'>	\
 					                                            {{#if isquestion}}	\
 					                                                Q: 	\
 					                                            {{else}}	\
 					                                                A: 	\
 					                                            {{/if}}	\
+					                                            </span>	\
 					                                        {{/if}}	\
 					                                        {{title}}	\
 					                                    </a>	\

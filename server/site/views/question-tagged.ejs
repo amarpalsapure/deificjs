@@ -1,18 +1,20 @@
 <% layout('__layout') -%>
 
-<% script('/javascripts/router/indexRouter.js') -%>
-<% script('/javascripts/controllers/baseController.js') -%>
-<% script('/javascripts/controllers/questionController.js') -%>
-<% script('/javascripts/views/questionsView.js') -%>
+<% script('/javascripts/infra/commonTemplate.js') -%>
 
+<% script('/javascripts/router/baseRoute.js') -%>
+<% script('/javascripts/router/taggedRouter.js') -%>
 
-<script type='text/x-handlebars', data-template-name='tag'>
-  <span class='label label-default mrs'>
-    <a data-toggle='popover' {{bindAttr data-content='description'}} {{bindAttr data-original-title='name'}} {{bindAttr href='url'}}>{{name}}</a>
-  </span>
-</script>
+<% script('/javascripts/models/entity.js') -%>
+<% script('/javascripts/models/paging.js') -%>
 
-<script type='text/x-handlebars', data-template-name='questions'>
+<% script('/javascripts/controllers/entityController.js') -%>
+<% script('/javascripts/controllers/pagingController.js') -%>
+
+<% script('/javascripts/views/entitiesView.js') -%>
+<% script('/javascripts/views/pagingView.js') -%>
+
+<script type='text/x-handlebars', data-template-name='entities'>
   {{outlet headerBar}}
   
   <div class='container'>
@@ -22,81 +24,33 @@
           <div class='mainSection'>
             <div class='row contentTitle'>
               <div class='col-xs-12 col-sm-7 col-lg-7'>
-                <h1 id='h1Sortedby'></h1>
+                <h1 class='mtm transform-lower'><span id='h1SearchCount'>0</span>&nbsp;results</h1>
               </div>
               <div class="col-xs-12 col-sm-5 col-lg-5">
-                <div class="mts">
-                  <div class="sortGroup mtm btn-group" >
-                    <a id='apopular' href='/?sort=popular' class="btn btn-danger">Popular</a>
-                    <a id='alatest' href='/?sort=latest' class="btn btn-danger">Latest</a>
-                    <a id='aunresolved' href='/?sort=unresolved' class="btn btn-danger">Unresolved</a>
-                  </div>
+                <div class="sortGroup btn-group" >
+                  <a id='alatest' href='/search?sort=latest' class="btn btn-danger">Latest</a>
+                  <a id='avotes' href='/search?sort=votes' class="btn btn-danger">Votes</a>
+                  <a id='aactive' href='/search?sort=active' class="btn btn-danger">Active</a>
                 </div>
               </div>
             </div>
-            <div class='question-list container'>
-              {{#each question in questions itemController="question"}}
-                {{#if isfavtag}}
-                <div class='question row isfavtag'>
-                {{else}}
-                <div class='question row'>
-                {{/if}}
-                  <div class='col-xs-12 col-sm-1 col-lg-1 user-profile'>
-                    <div class='divPic'><a class='user-img' {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}><img {{bindAttr src='author.smallimgurl'}}/></a></div>
-                    <div class='divUserDetails'>
-                      <div class='divUser'>
-                        <a {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}>
-                          <span class='fname'>{{author.firstname}}</span><span class='lname'>{{author.lastname}}</span>
-                        </a>
-                        </div>
-                      <div class='divPts'>{{abbreviateNumber author.reputation}}</div>
-                    </div>
-                    <div class='divPosted'>
-                      asked...
-                    </div>
+            <div class='question-list tag-page'>
+              {{#each entity in entities itemController="entity"}}
+                {{render 'entity' entity}}
+              {{else}}
+                <div class='row'>
+                  <div class='col-xs-12 col-sm-12 col-lg-12'>
+                    <h5 class='muted mtm'>No matching results found.</h5>
                   </div>
-                  <div class='col-xs-12 col-sm-9 col-lg-9'>
-                    <div class='row'>
-                      <div class='col-xs-12 col-sm-12 col-lg-12'>
-                        <h4 class='question-title'>
-                          {{#if isanswered}}
-                            <span class='answered' title='one of the answer was accepted as answer'></span>
-                          {{else}}
-                            <span class='unanswered' title='none of the answers was accepted as answer'></span>
-                          {{/if}}
-                          <a {{bindAttr title='text'}} {{bindAttr href='url'}}>{{title}}</a>
-                        </h4>
-                      </div>
-                    </div>
-                    <div class='row'>
-                      <div class='col-xs-12 col-sm-12 col-lg-12 font9'>
-                        {{text}}... <a {{bindAttr href='url' title='Click to read more'}}>more</a>
-                      </div>
-                      </div>
-                    <div class='row'>
-                      <div class='col-xs-12 col-sm-12 col-lg-12 question-details'>
-                        <span class="mrs">{{votecount}} {{pluralize votecount s='vote'}}</span>
-                        <span class='mrs'>&#8226; {{answercount}} {{pluralize answercount s='answer'}} </span>
-                        <span class='mrs'>&#8226; {{viewcount}} {{pluralize viewcount s='view'}}</span>
-                      </div>
-                    </div>
-                     <div class='row'>
-                      <div class='col-xs-12 col-sm-12 col-lg-12 question-tag'>
-                        <div class='pbl tag-container'>
-                          {{#each tag in tags}}
-                            {{render 'tag' tag}}
-                          {{/each}}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class='col-xs-12 col-sm-2 col-lg-2'>
-                    <div class='divTime'>
-                      {{sincetime __utcdatecreated}}
-                    </div> 
-                  </div>
-                </div>              
+                </div>
               {{/each}}
+            </div>
+            <div class='pager-container'>
+              <div class='row'>
+                <div class='col-xs-12 col-sm-12 col-lg-12'>
+                  {{outlet pagerBar}}
+                </div>
+              </div>
             </div>
           </div>
         </div>
