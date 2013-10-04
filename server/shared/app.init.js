@@ -20,8 +20,8 @@ exports.init = function (req) {
 		state.userid = req.signedCookies.u.i;
 		state.fullname = req.signedCookies.u.f + ' ' + req.signedCookies.u.l;
 		state.context += "window.init.user = { "+
-						"id: '"+ req.signedCookies.u.i +"', "+
-						"fname: '" + req.signedCookies.u.f + "', "+
+						"id: '"+ req.signedCookies.u.i + "', " +
+						"fname: '" + req.signedCookies.u.f + "', " +
 						"lname: '"+ req.signedCookies.u.l + "'" +
 					 "};";
 					 
@@ -29,7 +29,8 @@ exports.init = function (req) {
 		state.token = req.signedCookies.u.t;
 	}
 	state.context += "window.init.config = { " +
-					 	"maxpagecount: " + parseInt(process.config.maxpagecount) +
+					 	"maxpagecount: " + parseInt(process.config.maxpagecount) + "," +
+					 	"allowsignup: " + process.config.allowsignup +
 					 "};" +
 					 "window.host = '" + config.host + "'";
 	if(req.param('debug')) {

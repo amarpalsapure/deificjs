@@ -3,45 +3,11 @@
 		//answers grouped by date
 		groupedAnswers: [],
 
-		createComment: function() { this.__saveComment('question');	},
-		votedetails: function() { this.set('isVoteOpen', true);	},
-		upvote: function() {
-			var model = this.get('content');
-			this.__upvote('question', model);
-		},
-		downvote: function() {
-			var model = this.get('content');
-			this.__downvote('question', model);
-		},
-		createAnswer: function() {
-			var text = this.get('newAnswer');
-
-			//validation
-			if (!text || !text.trim()) return;
-
-			//change the button state to loading (Bootstrap)
-			$('#btnSubmitAnswer').button('loading');
-
-			var reset = function(answer) {
-				if(answer) answer.set('action', '');
-				//reset button state to loading (Bootstrap)
-				$('#btnSubmitAnswer').button('reset');
-			};
-
-			var alert_n_reset = function() {
-				//in case of any error roll back the changes (if any)
-				//and show an error message
-				var alert = '<div class="alert alert-block alert-danger font9"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred during saving answer. </div>';
-				$('.answerError').html(alert).alert();
-
-				reset();
-			};
-
+		saveAnswer: function(text, onSuccess, onError) {
 			var that = this;
-			this.get('store').find('user', Deific.AccountController.user.userid).then(function(user) {
+			that.get('store').find('user', Deific.AccountController.user.userid).then(function(user) {
 				// Create the new Comment model
 				var questionModel = that.get('model');
-				var parentId = questionModel.get('id');
 				var answer = that.get('store').createRecord('answer');
 				answer.set('text', text);
 				answer.set('author', user);
@@ -81,25 +47,16 @@
 						}
 					}
 
-					$('.answer-section').removeClass('hide');
-					$('#wmd-input').val('');
-					$('#wmd-input').trigger('focus');
-
-					reset(savedObj);
-
-					//Set the location to # of answer
-					setTimeout(function() {
-						window.location = model.get('url') + '#' + savedObj.get('id');
-					}, 1000);
-				}, function(){
-					alert_n_reset();
+					onSuccess(savedObj);
+				}, function(error){
+					onError(Deific.localDataSource.handleError(error, 'Deific.QuestionController-saveAnswer'));
 				});
 			}, function(error) {
-				alert_n_reset();				
+				onError(Deific.localDataSource.handleError(error, 'Deific.QuestionController-saveAnswer'));
 			});
 		},
 
-		createQuestion: function(title, text, tagIds, onSuccess, onError) {
+		saveQuestion: function(title, text, tagIds, onSuccess, onError) {
 			var that = this;
 			var model = this.get('model');
 
