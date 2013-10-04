@@ -75,21 +75,21 @@
 			       	<div {{bindAttr class=':col-xs-5 :plni :col-sm-12 :col-lg-12 view.questionpage:show:hide'}}>	\
 			       		<div class='vote-panel'>	\
 				       		{{#if isLoggedIn}}	\
-								<a {{action upvote}} {{bindAttr class='hasupvoted'}} href='javascript:void(0)'>	\
+								<a {{action registerVote true target=view}} {{bindAttr class='hasupvoted'}} href='javascript:void(0)'>	\
 									<i class='icon-large icon-thumbs-up'></i>	\
 								</a>	\
 								<div class='vote-cast'>	\
-									{{#if isVoteOpen}}	\
+									{{#if view.isVoteOpen}}	\
 										<span class='vote-up-count'>{{abbreviateNumber upvotecount}}</span>	\
 										<span class='vote-separator'>/</span>	\
 										<span class='vote-down-count'>{{abbreviateNumber downvotecount}}</span>	\
 									{{else}}	\
-										<a {{action votedetails}} href='javascript:void(0)' title='View up and down vote count'>	\
+										<a {{action voteDetails target=view}} href='javascript:void(0)' title='View up and down vote count'>	\
 	  										<span class='vote-count'>{{abbreviateNumber votecount}}</span>	\
 										</a>	\
 									{{/if}}	\
 								</div>	\
-								<a {{action downvote}} {{bindAttr class='hasdownvoted'}} href='javascript:void(0)'>	\
+								<a {{action registerVote false target=view}} {{bindAttr class='hasdownvoted'}} href='javascript:void(0)'>	\
 									<i class='icon-large icon-thumbs-down'></i>	\
 								</a>	\
 							{{else}}	\
@@ -193,13 +193,13 @@
   										<ul class='dropdown-menu' role='menu'>	\
   											{{#if iscorrectanswer}}	\
   												<li>	\
-  													<a href='javascript:void(0)' {{action 'unacceptAnswer' target=view}}>	\
+  													<a href='javascript:void(0)' {{action toggleAnswer false target=view}}>	\
   														<i class='icon-remove'></i> <span class='font9'>Unaccept</span>	\
 													</a>	\
 												</li>	\
 											{{else}}	\
 										    	<li>	\
-										    		<a href='javascript:void(0)' {{action 'acceptAnswer' target=view}}>	\
+										    		<a href='javascript:void(0)' {{action  toggleAnswer true target=view}}>	\
 										    			<i class='icon-ok'></i> <span class='font9'>Accept</span>	\
 									    			</a>	\
 								    			</li>	\
@@ -253,28 +253,30 @@
 						<div class='col-lg-12'>	\
 							<div class='border-top-dashed'>	\
 								<div class='row'>	\
-									<div class='progress progress-striped active mts hide actionProgress'>	\
-										<div class='progress-bar'  role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width: 100%'>	\
+									<div class='col-xs-12 col-sm-12 col-lg-12'>	\
+										<div class='progress progress-striped active mts hide actionProgress'>	\
+											<div class='progress-bar'  role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width: 100%'>	\
+											</div>	\
 										</div>	\
 									</div>	\
-									<div class='alert-dismiss-container action-error actionError'>	\
-									</div>	\
-									{{#if isCommenting}}	\
+									{{#if view.isCommenting}}	\
 										<div class='col-xs-12 col-sm-12 col-lg-12 mbs'>	\
-											{{view Ember.TextArea placeholder='If you want more information or want to provide any suggestion, use comments.' valueBinding='newComment' action='createComment'}}	\
+											{{view Ember.TextArea placeholder='If you want more information or want to provide any suggestion, use comments.' valueBinding='view.newComment'}}	\
 										</div>	\
 										<div class='col-xs-12 col-sm-12 col-lg-12'>	\
 											<div class='pull-left'>	\
-												<button class='btn btn-xs btn-primary mrs' href='javascript:void(0)' {{action 'createComment'}}>Post</button>	\
-												<a {{action 'commentAction'}} class='comment-cancel font9' href='javascript:void()'>Cancel</a>	\
+												<button class='btn btn-xs btn-primary mrs' href='javascript:void(0)' {{action saveComment target=view}}>Post</button>	\
+												<a {{action commentAction target=view}} class='comment-cancel font9' href='javascript:void()'>Cancel</a>	\
 											</div>	\
+										</div>	\
+										<div class='alert-dismiss-container action-save-comment-error position-absolute width-100p'>	\
 										</div>	\
 									{{else}}	\
 										<div class='col-lg-12'>	\
 											<div class='entity-action'>	\
 												<div class='comment-add pull-left'>	\
 												{{#if isLoggedIn}}	\
-													<a {{action 'commentAction'}} class='comment-add-action' href='javascript:void()'></a>	\
+													<a {{action commentAction target=view}} class='comment-add-action' href='javascript:void()'></a>	\
 												{{else}}	\
 													<a {{bindAttr href='loginurl'}} class='comment-add-action' title='Login to add Comment'></a>	\
 												{{/if}}	\

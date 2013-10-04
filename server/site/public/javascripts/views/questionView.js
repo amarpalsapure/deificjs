@@ -192,7 +192,7 @@
 			this.__checkQuestionFormIsComplete();
 		},
 
-		createQuestion: function() {
+		saveQuestion: function() {
 			var title = this.get('question').title.trim();
 			var text = this.get('question').text.trim();
 
@@ -204,7 +204,7 @@
 			//change the button state to loading (Bootstrap)
 			$('#btnSubmitQuestion').button('loading');
 
-			this.get('controller').createQuestion(title, text, tagIds, function(savedObj){
+			this.get('controller').saveQuestion(title, text, tagIds, function(savedObj){
 				//redirect user to the question page
 				window.location = savedObj.get('url');
 			}, function(error) {
@@ -213,6 +213,46 @@
 				//reset button state to loading (Bootstrap)
 				$('#btnSubmitQuestion').button('reset');		
 			});
+		},
+
+		saveAnswer: function() {
+			var that = this;
+			var text = that.get('newAnswer');
+
+			//validation
+			if (!text || !text.trim()) return;
+			var model = that.controller.get('model');
+			//change the button state to loading (Bootstrap)
+			$('#btnSubmitAnswer').button('loading');
+
+			var reset = function(answer) {
+				if(answer) answer.set('action', '');
+				//reset button state to loading (Bootstrap)
+				$('#btnSubmitAnswer').button('reset');
+			};
+
+			that.controller.saveAnswer(text, function(savedObj) {
+				$('.answer-section').removeClass('hide');
+				$('#wmd-input').val('');
+				$('#wmd-input').trigger('focus');
+
+				reset(savedObj);
+
+				//Set the location to # of answer
+				setTimeout(function() {
+					window.location = model.get('url') + '#' + savedObj.get('id');
+				}, 1000);
+			}, function(message) {
+				//in case of any error roll back the changes (if any)
+				//and show an error message
+				message = message || 'An error occurred during saving answer.';
+				var alert = '<div class="alert alert-block alert-danger font9"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' + message + '</div>';
+				$('.answerError').html(alert).alert();
+
+				reset();
+			});
+
+
 		},
 
 		__checkQuestionFormIsComplete: function() {
