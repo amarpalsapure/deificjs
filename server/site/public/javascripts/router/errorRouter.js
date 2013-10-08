@@ -7,7 +7,11 @@ Deific.Router.map(function () {
 Deific.Router.reopen({
 	location: 'none'
 });
-
+Deific.ErrorView = Ember.View.extend({
+	didInsertElement: function() {
+		$('#rootProgress').remove();
+	}
+});
 Deific.Error = DS.Model.extend({
 	code: DS.attr('string'),
 	message: DS.attr('string')
