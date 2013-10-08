@@ -12,7 +12,7 @@
 				setTimeout(function(){
 					var $loaderEle = $('#answer-loader-'+ model.get('id'));
 					//show answer
-					$('#answer-'+model.get('id')).removeClass('hide')
+					model.get('rootElement').removeClass('hide')
 					//remove loader
 					$loaderEle.remove();
 				}, 50);

@@ -101,7 +101,7 @@ body { background-color: #eef0f3; }
 .question-page .question-desc { min-height: 150px; }
 .question-page .answer-desc { min-height: 250px; }
 .question-page .answer-desc p { word-wrap: break-word;}
-.question-page .col-entity-details { padding-top: 21px !important; padding-left: 4.5%; margin-left: -4.8%; border-left: solid 3px #eee; width: 96%; min-height: 380px; }
+.question-page .col-entity-details { padding-top: 21px !important; padding-left: 4.5%; margin-left: -4.8%; border-left: solid 3px #eee; width: 96%; min-height: 250px; }
 .question-page .col-sm-1 { margin-top: 23px; z-index: 1; background-color: #fff; }
 .question-page textarea, .question-new-page textarea { resize: vertical; width: 100%; font-size: 0.9em; font-family: Monaco, Menlo, Consolas, "Courier New", monospace; border: solid 1px #bbb; height: 45px; }
 .entity-action { padding: 8px 14px 3px; background-color: #eee; margin-top: -2px; height: 32px; }

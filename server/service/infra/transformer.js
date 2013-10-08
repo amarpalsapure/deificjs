@@ -338,7 +338,10 @@ var _toError = function(origin, status) {
 		user_find: 'User not found',
 		comment_save: 'Failed to save the comment.',
 		comment_delete: 'Failed to delete the comment.',
-		answer_save: 'Failed to save the save.',
+		answer_save: 'Failed to save the answer.',
+		answer_delete: 'Failed to delete the answer.',
+		answer_accept: 'Failed to accept the answer',
+		answer_accept_undo: 'Failed to undo accepted answer',
 
 	};
 	var message = errorMap[origin];
