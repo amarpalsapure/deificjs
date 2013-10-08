@@ -5,9 +5,7 @@ Deific.Router.map(function () {
 	this.resource('question', { path: '/' });
 });
 
-Deific.Router.reopen({ location: 'none' });
-
-Deific.QuestionRoute = Ember.Route.extend({
+Deific.QuestionRoute = Deific.BaseRoute.extend({
 	model: function(params){
 		//extract the id from url
 		var idMatch = window.location.pathname.match(/\d+\.?\d*/g);

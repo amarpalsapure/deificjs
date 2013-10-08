@@ -1,10 +1,10 @@
 (function() {
 	Deific.HeaderController = Ember.ObjectController.extend({
-		isLoggedInBinding: 'Deific.AccountController.isLoggedIn',
+		isLoggedInBinding: Ember.Binding.oneWay('Deific.AccountController.isLoggedIn'),
 	   
 		loginurl: window.location.pathname.toLowerCase() === '/users/login'
 				? '/users/login'
-				: '/users/login?returnurl=' + window.location.pathname,
+				: '/users/login?returnurl=' + window.location.pathname + window.location.search,
 		askUrl: Deific.AccountController.user != null 
 			  ? '/questions/ask' 
 			  : '/users/login?returnurl=/questions/ask'

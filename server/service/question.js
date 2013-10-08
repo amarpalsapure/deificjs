@@ -1,100 +1,27 @@
-exports.findAll = function(req, res) {
-	var response = {
-		questions: []
-	};
-
-	//IMPORTANT
-	//Check if question id is there in param,
-	//if yes, it means user has done get question
-	//and not search
-	var questionId = req.param('qId');
-	if(questionId) {
-		_findById(req, questionId, function(questionRes){
-			//dump the question response object in current response object
-			
-			//push the question to array of question, client expects an array of question
-			response.questions.push(questionRes.question);
-
-			//following stuff is side loaded, so add it to root
-			//comments, tags and users
-			response.comments = questionRes.comments;
-			response.tags = questionRes.tags;
-			response.users = questionRes.users;
-
-			return res.json(response);
-		});
-
-	} else {
-		var questionIds = [];
-
-		//get the state of app
-		var app = require('../shared/app.init');
-		var state = app.init(req);
-
-		//initialize the SDK
-		var sdk = require('./appacitive.init');
-		var Appacitive = sdk.init(state.debug);
-
-		//get the transformer
-		var transformer = require('./infra/transformer');
-
-		//First get the question according to the query
-		//then get the question details by making a graph query call
-		var orderBy = '__utcdatecreated',
-			filter = "*issearchable==true and *type=='question'";
-
-
-		var sort = req.query.sort;
-		sort = (!sort) ? 'popular' : sort.toLowerCase();
-		switch(sort) {
-			case 'popular': 
-				orderBy = 'totalvotecount';
-				break;
-			case 'latest':
-				break;
-			case 'unresolved':
-				filter += ' and *isanswered==false';
-				break;
-		}
-
-		var query = new Appacitive.Queries.FindAllQuery({
-						schema : 'entity',
-						fields : '__id',
-						isAscending: false,
-						orderBy: orderBy,
-						filter: filter,
-						pageSize: process.config.pagesize
-					});
-
-		query.fetch(function (questions, paginginfo) {
-			questions.forEach(function (question) {
-				questionIds.push(question.id());
-			})
-
-			//No questions found
-			if(questionIds.length === 0) return res.json(response);
-
-			//Get the question details
-			var query = new Appacitive.Queries.GraphProjectQuery('questions', questionIds);
-			query.fetch(function (gQuestions) {
-				//if no data found
-				if(gQuestions && gQuestions.length > 0) response = transformer.toQuestions(gQuestions, paginginfo);
-				
-				return res.json(response);
-			}, function (status) {
-				return res.json(response);
-			});	
-		}, function (status) {
-			return res.json(response);
-		});
-	}
+//*** IMPORTANT ***//
+//This route will handle 3 request
+// 1) find question by Id (query string will have question id)
+// 2) find question by Tag (query string will have tag)
+// 3) find all questions (no query search string)
+exports.findQuestion = function(req, res) {
+	if(req.param('qId')) return _findById(req, res);
+	else if(req.param('tag')) return _tagSearch(req, res);
+	else return _findAll(req, res);
 };
 
-
-var _findById = function(req, qId, callback) {
+//Step 1: Get the question details
+//Step 2: Get the answers
+// If user is logged in, in that case following two extra calls needs to be made
+//Step 3: Check if logged in user had voted the question
+//Step 4: Check if logged in user had bookmarked the question
+var _findById = function(req, res) {
+	//As we are doing a search call from client side
+	//ember expects an array of of question and not a single question
+	//hence creating an array and dumping question in it
 	var response = {
-		question: {},
+		questions: [],
 		comments: [],
+		tags: [],
 		users: []
 	};
 	var answersMeta = [];
@@ -106,6 +33,8 @@ var _findById = function(req, qId, callback) {
 	// +    vote => +1
 	// -    vote => -1
 	// not voted =>  0
+	var qId = req.param('qId');
+	var questionExists = true;
 	var voted = 0
 	var voteconnid = '';
 	var isBookmarked = false;
@@ -124,7 +53,7 @@ var _findById = function(req, qId, callback) {
 
 	//merge the responses from the parallel calls
 	var merge = function(){
-		if(--callCount != 0) return;
+		if(--callCount != 0 || questionExists === false) return;
 		if(isNewVisit) response.question['viewcount'] = parseInt(response.question['viewcount'], 10) + 1;
 		if(response.question.correctanswer) {
 			var newAnswerMeta = [];
@@ -143,7 +72,14 @@ var _findById = function(req, qId, callback) {
 		response.question['voted'] = voted;
 		response.question['isbookmarked'] = isBookmarked;
 		response.question['bookmarkconnid'] = bookmarkConnId;
-		callback(response);
+
+		//As we are doing a search call from client side
+		//ember expects an array of of question and not a single question
+		//hence creating an array and dumping question in it
+		response.questions = [];
+		response.questions.push(response.question);
+		delete response.question;
+		return res.json(response);
 	};
 
 	//get the state of app
@@ -152,7 +88,7 @@ var _findById = function(req, qId, callback) {
 
 	//initialize the SDK
   	var sdk = require('./appacitive.init');
-	var Appacitive = sdk.init(state.debug);
+	var Appacitive = sdk.init(state.token, state.debug);
 
 	//get the transformer
 	var transformer = require('./infra/transformer');
@@ -161,18 +97,16 @@ var _findById = function(req, qId, callback) {
 	//Get the question details
 	var query = new Appacitive.Queries.GraphProjectQuery('question', [qId]);
 	query.fetch(function (questions) {
-		//if no data found
-		if(!questions && questions.length == 0) callback(response);
-		
 		var question = questions[0]
 		response = transformer.toQuestion(question, state);
 		merge();
 
 		//update the view count, fire and forget save call
 		if(isNewVisit) question.increment('viewcount').save();
-
 	}, function (status) {
+		questionExists = false;
 		merge();
+		return res.status(404).json(transformer.toError('question_not_found', status));	
 	});	
 
 	//PARALLEL CALL 2 
@@ -255,13 +189,194 @@ var _findById = function(req, qId, callback) {
 	}
 };
 
-//deprecated
-exports.findById = function(req, res) {
-	var qId = req.param('id');
-	_findById(req, qId, function(response){
-		return res.json(response);
+//Step 1: Get the tag
+//Step 2: Get connected question for the tag
+//Step 3: Get all question details using graph query
+var _tagSearch = function(req, res) {
+	var response = {
+		questions: [],
+		users: []
+	}
+
+	//validate input
+	var query = req.param('tag');
+	if(!query || query === '') return res.json(response);
+
+	//get the state of app
+	var app = require('../shared/app.init');
+	var state = app.init(req);
+
+	//initialize the SDK
+	var sdk = require('./appacitive.init');
+	var Appacitive = sdk.init(state.token, state.debug);
+
+	//get the transformer
+	var transformer = require('./infra/transformer');
+
+	//First get the question according to the query
+	//then get the question details by making a graph query call
+	var orderBy = '__utcdatecreated',
+		filter = "*issearchable==true",
+		pagenumber = req.param('page');
+
+	if(!pagenumber) pagenumber = 1;
+
+	var sort = req.query.sort;
+	sort = (!sort) ? 'latest' : sort.toLowerCase();
+	switch(sort) {
+		case 'latest':
+			break;
+		case 'votes': 
+			orderBy = 'totalvotecount';
+			break;		
+		case 'active':
+			orderBy = '__utclastupdateddate';
+			break;
+	}
+
+	var getTag = function(name, onsuccess, onfailure) {
+		var tagQuery = new Appacitive.Queries.FindAllQuery({
+					schema : 'tag',
+					fields : '__id,name,excerpt,$questioncount',
+					filter: "*name=='" + name + "'"
+				});
+		tagQuery.fetch(function(tags) {
+			if(tags && tags.length > 0) onsuccess(tags[0]);
+			else onsuccess();
+		}, onfailure);
+	};
+
+	var getConnectedQuestion = function(aTag, onsuccess, onfailure) {
+		aTag.fetchConnectedArticles({
+			relation: 'question_tag',
+		    label: 'question',
+		    orderBy: orderBy,
+		    pageNumber: pagenumber,
+		    pageSize: process.config.pagesize,
+		    fields: '__id'
+		}, function(obj, paginginfo){
+			onsuccess(aTag.children['question_tag'], paginginfo);
+		}, onfailure);
+	};
+
+	var getQuestionDetails = function(questionIds, onsuccess, onfailure) {
+		//Get the question details
+		var query = new Appacitive.Queries.GraphProjectQuery('questions', questionIds);
+		query.fetch(onsuccess, onfailure);	
+	};
+
+	//get the tag
+	getTag(query, function(aTag) {
+		//tag name is invalid
+		if(!aTag) return res.status(400).json(transformer.toError('question_find_tag'));
+
+		//get the connected questions
+		getConnectedQuestion(aTag, function(questions, paginginfo) {
+			//extract the user ids from entities
+			var questionIds = [];
+			questions.forEach(function (question) {
+				questionIds.push(question.id());
+			});
+
+			//No questions found
+			if(questionIds.length === 0) return res.json(response);
+
+			//get the question details with user and tags
+			getQuestionDetails(questionIds, function(gQuestions) {
+
+				//if no data found
+				if(gQuestions && gQuestions.length > 0) response = transformer.toQuestions(gQuestions, paginginfo);
+				
+				//dump tag information
+				if(!response.meta) response.meta = {};
+				response.meta.tag = transformer.toTag(aTag);
+
+			    //return the response
+			    return res.json(response);
+
+			}, function(status) { // error while fetching users
+				return res.status(502).json(transformer.toError('question_find_tag_no_user', status));
+			});
+		}, function(status) {	// error while fetching question
+			return res.status(502).json(transformer.toError('question_find_tag_no_question', status));
+		});
+	}, function(status) {	// error while fetching tag
+		return res.status(502).json(transformer.toError('question_find_tag_no_tag', status));
 	});
 };
+
+//Step 1: Get the question ids according to query
+//Step 2: Get the question details using projection query
+var _findAll = function(req, res) {
+	var response = {
+		questions: [],
+		comments: [],
+		tags: [],
+		users: []
+	};
+	//get the state of app
+	var app = require('../shared/app.init');
+	var state = app.init(req);
+
+	//initialize the SDK
+	var sdk = require('./appacitive.init');
+	var Appacitive = sdk.init(state.token, state.debug);
+
+	//get the transformer
+	var transformer = require('./infra/transformer');
+
+	//First get the question according to the query
+	//then get the question details by making a graph query call
+	var orderBy = '__utcdatecreated',
+		filter = "*issearchable==true and *type=='question'";
+
+
+	var sort = req.query.sort;
+	sort = (!sort) ? 'popular' : sort.toLowerCase();
+	switch(sort) {
+		case 'popular': 
+			orderBy = 'totalvotecount';
+			break;
+		case 'latest':
+			break;
+		case 'unresolved':
+			filter += ' and *isanswered==false';
+			break;
+	}
+
+	var query = new Appacitive.Queries.FindAllQuery({
+					schema : 'entity',
+					fields : '__id',
+					isAscending: false,
+					orderBy: orderBy,
+					filter: filter,
+					pageSize: process.config.pagesize
+				});
+
+	query.fetch(function (questions, paginginfo) {
+		var questionIds = [];
+		questions.forEach(function (question) {
+			questionIds.push(question.id());
+		})
+
+		//No questions found
+		if(questionIds.length === 0) return res.json(response);
+
+		//Get the question details
+		var query = new Appacitive.Queries.GraphProjectQuery('questions', questionIds);
+		query.fetch(function (gQuestions) {
+			//if no data found
+			if(gQuestions && gQuestions.length > 0) response = transformer.toQuestions(gQuestions, paginginfo);
+			
+			return res.json(response);
+		}, function (status) {
+			return res.status(502).json(transformer.toError('question_find_all', status));
+		});	
+	}, function (status) {
+		return res.status(502).json(transformer.toError('question_find_all', status));
+	});
+};
+
 
 exports.update = function(req, res) {
 	var question = req.body.question;
@@ -276,12 +391,12 @@ exports.update = function(req, res) {
 
 	//initialize appacitive sdk
 	var sdk = require('./appacitive.init');
-	var Appacitive = sdk.init(state.debug);
+	var Appacitive = sdk.init(state.token, state.debug);
 
 	//get the transformer
 	var transformer = require('./infra/transformer');
 
-	if(!state.userid) return res.status(401).json({ message: 'Session expired' });
+	if(!state.userid) return res.status(401).json(transformer.toSessionExpiredError(res));
 
 	var aQuestion = transformer.toAppacitiveQuestion(Appacitive, question);
 
@@ -362,7 +477,7 @@ exports.update = function(req, res) {
 			response.question.bookmarkconnid = question.bookmarkconnid;
 			return res.json(response);
 		}, function(status) {
-			return res.status(502).json({ messsage: status.message });
+			return res.status(502).json(transformer.toError('questoin_save', status));
 		});
 	};
 
@@ -380,7 +495,7 @@ exports.update = function(req, res) {
 					aQuestion.increment('totalvotecount', 2);
 					save();
 				}, function(status){
-					return res.status(502).json({ messsage: 'Failed to register downvote' });
+					return res.status(502).json(transformer.toError('entity_vote_down', status));
 				});
 			}else {
 				question_vote_Create(true, function(){
@@ -388,7 +503,7 @@ exports.update = function(req, res) {
 					aQuestion.increment('totalvotecount');
 					save();
 				}, function(status){
-					return res.status(502).json({ messsage: 'Failed to register upvote' });
+					return res.status(502).json(transformer.toError('entity_vote_up', status));
 				});
 			}
 			//has voted true
@@ -402,7 +517,7 @@ exports.update = function(req, res) {
 				aQuestion.decrement('totalvotecount');
 				save();
 			}, function(status){
-				return res.status(502).json({ messsage: 'Failed to undo register upvote' });
+				return res.status(502).json(transformer.toError('entity_vote_up_undo', status));
 			});
 			//has removed vote
 			question.voted = 0;
@@ -419,7 +534,7 @@ exports.update = function(req, res) {
 					aQuestion.decrement('totalvotecount', 2);
 					save();
 				}, function(status){
-					return res.status(502).json({ messsage: 'Failed to register downvote' });
+					return res.status(502).json(transformer.toError('entity_vote_down', status));
 				});
 			}else {
 				question_vote_Create(false, function(){
@@ -427,7 +542,7 @@ exports.update = function(req, res) {
 					aQuestion.decrement('totalvotecount');
 					save();
 				}, function(status){
-					return res.status(502).json({ messsage: 'Failed to register downvote' });
+					return res.status(502).json(transformer.toError('entity_vote_down', status));
 				});
 			}
 			//has voted false
@@ -441,7 +556,7 @@ exports.update = function(req, res) {
 				aQuestion.increment('totalvotecount');
 				save();
 			}, function(status){
-				return res.status(502).json({ messsage: 'Failed to undo register downvote' });
+				return res.status(502).json(transformer.toError('entity_vote_down_undo', status));
 			});
 			//has remove vote
 			question.voted = 0;
@@ -452,20 +567,20 @@ exports.update = function(req, res) {
 				question_bookmark_Create(function() {
 					question.isbookmarked = true;
 					save();
-				}, function(error) {
-					return res.status(502).json({ messsage: 'Failed to bookmark the question' });	
+				}, function(status) {
+					return res.status(502).json(transformer.toError('entity_bookmark', status));
 				});
 			} else {
 				question_bookmark_Delete(function() {
 					question.isbookmarked = false;
 					save();
-				}, function(error) {
-					return res.status(502).json({ messsage: 'Failed to undo bookmark the question' });	
+				}, function(status) {
+					return res.status(502).json(transformer.toError('entity_bookmark_undo', status));
 				});
 			}
 			break;
 		default:
-			return res.status(400).json({ message: 'Invalid action provided' });
+			return res.status(400).json(transformer.toError('entity_invalid_action'));
 	}
 };
 
@@ -479,17 +594,14 @@ exports.save = function(req, res) {
 
 	//initialize appacitive sdk
 	var sdk = require('./appacitive.init');
-	var Appacitive = sdk.init(state.debug);
+	var Appacitive = sdk.init(state.token, state.debug);
 
 	//get the transformer
 	var transformer = require('./infra/transformer');
 
 	//from the state of app
 	//check if user is logged in or not
-	if(!state.userid) {
-		res.clearCookie('u');
-		return res.status(401).json({ message: 'Session expired' });
-	}
+	if(!state.userid) return res.status(401).json(transformer.toSessionExpiredError(res));
 
 	//creates the question and connects it with current logged in user
 	var createQuestion = function() {
@@ -591,7 +703,7 @@ exports.del= function(req, res) {
 
 	//intialize SDK
 	var sdk = require('./appacitive.init');
-	var Appacitive = sdk.init(state.debug);
+	var Appacitive = sdk.init(state.token, state.debug);
 
 	//get the transformer
 	var transformer = require('./infra/transformer');
@@ -599,7 +711,7 @@ exports.del= function(req, res) {
 	//get the answer api so that answers can be deleted
 	var answerApi = require('./answer');
 
-	if(!state.userid) return res.status(401).json({ message: 'Session expired' });
+	if(!state.userid) return res.status(401).json(transformer.toSessionExpiredError(res));
 
 	//get the question details
 	var getQuestionDetails = function(onsuccess, onfailure) {
@@ -664,7 +776,7 @@ exports.del= function(req, res) {
 	getQuestionDetails(function(question) {
 		//check the ownership of question
 		if(!question.isowner)
-			return res.status(403).json({ message: 'You are not authorized for this action.' });
+			return res.status(403).json(transformer.toError('access_denied'));
 
 		//delete the question with all connections
 		delete_Question(question.__id, function() {
@@ -677,9 +789,9 @@ exports.del= function(req, res) {
 			//return empty response
 			return res.status(204).json({});
 		}, function(status) {
-			return res.status(502).json({ message: 'Failed to delete the answer.' });
+			return res.status(502).json(transformer.toError('question_delete', status));
 		});
 	}, function(status) {
-		return res.status(502).json({ message: 'Failed to delete the answer.' });
+		return res.status(502).json(transformer.toError('question_delete', status));
 	});	
 };

@@ -51,9 +51,7 @@ if ('development' == app.get('env')) {
 
 // ################# question api ####################
 // get all question
-app.get('/service/questions', questionApi.findAll);
-// get question by id
-app.get('/service/questions/:id', questionApi.findById);
+app.get('/service/questions', questionApi.findQuestion);
 // save question
 app.post('/service/questions', questionApi.save);
 // update question
@@ -94,7 +92,7 @@ app.get('/service/tags', tagApi.find)
 
 // ################# search api ####################
 // free text search
-app.get('/service/entities', searchApi.freeText);
+app.get('/service/entities', searchApi.search);
 
 
 // *************************************************
@@ -108,14 +106,14 @@ app.get('/', routes.index);
 //ask a question
 app.get('/questions/ask', questionRoute.ask);
 
+// question list page by tag
+app.get('/questions/tagged/:tag', questionRoute.tagged);
+
 // question page without title in url
 app.get('/questions/:id', questionRoute.index);
 
 // question page with title in url
 app.get('/questions/:id/:title', questionRoute.index);
-
-// question list page by tag
-app.get('/questions/tagged/:tag', questionRoute.index);
 
 // short url for question
 app.get('/q/:qid', questionRoute.miniindex);

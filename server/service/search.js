@@ -1,4 +1,4 @@
-exports.freeText = function (req, res) {
+exports.search = function(req, res) {
 	var response = {
 		entities: [],
 		users: []
@@ -40,7 +40,8 @@ exports.freeText = function (req, res) {
 			break;
 	}
 
-	var query = new Appacitive.Queries.FindAllQuery({
+	var findAllEntities = function(onsuccess, onfailure) {
+		var query = new Appacitive.Queries.FindAllQuery({
 					schema : 'entity',
 					fields : 'title,text,type,isanswered,totalvotecount,__createdby,__utcdatecreated,__attributes',
 					isAscending: false,
@@ -49,8 +50,18 @@ exports.freeText = function (req, res) {
 					pageNumber: pagenumber,
 					pageSize: process.config.pagesize
 				});
+		query.fetch(onsuccess, onfailure);
+	};
 
-	query.fetch(function (entities, paginginfo) {
+	var multiGetUsers = function(userIds, onsuccess, onfailure) {
+		Appacitive.Article.multiGet({ 
+		    schema: 'user',
+		    ids: userIds,
+		    fields: ['firstname,lastname,email,$answerdowncount,$answerupcount,$correctanswercount,$questiondowncount,$questionupcount']// this denotes the fields to be returned in the article object, to avoid increasing the payload : optional
+		}, onsuccess, onfailure);
+	};
+
+	findAllEntities(function(entities, paginginfo) {
 		var userIds = [];
 		entities.forEach(function (entity) {
 			userIds.push(entity.get('__createdby'));
@@ -59,12 +70,7 @@ exports.freeText = function (req, res) {
 		//No questions found
 		if(userIds.length === 0) return res.json(response);
 
-		//Get the details for all the users
-		Appacitive.Article.multiGet({ 
-		    schema: 'user',
-		    ids: userIds,
-		    fields: ['firstname,lastname,email,$answerdowncount,$answerupcount,$correctanswercount,$questiondowncount,$questionupcount']// this denotes the fields to be returned in the article object, to avoid increasing the payload : optional
-		}, function(users) { 
+		multiGetUsers(userIds, function(users){
 			//get the transformed entities
 			response = transformer.toEntities(entities, paginginfo);
 
@@ -73,11 +79,10 @@ exports.freeText = function (req, res) {
 		    	response.users.push(transformer.toUser(user));
 		    });
 		    return res.json(response);
-		}, function(err) {
-		    return res.status(502).json(response);
+		}, function(status){
+			return res.status(502).json(transformer.toError('entity_find_all', status));
 		});
-		
-	}, function (status) {
-		return res.status(502).json(response);
-	});
+	}, function(status){
+		return res.status(502).json(transformer.toError('entity_find_all', status));
+	});	
 };

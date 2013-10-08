@@ -1,14 +1,33 @@
 (function() {
 	window.templates = new (function() {
+		var _error = 
+		"{{outlet headerBar}}	\
+		  <div class='container'>	\
+		    <div class='content'>	\
+		      <div class='mainSection' style='margin-right: 0;'>	\
+		        <div class='row error-page'>	\
+		          <div class='col-lg-12 z-index-1 text-center'>	\
+		            <h3 class='transform-upper ptxl'>{{markdown message}}</h3>	\
+		            {{#if code}}	\
+			            <p class='font110 mtl mbm'>We are investigating the issue.</p>	\
+			            <p>Please try again after some time. Thanks.</p>	\
+		            {{/if}}	\
+		          </div>	\
+		        </div>	\
+		      </div>	\
+		    </div>	\
+		  </div>	\
+		{{render 'footer'}}";
+
 		//Paging template
 		var _pagingTemplate =
 		"{{#if isvisible}}	\
 	  		<ul class='pagination'>	\
-	    		<li {{bindAttr class='view.disableprepage:disabled'}}><a {{bindAttr href='view.jumpfirstpage'}}>&laquo;</a></li>	\
+	    		<li {{bindAttr class='view.disableprepage:disabled view.hiddenprepage:hide'}}><a {{bindAttr href='view.jumpfirstpage'}}>&laquo;</a></li>	\
 				{{#each page in pages itemController='paging'}}	\
 	      			<li {{bindAttr class='isactivepage:active'}}><a {{bindAttr href='jumptopage'}}>{{pagenumber}}</a></li>	\
 	    		{{/each}}	\
-	    		<li {{bindAttr class='view.disablenextpage:disabled'}}><a {{bindAttr href='view.jumplastpage'}}>&raquo;</a></li>	\
+	    		<li {{bindAttr class='view.disablenextpage:disabled view.hiddennextpage:hide'}}><a {{bindAttr href='view.jumplastpage'}}>&raquo;</a></li>	\
 	  		</ul>	\
 	  	{{/if}}";
 
@@ -16,12 +35,27 @@
 	  	var _tagTemplate = 
 	  	"<span class='label label-default mrm'> \
     		<a data-toggle='popover' 	\
-    			{{bindAttr data-content='description'}} 	\
+    			{{bindAttr data-content='excerpt'}} 	\
     			{{bindAttr data-original-title='name'}} 	\
     			{{bindAttr href='selfurl'}}>	\
     				{{name}}	\
 			</a>	\
   		</span>";
+
+  		var _tagsTemplate = 
+  		"<ul class='tagCloud-container pan mtm'>	\
+  			{{#each tag in tags itemController='question'}}	\
+    			<li class='tag-container'>	\
+      				{{render 'tag' tag}}<small class='muted'>x {{abbreviateNumber tag.questioncount}}</small>	\
+    			</li>	\
+  			{{else}}	\
+    			<div class='row'>	\
+      				<div class='col-xs-12 col-sm-12 col-lg-12'>	\
+        				<h5 class='muted mtm'>No related tags.</h5>	\
+      				</div>	\
+    			</div>	\
+  			{{/each}}	\
+  		</ul>";
 
   		var _timeTemplate = 
   		"<div class='row time-row'>	\
@@ -141,11 +175,13 @@
 					                                <h1>	\
 					                                    <a {{bindAttr title='text'}} {{bindAttr href='url'}} {{bindAttr class='view.questionpage:font120'}}>	\
 					                                        {{#if view.entitylist}}	\
+					                                        	<span class='abbreviation'>	\
 					                                            {{#if isquestion}}	\
 					                                                Q: 	\
 					                                            {{else}}	\
 					                                                A: 	\
 					                                            {{/if}}	\
+					                                            </span>	\
 					                                        {{/if}}	\
 					                                        {{title}}	\
 					                                    </a>	\
@@ -179,7 +215,7 @@
 					                </div>	\
 				                </div>	\
 				                {{#if ownsparent}}	\
-				                <div {{bindAttr class='istypeanswer:width-10p:hide :text-right :pull-right :mbxs :position-relative'}}> \
+				                <div {{bindAttr class=':accept-answer-container istypeanswer:width-10p:hide :text-right :pull-right :mbxs :position-relative'}}> \
 				                	<div class='progress progress-striped active mts hide action-toggle-accept-progress position-absolute width-100p'>	\
 										<div class='progress-bar'  role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width: 100%'>	\
 										</div>	\
@@ -217,7 +253,7 @@
 			                <div {{bindAttr class='view.questionpage:hide :pbm'}}>	\
 			                    {{text}}... <a {{bindAttr href='url' title='Click to read more'}}>more</a>	\
 			                </div>	\
-			                <div {{bindAttr class='view.questionpage:ptm:hide :pbm'}}>	\
+			                <div {{bindAttr class='view.questionpage:ptm:hide :pbm :entity-description'}}>	\
 			                	{{markdown text}}	\
 			                </div>	\
 			            </div>	\
@@ -332,8 +368,10 @@
 		    </div>	\
 	    </div>";
 
+	    this.errorTemplate = _error;
 	  	this.pagingTemplate = _pagingTemplate;
 	  	this.tagTemplate = _tagTemplate;
+	  	this.tagsTemplate = _tagsTemplate;
 	  	this.timeTemplate = _timeTemplate;
 	  	this.shareTemplate = _shareTemplate;
   		this.entityTemplate = _entityTemplate;
@@ -341,8 +379,10 @@
 	})();
 }).call(this);
 
+Ember.TEMPLATES.error = Ember.Handlebars.compile(templates.errorTemplate);
 Ember.TEMPLATES.paging = Ember.Handlebars.compile(templates.pagingTemplate);
 Ember.TEMPLATES.tag = Ember.Handlebars.compile(templates.tagTemplate);
+Ember.TEMPLATES.tags = Ember.Handlebars.compile(templates.tagsTemplate);
 Ember.TEMPLATES.time = Ember.Handlebars.compile(templates.timeTemplate);
 Ember.TEMPLATES.share = Ember.Handlebars.compile(templates.shareTemplate);
 Ember.TEMPLATES.entity = Ember.Handlebars.compile(templates.entityTemplate);

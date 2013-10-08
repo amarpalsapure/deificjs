@@ -30,6 +30,7 @@ exports.init = function (req) {
 	}
 	state.context += "window.init.config = { " +
 					 	"maxpagecount: " + parseInt(process.config.maxpagecount) + "," +
+					 	"env: '" + process.config.env + "'," +
 					 	"allowsignup: " + process.config.allowsignup +
 					 "};" +
 					 "window.host = '" + config.host + "'";

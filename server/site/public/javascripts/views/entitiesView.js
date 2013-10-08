@@ -20,9 +20,11 @@
 			//update the href of all the sort
 			//add query to the href
 			var query = $.fn.parseParam('q');
-			$.each($('.sortGroup a'), function(i, ele) {
-				$(ele).attr('href', $(ele).attr('href') + '&q=' + query);
-			});
+			if(query) {
+				$.each($('.sortGroup a'), function(i, ele) {
+					$(ele).attr('href', $(ele).attr('href') + '&q=' + query);
+				});
+			}
 
 			//cleanup html
 			//as we are using common template `entity` for all pages
