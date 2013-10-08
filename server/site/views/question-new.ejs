@@ -9,12 +9,6 @@
 <% script('/javascripts/views/baseView.js') -%>
 <% script('/javascripts/views/questionView.js') -%>
 
-<script type='text/x-handlebars', data-template-name='tag'>
-  <span class='label label-default mrs'>
-    <a data-toggle='popover' {{bindAttr data-content='description'}} {{bindAttr data-original-title='name'}} {{bindAttr href='url'}}>{{name}}</a>
-  </span>
-</script>
-
 <script type='text/x-handlebars', data-template-name='question'>
 {{outlet headerBar}} 
 

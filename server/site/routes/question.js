@@ -11,6 +11,9 @@ exports.tagged = function(req, res) {
   	var app = require('../../shared/app.init');
 	var state = app.init(req);
 
+	state.tag = req.param('tag');
+	state.title = "Questions tagged as '" + state.tag + "'";
+
 	res.render('question-tagged', state);
 };
 

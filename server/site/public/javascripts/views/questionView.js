@@ -93,15 +93,15 @@
 					store.push('tag', {
 						id: tag.__id,
 						name: tag.name,
-						description: tag.description
+						excerpt: tag.excerpt
 					});
 
 					//return the html
 			        var markup = "<table class='tag-result'><tr>";
 			        markup += "<td class='tag-info'><div class='tag-name font-bold'>" + tag.name + "</div>";
 			        markup += "<div class='tag-qcount mls font9'>x "+ tag.questioncount +"</div>"
-			        if (tag.description) {
-			            markup += "<div class='pas font8'>" + tag.description + "</div>";
+			        if (tag.excerpt) {
+			            markup += "<div class='pas font8'>" + tag.excerpt + "</div>";
 			        }
 			        markup += "</td></tr></table>"
 			        return markup;

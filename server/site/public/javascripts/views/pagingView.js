@@ -2,6 +2,10 @@
 	Deific.PagingView =  Ember.View.extend({
 		disableprepage: true,
 		disablenextpage: false,
+
+		hiddenprepage: false,
+		hiddennextpage: false,
+
 		jumpfirstpage: null,
 		jumplastpage: null,
 
@@ -16,7 +20,10 @@
 			if(isNaN(window.init.config.maxpagecount) === false) maxallowedpagecount = window.init.config.maxpagecount;
 
 			//if max page count is less than 5, then disable both pre and next page anchor
-			if(maxpagecount <= maxallowedpagecount) {
+			if(maxpagecount === 0) {
+				this.set('hiddenprepage', true);
+				this.set('hiddennextpage', true);
+			}else if(maxpagecount <= maxallowedpagecount) {
 				this.set('disableprepage', true);
 				this.set('disablenextpage', true);
 			} else {
@@ -27,7 +34,7 @@
 				var nextPage = pages[maxallowedpagecount - 1].get('pagenumber') + 1;
 
 				var getLocation = function(pagenumber) {
-					var location = window.host + '/search' + $.fn.removeParam('page') +
+					var location = window.host + window.location.pathname + $.fn.removeParam('page') +
 								   '&page=' + pagenumber;
 					if(window.location.hash != '') location += window.location.hash
 					return location;

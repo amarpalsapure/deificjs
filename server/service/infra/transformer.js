@@ -61,11 +61,12 @@ var _toTag = function(tag) {
 	var response = {
 		'__id': tag.id(),
 		'name': tag.get('name'),
+		'excerpt': tag.get('excerpt'),
 		'description': tag.get('description'),
 		'questioncount': 0
 	};
 
-	if(tag.aggregate('questioncount')) response.questioncount = tag.aggregate('questioncount').all;
+	if(tag.aggregate('questioncount')) response.questioncount = _toInt(tag.aggregate('questioncount').all);
 
 	return response;
 };
@@ -302,7 +303,66 @@ var _to_Appacitive_Answer = function(Appacitive, answer) {
 };
 exports.toAppacitiveAnswer = _to_Appacitive_Answer;
 
+// ASSUMPTION //
+//if status object is not provided, it means user has provided in valid input
+var _toError = function(origin, status) {
+	if(!status) status = {
+					code: '56789', //this code value is handled differently on client side
+					message: 'status object not provided',
+  					faulttype: null,
+  					version: '1.0',
+  					referenceid: 'notavailble',
+  					additionalmessages: []
+				};
+	var errorMap = {
+		default: 'Something went wrong.',
+		question_not_found: 'Question not found, it might be deleted.',
+		question_find_all: 'Looks like something has broken.',
+		question_find_tag: 'Tag name is invalid',
+		question_find_tag_no_tag: 'Some error occurred during fetching tag',
+		question_find_tag_no_question: 'Some error occurred during fetching question',
+		question_find_tag_no_user: 'Some error occurred during fetching user for the question',
+		questoin_save: 'Failed to save the question.',
+		question_delete: 'Failed to delete the question.',
+		entity_find_all: 'Looks like something has broken.',
+		entity_vote_up: 'Failed to register upvote',
+		entity_vote_up_undo: 'Failed to undo register upvote',
+		entity_vote_down: 'Failed to register downvote',
+		entity_vote_down_undo: 'Failed to undo register downvote',
+		entity_bookmark: 'Failed to bookmark the question',
+		entity_bookmark_undo: 'Failed to undo bookmark the question',
+		entity_invalid_action: 'Invalid action provided',
+		access_denied: 'You are not authorized for this action.',
+		user_login_validate: 'Email and Password are required.',
+		user_login: 'Authentication failed',
+		user_find: 'User not found',
+		comment_save: 'Failed to save the comment.',
+		comment_delete: 'Failed to delete the comment.',
+		answer_save: 'Failed to save the save.',
 
+	};
+	var message = errorMap[origin];
+	if(!message) message = errorMap['default'];
+	if(status.code === '19036') message = 'Your session has expired, please <a href="/users/login?returnurl=' + window.location.pathname + '">login</a> again. Thanks.';
+	status.error = message;
+	return status;
+};
+exports.toError = _toError;
+
+var _toSessionExpiredError = function(res, status) {
+	//clear the session cookie (if any)
+	if(res) res.clearCookie('u');
+
+	//if status is not provided, create one
+	if(!status) status = {
+		code: '19036',
+		message: 'Session expired'
+	}
+
+	status.error = 'Your session has expired, please <a href="/users/login?returnurl=' + window.location.pathname + '">login</a> again. Thanks.';
+	return status;
+};
+exports.toSessionExpiredError = _toSessionExpiredError;
 
 //private functions (for local use)
 var _toInt = function(number) { 
@@ -318,3 +378,4 @@ var _urlEncode = function(text) {
 	}
 	return text.toLowerCase();
 };
+
