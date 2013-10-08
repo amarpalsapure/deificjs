@@ -5,7 +5,7 @@
         didInsertElement: function() {
             var query = $.fn.parseParam('q');
             if(!query || query === '') return;
-            this.set('searchtext', decodeURI(query));
+            this.set('searchtext', decodeURIComponent(query).replace(/\+/g, ' '));
             $(this.get('element')).find('.searchbox > input').focus();
         },
 
@@ -23,7 +23,8 @@
     		if(!query || query.trim() === '') return;
 
             //set the search in query string
-    		window.location = window.host + '/search?q=' + encodeURI(query);
+            query = encodeURIComponent(query).replace(/%20/g, '+');
+    		window.location = window.host + '/search?q=' + query;
     	},
 
     	signOut: function() {
