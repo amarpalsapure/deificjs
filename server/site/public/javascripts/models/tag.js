@@ -1,6 +1,7 @@
 (function() {
 	Deific.Tag = DS.Model.extend({
 		name: DS.attr('string'),
+		excerpt: DS.attr('string'),
 		description: DS.attr('string'),
 		questioncount: DS.attr('number', { defaultValue: 0 }),
 

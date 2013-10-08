@@ -1,4 +1,5 @@
 body { background-color: #eef0f3; }
+.error-page h3 { line-height: 1.4em; }
 #rootProgress { position: fixed; top: 0px; z-index: 1; width: 100%; }
 .font-medium { font-size: 1.1em; }
 .sub-header { padding-bottom: 18px; }
@@ -18,7 +19,7 @@ body { background-color: #eef0f3; }
 .icon_ask { background: url(../images/icon_ask.png) left center no-repeat; height: 54px; width: 24px; display: inline-block; line-height: 54px; margin-right: 3px; }
 .answer .entity-container { padding-bottom: 50px !important; }
 .bubble { border: solid 15px #eee; border-radius: 15px; float: left; margin-top: -8px; margin-left: 5px;}
-.user-profile img { box-shadow: 1px 1px 3px #ccc; }
+.user-profile img { box-shadow: 1px 1px 3px #ccc; width: 40px;}
 .question-new-page textarea { height: 200px !important; }
 .related-tags { margin-top: 6px; padding: 5px 0px 7px;}
 .tagCloud-container li { list-style: none; padding: 4px 0 4px;}
@@ -46,8 +47,17 @@ body { background-color: #eef0f3; }
         .question-list .isanswered, .question-list .isanswered .user-profile, .question-list .isanswered .vote-panel { background-color: #EFFFEF; }
 
 .entity-details span { font-size: 0.95em; color: #888; }
+#wmd-preview h1, .entity-description h1 { font-size: 1.7em; line-height: 1.4em; }
+#wmd-preview h2, .entity-description h2 { font-size: 1.6em; }
+#wmd-preview h3, .entity-description h3 { font-size: 1.4em; }
+#wmd-preview h4, .entity-description h4 { font-size: 1.2em; }
 
-.tag-page .abbreviation {display: none;}
+
+.tag-page .abbreviation { display: none;}
+.tag-details .tag-excerpt { color: #aaa; font-size: 0.95em; font-style: italic; }
+.tag-details h2 { font-size: 1.55em; }
+.tag-details h4 {font-style: 1.2em; color: #666; }
+.tag-details h2, .tag-details h4 { display: inline; }
 
 .mainSection .row { padding: 2px 0 6px; }
 
@@ -134,6 +144,7 @@ body { background-color: #eef0f3; }
     .answer-list .even .arrow-up { border-bottom: 10px solid #fafafa; }
 
 .answer-list .answer-accepted { background-color: #EFFFEF; }
+.accept-answer-container { min-width: 50px; }
 .answer-accepted .arrow-left { border-right: 10px solid #EFFFEF !important; }
 .answer-accepted .arrow-up { border-bottom: 10px solid #EFFFEF !important; }
 .answer-accepted pre, .answer-accepted code { background-color: #fff; }

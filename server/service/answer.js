@@ -28,15 +28,10 @@ exports.findById = function(req, res) {
 
 	//initialize the sdk
   	var sdk = require('./appacitive.init');
-	var Appacitive = sdk.init(state.debug);
+	var Appacitive = sdk.init(state.token, state.debug);
 
 	//get the transformer
 	var transformer = require('./infra/transformer');
-
-	//get the state of app
-	//to check if user is logged in or not
-	var app = require('../shared/app.init');
-	var state = app.init(req);
 
 	//PARALLEL CALL 1 
 	//get the answer details
@@ -85,14 +80,14 @@ exports.update = function(req, res) {
 	var app = require('../shared/app.init');
 	var state = app.init(req);
 
-	if(!state.userid) return res.status(401).json(req.body.answer);
-
 	//initialize appacitive sdk
 	var sdk = require('./appacitive.init');
-	var Appacitive = sdk.init(state.debug);
+	var Appacitive = sdk.init(state.token, state.debug);
 
 	//get the transformer
 	var transformer = require('./infra/transformer');
+
+	if(!state.userid) return res.status(401).json(transformer.toSessionExpiredError(res));
 
 	var aAnswer = transformer.toAppacitiveAnswer(Appacitive, answer);
 
@@ -203,7 +198,7 @@ exports.update = function(req, res) {
 					aAnswer.increment('totalvotecount', 2);
 					save();
 				}, function(status){
-					return res.status(502).json({ messsage: 'Failed to register upvote' });
+					return res.status(502).json(transformer.toError('entity_vote_up', status));
 				});
 			}else {
 				answer_vote_Create(true, function(){
@@ -211,7 +206,7 @@ exports.update = function(req, res) {
 					aAnswer.increment('totalvotecount');
 					save();
 				}, function(status){
-					return res.status(502).json({ messsage: 'Failed to register upvote' });
+					return res.status(502).json(transformer.toError('entity_vote_up', status));
 				});
 			}
 			//has voted true
@@ -225,7 +220,7 @@ exports.update = function(req, res) {
 				aAnswer.decrement('totalvotecount');
 				save();
 			}, function(status){
-				return res.status(502).json({ messsage: 'Failed to register upvote' });
+				return res.status(502).json(transformer.toError('entity_vote_up_undo', status));
 			});
 			//has removed vote
 			answer.voted = 0;
@@ -242,7 +237,7 @@ exports.update = function(req, res) {
 					aAnswer.decrement('totalvotecount', 2);
 					save();
 				}, function(status){
-					return res.status(502).json({ messsage: 'Failed to register downvote' });
+					return res.status(502).json(transformer.toError('entity_vote_down', status));
 				});
 			}else {
 				answer_vote_Create(false, function(){
@@ -250,7 +245,7 @@ exports.update = function(req, res) {
 					aAnswer.decrement('totalvotecount');
 					save();
 				}, function(status){
-					return res.status(502).json({ messsage: 'Failed to register downvote' });
+					return res.status(502).json(transformer.toError('entity_vote_down', status));
 				});
 			}
 			//has voted false
@@ -264,7 +259,7 @@ exports.update = function(req, res) {
 				aAnswer.increment('totalvotecount');
 				save();
 			}, function(status){
-				return res.status(502).json({ messsage: 'Failed to register downvote' });
+				return res.status(502).json(transformer.toError('entity_vote_down_undo', status));
 			});
 			//has remove vote
 			answer.voted = 0;
@@ -295,17 +290,17 @@ exports.update = function(req, res) {
 					//save the answer and return the response
 					save();
 				}, function() {
-					if(!oldAcceptedAnswer) return res.status(502).json({ messsage: 'Failed to accept the answer' });
+					if(!oldAcceptedAnswer) return res.status(502).json(transformer.toError('answer_accept'));
 					//try to rollback the state
 					correct_answer_Create(oldAcceptedAnswer.id(), function() {
-						return res.status(502).json({ messsage: 'Failed to accept the answer' });
+						return res.status(502).json(transformer.toError('answer_accept'));
 					}, function() {
 						//TODO: Some error mechanism which will let user know something is gone wrong for which user might to refresh the page
-						return res.status(502).json({ messsage: 'Failed to accept the answer' });
+						return res.status(502).json(transformer.toError('answer_accept'));
 					});
 				});
 			}, function() {
-				return res.status(502).json({ messsage: 'Failed to accept the answer' });
+				return res.status(502).json(transformer.toError('answer_accept'));
 			});
 			break;
 		case 'undo:accepted':
@@ -315,11 +310,11 @@ exports.update = function(req, res) {
 				aAnswer.set('score', 0);
 				save();
 			}, function() {
-				return res.status(502).json({ messsage: 'Failed to undo accepted answer' });
+				return res.status(502).json(transformer.toError('answer_accept_undo'));
 			});
 			break;
 		default:
-			return res.status(400).json({ messsage: 'Invalid action provided.' });
+			return res.status(400).json(transformer.toError('entity_invalid_action'));
 	}
 };
 
@@ -334,22 +329,19 @@ exports.save = function(req, res) {
 	var app = require('../shared/app.init');
 	var state = app.init(req);
 
-	if(!state.userid) {
-		res.clearCookie('u');
-		return res.status(401).json({ message: 'Session expired' });
-	}
-
 	//initialize appacitive sdk
 	var sdk = require('./appacitive.init');
-	var Appacitive = sdk.init(state.debug);
+	var Appacitive = sdk.init(state.token, state.debug);
 
 	//get the transformer
 	var transformer = require('./infra/transformer');
 
+	if(!state.userid) return res.status(401).json(transformer.toSessionExpiredError(res));
+
 	var rollbackAnswer = function(aAnswer) {
 		//Rollback the answer
 		aAnswer.del(function(){}, function(){}, true);
-		return res.status(500).json({ message: 'Unable to save answer' });
+		return res.status(500).json(transformer.toError('answer_save'));
 	};
 
 	//creates the answer and connects it with current logged in user
@@ -448,12 +440,12 @@ exports.del = function(req, res) {
 	//get the transformer
 	var transformer = require('./infra/transformer');
 
-	if(!state.userid) return res.status(401).json({ message: 'Session expired' });
+	if(!state.userid) return res.status(401).json(transformer.toSessionExpiredError(res));
 
 	_deleteAnswer(req.param('id'), false, Appacitive, state, transformer, function(status) {
 		return res.status(status).json({});
-	}, function(status, message) {
-		return res.status(status).json({ message: message });
+	}, function(status, error) {
+		return res.status(status).json(error);
 	});
 };
 
@@ -497,7 +489,7 @@ var _deleteAnswer = function (answerId, overrideOwner, Appacitive, state, transf
 	getAnswerDetails(function(answer) {
 		//check the ownership of answer
 		if(!overrideOwner && !answer.isowner) {
-			onFailure(403, 'You are not authorized for this action.')
+			onFailure(403, transformer.toError('access_denied'))
 			return;
 		}
 
@@ -513,10 +505,10 @@ var _deleteAnswer = function (answerId, overrideOwner, Appacitive, state, transf
 			//return empty response
 			onSuccess(204);
 		}, function(status) {
-			onFailure(502, 'Failed to delete the answer.')
+			onFailure(502, transformer.toError('answer_delete', status));
 		});
 	}, function(status) {
-		onFailure(502, 'Failed to delete the answer.')
+		onFailure(502, transformer.toError('answer_delete', status));
 	});
 };
 exports.deleteAnswer = _deleteAnswer;

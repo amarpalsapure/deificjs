@@ -14,7 +14,7 @@ exports.find = function(req, res) {
 
 	//initialize the sdk
   	var sdk = require('./appacitive.init');
-	var Appacitive = sdk.init(state.debug);
+	var Appacitive = sdk.init(state.token, state.debug);
 
 	//get the transformer
 	var transformer = require('./infra/transformer');
@@ -22,7 +22,7 @@ exports.find = function(req, res) {
 	//search for matching tags
 	var query = new Appacitive.Queries.FindAllQuery({
 						schema : 'tag',
-						fields : 'name,description,$questioncount',
+						fields : 'name,excerpt,$questioncount',
 						isAscending: false,
 						filter: "(*name like '"+ term +"*')",
 						pageSize: pageSize
@@ -35,6 +35,6 @@ exports.find = function(req, res) {
 		response.total = pi.totalrecords;
 		return res.json(response);
 	}, function (status) {
-		return res.status(502).json({message: status.message});
+		return res.status(502).json(transformer.toError('question_find_tag', status));
 	});
 };

@@ -1,20 +1,18 @@
 <% layout('__layout') -%>
 
-<% script('/javascripts/infra/commonTemplate.js') -%>
-
-<% script('/javascripts/router/baseRoute.js') -%>
 <% script('/javascripts/router/taggedRouter.js') -%>
 
 <% script('/javascripts/models/entity.js') -%>
 <% script('/javascripts/models/paging.js') -%>
 
-<% script('/javascripts/controllers/entityController.js') -%>
+<% script('/javascripts/controllers/baseController.js') -%>
+<% script('/javascripts/controllers/questionController.js') -%>
 <% script('/javascripts/controllers/pagingController.js') -%>
 
-<% script('/javascripts/views/entitiesView.js') -%>
+<% script('/javascripts/views/questionsView.js') -%>
 <% script('/javascripts/views/pagingView.js') -%>
 
-<script type='text/x-handlebars', data-template-name='entities'>
+<script type='text/x-handlebars', data-template-name='questions'>
   {{outlet headerBar}}
   
   <div class='container'>
@@ -24,23 +22,35 @@
           <div class='mainSection'>
             <div class='row contentTitle'>
               <div class='col-xs-12 col-sm-7 col-lg-7'>
-                <h1 class='mtm transform-lower'><span id='h1SearchCount'>0</span>&nbsp;results</h1>
+                <h1 class='mtm'>Tagged Questions</h1>
               </div>
               <div class="col-xs-12 col-sm-5 col-lg-5">
                 <div class="sortGroup btn-group" >
-                  <a id='alatest' href='/search?sort=latest' class="btn btn-danger">Latest</a>
-                  <a id='avotes' href='/search?sort=votes' class="btn btn-danger">Votes</a>
-                  <a id='aactive' href='/search?sort=active' class="btn btn-danger">Active</a>
+                  <a id='alatest' href='/questions/tagged/<%= tag %>/?sort=latest' class="btn btn-danger">Latest</a>
+                  <a id='avotes' href='/questions/tagged/<%= tag %>/?sort=votes' class="btn btn-danger">Votes</a>
+                  <a id='aactive' href='/questions/tagged/<%= tag %>/?sort=active' class="btn btn-danger">Active</a>
                 </div>
               </div>
             </div>
+            {{#if tag}}
+            <div class='tag-details mtm mbm'>
+              <div class='row border-all-dashed'>
+                <div class="col-xs-12 col-sm-12 col-lg-12 ptm pll prl">
+                  <h2>{{tag.name}}</h2><h4> x {{tag.questioncount}}</h4>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-lg-12 ptm pbm pll prl tag-excerpt">
+                  {{tag.excerpt}}
+                </div>
+              </div>  
+            </div>
+            {{/if}}
             <div class='question-list tag-page'>
-              {{#each entity in entities itemController="entity"}}
-                {{render 'entity' entity}}
+              {{#each question in questions itemController="question"}}
+                {{render 'entity' question}}
               {{else}}
                 <div class='row'>
                   <div class='col-xs-12 col-sm-12 col-lg-12'>
-                    <h5 class='muted mtm'>No matching results found.</h5>
+                    <h5 class='muted mtm'>No question is tagged.</h5>
                   </div>
                 </div>
               {{/each}}
@@ -56,7 +66,15 @@
         </div>
         <div class='col-xs-12 col-sm-12 col-lg-3 z-index-0'>
           <div class='sideSection'>
+            <div class='row contentTitle'>
+              <div class='col-xs-12 col-sm-12 col-lg-12'>
+                <h1 class='related-tags'>Related Tags</h1>
+              </div>
+            </div>
             <div class='row'>
+              <div class='col-xs-12 col-sm-12 col-lg-12'>
+                {{outlet relatedTags}}
+              </div>
             </div>
           </div>
         </div>

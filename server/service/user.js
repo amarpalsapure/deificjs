@@ -3,18 +3,24 @@ exports.findById = function(req, res) {
 		user: {}
 	};
 
+	//get the state of app
+	var app = require('../shared/app.init');
+	var state = app.init(req);
+
+	//initialize the sdk
   	var sdk = require('./appacitive.init');
-	var Appacitive = sdk.init();
+	var Appacitive = sdk.init(state.debug);
 	
+	//get the transformer
 	var transformer = require('./infra/transformer');
 
 	var user = new Appacitive.User({__id: req.param('id')})
 	user.fetch(function () {
 		//tranform		
 		response.user = transformer.toUser(user);
-		res.json(response);
+		return res.json(response);
 	}, function (status) {
-		res.json(response);
+		return res.status(404).json(transformer.toError('user_find'));
 	});	
 };
 
@@ -22,9 +28,12 @@ exports.auth = function(req, res){
 	var email = req.body.email;
 	var pwd = req.body.password;
 
+	//get the transformer
+	var transformer = require('./infra/transformer');
+
 	//validate the inputs
 	if(!email || email === '' || !pwd || pwd === '')
-		return res.status(400).json({ message: 'Email and Password are required.' });
+		return res.status(400).json(transformer.toError('user_login_validate'));
 	
 	//initialize the SDK
   	var sdk = require('./appacitive.init');
@@ -52,8 +61,8 @@ exports.auth = function(req, res){
 				lname: authResult.user.get('lastname')
 			}
 		});
-	}, function(data) {
-		return res.status(401).json({ message: 'Authentication failed' });
+	}, function(status) {
+		return res.status(401).json(transformer.toError('user_login', status));
 	});	
 };
 

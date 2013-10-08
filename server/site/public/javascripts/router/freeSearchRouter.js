@@ -4,9 +4,6 @@
 Deific.Router.map(function () {
 	this.resource('entities', { path: '/' });
 });
-Deific.Router.reopen({
-	location: 'none'
-});
 
 Deific.EntitiesRoute = Deific.BaseRoute.extend({
 	model: function(param){ 

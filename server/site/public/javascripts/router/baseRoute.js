@@ -1,4 +1,11 @@
 Deific.BaseRoute = Ember.Route.extend({
+	actions: {
+		error: function(error, transition) {
+			Deific.localDataSource.handleRouteError(error);
+			this.transitionTo('error');
+		}
+	},
+
 	setupPager: function(model, totalRecordPlaceholder) {
 		var store = this.controllerFor('paging').get('store');
 		var meta = store.typeMapFor(model.type).metadata;
@@ -37,5 +44,30 @@ Deific.BaseRoute = Ember.Route.extend({
 			if(totalRecordPlaceholder)
 				this.controllerFor('paging').set('totalRecordPlaceholder', totalRecordPlaceholder);
 		}
+	},
+
+	setupRelatedTag: function(controllerFor, model) {
+		var storeTags = [];
+		var questions = model.toArray();
+		if(!questions) return;
+		questions.forEach(function(question) {
+			var tags = question.get('tags');
+			if(!tags) return;
+			tags.forEach(function(tag) {
+				var match = $.grep(storeTags, function(item) {
+					return item.get('id') === tag.get('id');
+				});
+				if(match.length === 0) storeTags.push(tag);
+			});
+		});
+
+		//sort tags by `questioncount`
+		storeTags.sort(function(t1, t2) {
+			var diff = t2.get('questioncount') - t1.get('questioncount');
+			if(diff < -1) return -1;
+			if(diff > 0) return 1;
+			return 0;
+		});
+		this.controllerFor(controllerFor).set('tags', storeTags);
 	}
 });

@@ -1,28 +1,10 @@
 <% layout('__layout') -%>
 
-<% script('/javascripts/infra/commonTemplate.js') -%>
 <% script('/javascripts/router/indexRouter.js') -%>
 <% script('/javascripts/controllers/baseController.js') -%>
 <% script('/javascripts/controllers/questionController.js') -%>
 <% script('/javascripts/views/questionsView.js') -%>
 <% script('/javascripts/views/tagView.js') -%>
-
-
-<script type='text/x-handlebars', data-template-name='tags'>
-  <ul class='tagCloud-container pan mtm'>
-  {{#each tag in tags itemController="question"}}
-    <li class='tag-container'>
-      {{render 'tag' tag}}<small class='muted'>x {{abbreviateNumber tag.questioncount}}</small>
-    </li>
-  {{else}}
-    <div class='row'>
-      <div class='col-xs-12 col-sm-12 col-lg-12'>
-        <h5 class='muted mtm'>No related tags.</h5>
-      </div>
-    </div>
-  {{/each}}
-  </ul>
-</script>
 
 <script type='text/x-handlebars', data-template-name='questions'>
   {{outlet headerBar}}
