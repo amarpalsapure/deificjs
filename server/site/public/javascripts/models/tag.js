@@ -6,7 +6,7 @@
 		questioncount: DS.attr('number', { defaultValue: 0 }),
 
 		selfurl: function(){
-			return '/questions/tagged/' + this.get('name');
+			return '/questions/tagged/' + encodeURIComponent(this.get('name'));
 		}.property('name'),
 
 		question: DS.belongsTo('question')
