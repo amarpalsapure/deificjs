@@ -13,6 +13,7 @@
     "facebook-node-sdk": "0.2",
     "phantom": "*",
     "node-phantom": "*",
-    "MD5": "*"
+    "MD5": "*",
+    "express-minify": "*"
   }
 }

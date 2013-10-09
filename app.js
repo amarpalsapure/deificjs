@@ -5,6 +5,8 @@
 
 var express = require('express');
 var engine = require('ejs-locals');
+var minify = require('express-minify');
+
 var routes = require('./server/site/routes');
 var userRoute = require('./server/site/routes/user');
 var questionRoute = require('./server/site/routes/question');
@@ -23,6 +25,9 @@ var tagApi = require('./server/service/tag.js');
 var searchApi = require('./server/service/search.js');
 
 var app = express();
+app.use(express.compress());
+app.use(minify());
+app.use(minify({cache: __dirname + 'server/site/public/_cache'}));
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -32,7 +37,6 @@ app.engine('ejs', engine);
 //app.use(googlebot());
 app.use(express.favicon());
 app.use(express.logger('dev'));
-app.use(express.compress());
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.cookieParser('9b7c1f44590b46e509db'));
