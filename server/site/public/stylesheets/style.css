@@ -322,5 +322,6 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
 @media (max-width: 400px) /* Mobile */ {
     #wmd-heading-button, #wmd-hr-button { display: none !important; }
     .divUser a { overflow-x: hidden; float: left; text-overflow: ellipsis; width: 90px; white-space: nowrap; }
+    .question-search-page .divUser a { width: auto;}
     .divPts { margin-top: -2px !important; }
 }

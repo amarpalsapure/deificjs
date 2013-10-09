@@ -9,15 +9,14 @@ Deific.QuestionsRoute = Deific.BaseRoute.extend({
 	model: function(param){ 
 		var split = window.location.pathname.split('/');
 		var tagName = split.pop();
-		if (window.location.search != '') tagName = split.pop();
+		if (tagName === '') tagName = split.pop();
 		if(tagName === '') window.location = '/error.html';
-		var sort = $.fn.parseParam('sort', 'popular');
+		var sort = $.fn.parseParam('sort', 'votes');
 		var page = $.fn.parseParam('page', '1');
 		return this.get('store').find('question', {
 			tag: decodeURI(tagName),
 			sort: sort,
-			page: page,
-			tagsearch: true
+			page: page
 		});
 	},
 	setupController : function(controller, model) {

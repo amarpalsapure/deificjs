@@ -328,8 +328,10 @@ var _findAll = function(req, res) {
 	//First get the question according to the query
 	//then get the question details by making a graph query call
 	var orderBy = '__utcdatecreated',
-		filter = "*issearchable==true and *type=='question'";
+		filter = "*issearchable==true and *type=='question'",
+		pagenumber = req.param('page');
 
+	if(!pagenumber) pagenumber = 1;
 
 	var sort = req.query.sort;
 	sort = (!sort) ? 'popular' : sort.toLowerCase();
@@ -350,6 +352,7 @@ var _findAll = function(req, res) {
 					isAscending: false,
 					orderBy: orderBy,
 					filter: filter,
+					pageNumber: pagenumber,
 					pageSize: process.config.pagesize
 				});
 

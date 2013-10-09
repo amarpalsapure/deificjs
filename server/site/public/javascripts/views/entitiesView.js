@@ -14,7 +14,7 @@
 			$('#rootProgress').remove();
 
 			//enable the the active link
-			var sort = $.fn.parseParam('sort', 'latest').toLowerCase();
+			var sort = $.fn.parseParam('sort', $('.sortGroup').data('default')).toLowerCase();
 			$('.sortGroup #' + 'a' + sort).addClass('active');
 
 			//update the href of all the sort

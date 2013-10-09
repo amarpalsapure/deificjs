@@ -10,7 +10,7 @@ Deific.EntitiesRoute = Deific.BaseRoute.extend({
 		var query = $.fn.parseParam('q');
 		if(query === '') window.location = '/error.html';
 		query  = query.replace(/\+/g, '%20');
-		var sort = $.fn.parseParam('sort', 'popular');
+		var sort = $.fn.parseParam('sort', 'votes');
 		var page = $.fn.parseParam('page', '1');
 		return this.get('store').find('entity', {
 			q: decodeURI(query),
