@@ -27,7 +27,8 @@ var searchApi = require('./server/service/search.js');
 var app = express();
 app.use(express.compress());
 
-if ('production' == process.env.NODE_ENV) {
+console.log(app.get('env'));
+if ('production' == app.get('env')) {
 	app.use(minify({ cache: path.join(__dirname, 'server/site/public/_cache') }));
 }
 
@@ -52,16 +53,16 @@ if ('development' == app.get('env')) {
 }
 
 // ***************************************************
-// ****************** Service route ******************
+// ****************** Service rote ******************
 // ***************************************************
 
 // ################# question api ####################
 function noCacheRequest() {
 	return function(req, res, next) {
+		res._no_minify = true;
 		res.header("Cache-Control", "no-cache, no-store, must-revalidate");
 		res.header("Pragma", "no-cache");
 		res.header("Expires", 0);
-		res._no_minify = true;
 		next();
 	};
 };
