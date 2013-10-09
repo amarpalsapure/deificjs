@@ -26,8 +26,7 @@ var searchApi = require('./server/service/search.js');
 
 var app = express();
 app.use(express.compress());
-app.use(minify());
-app.use(minify({cache: __dirname + 'server/site/public/_cache'}));
+app.use(minify({ cache: path.join(__dirname, 'server/site/public/_cache') }));
 
 // all environments
 app.set('port', process.env.PORT || 3000);
