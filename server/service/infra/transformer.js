@@ -146,6 +146,20 @@ var _toQuestion = function(question, state) {
 		delete response.question.correctanswer.__attributes;
 		delete response.question.correctanswer.__tags;
 	}
+
+	//question is bookmarked or not
+	response.question['voted'] = 0;
+	if(question.children.vote && question.children.vote.length > 0) {
+		response.question['voteconnid'] = question.children.vote[0].connection.id();
+		response.question['voted'] = question.children.vote[0].connection.get('isupvote', 'boolean') ? 1 : -1;
+	}
+
+	//question is voted or not
+	response.question['isbookmarked'] = false;
+	if(question.children.bookmark && question.children.bookmark.length > 0) {
+		response.question['isbookmarked'] = true;
+		response.question['bookmarkconnid'] = question.children.bookmark[0].connection.id();;
+	}
 	return response;
 };
 exports.toQuestion = _toQuestion;
@@ -174,11 +188,32 @@ var _toQuestions = function(questions, paginginfo) {
 		for (var i = 0; i < questionResponse.comments.length; i++) 
 			response.comments.push(questionResponse.comments[i]);
 
-		for (var i = 0; i < questionResponse.users.length; i++)
-			response.users.push(questionResponse.users[i]);
+		for (var i = 0; i < questionResponse.users.length; i++){
+			if(response.users.length === 0) response.users.push(questionResponse.users[i]);
+			else {
+				var exists = false;
+				for (var j = 0; j < response.users.length; j++) {
+					if(response.users[j]['__id'] === questionResponse.users[i]['__id']) {
+						exists = true;
+						break;
+					}
+				}
+				if(exists === false) response.users.push(questionResponse.users[i]);	
+			}
+		}
 
 		for (var i = 0; i < questionResponse.tags.length; i++)
-			response.tags.push(questionResponse.tags[i]);
+			if(response.tags.length === 0) response.tags.push(questionResponse.tags[i]);
+			else {
+				var exists = false;
+				for (var j = 0; j < response.tags.length; j++) {
+					if(response.tags[j]['__id'] === questionResponse.tags[i]['__id']) {
+						exists = true;
+						break;
+					}
+				}
+				if(exists === false) response.tags.push(questionResponse.tags[i]);	
+			}
 	});
 	return response;
 };
@@ -318,7 +353,6 @@ var _toError = function(origin, status) {
 		default: 'Something went wrong.',
 		question_not_found: 'Question not found, it might be deleted.',
 		question_find_all: 'Looks like something has broken.',
-		question_find_tag: 'Tag name is invalid',
 		question_find_tag_no_tag: 'Some error occurred during fetching tag',
 		question_find_tag_no_question: 'Some error occurred during fetching question',
 		question_find_tag_no_user: 'Some error occurred during fetching user for the question',
@@ -342,7 +376,7 @@ var _toError = function(origin, status) {
 		answer_delete: 'Failed to delete the answer.',
 		answer_accept: 'Failed to accept the answer',
 		answer_accept_undo: 'Failed to undo accepted answer',
-
+		tag_find: 'Tag not found',
 	};
 	var message = errorMap[origin];
 	if(!message) message = errorMap['default'];

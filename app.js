@@ -26,7 +26,10 @@ var searchApi = require('./server/service/search.js');
 
 var app = express();
 app.use(express.compress());
-app.use(minify({ cache: path.join(__dirname, 'server/site/public/_cache') }));
+
+if ('production' == process.env.NODE_ENV) {
+	app.use(minify({ cache: path.join(__dirname, 'server/site/public/_cache') }));
+}
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -101,6 +104,8 @@ app.delete('/service/comments/:id', noCacheRequest(), commentApi.del);
 // ################# tag api ####################
 // find tag
 app.get('/service/tags', noCacheRequest(), tagApi.find)
+// find tag by id
+app.get('/service/tags/:id', noCacheRequest(), tagApi.findById);
 
 // ################# search api ####################
 // free text search

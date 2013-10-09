@@ -2,6 +2,7 @@
 	Deific.Question = DS.Model.extend({
 		__utcdatecreated: DS.attr('date'),
 		__createdby: DS.attr('string'),
+		__tags: DS.attr('string'),
 
 		title: DS.attr('string'),
 		text: DS.attr('string'),

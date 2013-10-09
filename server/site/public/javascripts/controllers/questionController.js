@@ -73,6 +73,13 @@
 
 			//wait for all tags to be fetched
 			Ember.RSVP.all(tagPromise).then(function(tags) {
+				//add tag names to model
+				var tagsArray = [];
+				for (var i = 0; i < tags.length; i++) 
+					tagsArray.push(tags[i].get('name'));
+				
+				model.set('__tags', tagsArray.join(','));
+
 				//add tags to model
 				model.get('tags').pushObjects(tags);
 

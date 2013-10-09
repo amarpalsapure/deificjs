@@ -30,16 +30,11 @@ Deific.QuestionsRoute = Deific.BaseRoute.extend({
 		var store = that.get('store');
 		var meta = store.typeMapFor(model.type).metadata;
 		if(meta && meta.tag) {
-			store.push('tag',{
-						id: meta.tag.__id,
-						name: meta.tag.name,
-						excerpt: meta.tag.excerpt,
-						description: meta.tag.description,
-						questioncount: meta.tag.questioncount
-					});
-
 			store.find('tag', meta.tag.__id).then(function(tag) {
-				that.controllerFor('questions').set('tag', tag);	
+				tag.set('description','loading');
+				tag.reload();
+				that.controllerFor('questions').set('tag', tag);
+
 			});
 		}
 

@@ -35,11 +35,7 @@ var _findById = function(req, res) {
 	// not voted =>  0
 	var qId = req.param('qId');
 	var questionExists = true;
-	var voted = 0
-	var voteconnid = '';
-	var isBookmarked = false;
-	var bookmarkConnId = '';
-	var callCount = 4;
+	var callCount = 2;
 
 	//to update the view count
 	var isNewVisit = false;
@@ -54,7 +50,11 @@ var _findById = function(req, res) {
 	//merge the responses from the parallel calls
 	var merge = function(){
 		if(--callCount != 0 || questionExists === false) return;
+
+		//increment the view count locally
 		if(isNewVisit) response.question['viewcount'] = parseInt(response.question['viewcount'], 10) + 1;
+		
+		//if the correct answer exists, then it will appear first in any sort
 		if(response.question.correctanswer) {
 			var newAnswerMeta = [];
 			newAnswerMeta.push(response.question.correctanswer);
@@ -68,10 +68,6 @@ var _findById = function(req, res) {
 			answersMeta = newAnswerMeta;
 		}
 		response.question['answersMeta'] = answersMeta;
-		response.question['voteconnid'] = voteconnid;
-		response.question['voted'] = voted;
-		response.question['isbookmarked'] = isBookmarked;
-		response.question['bookmarkconnid'] = bookmarkConnId;
 
 		//As we are doing a search call from client side
 		//ember expects an array of of question and not a single question
@@ -95,7 +91,10 @@ var _findById = function(req, res) {
 
 	//PARALLEL CALL 1 
 	//Get the question details
-	var query = new Appacitive.Queries.GraphProjectQuery('question', [qId]);
+	var graphQueryName = 'question';
+	if(state.isauth) graphQueryName = 'question_user';
+
+	var query = new Appacitive.Queries.GraphProjectQuery(graphQueryName, [qId], { id: state.userid });
 	query.fetch(function (questions) {
 		var question = questions[0]
 		response = transformer.toQuestion(question, state);
@@ -146,52 +145,10 @@ var _findById = function(req, res) {
 	}, function (err, obj) {
 		merge();
 	});
-
-	//PARALLEL CALL 3 & 4
-	//Check if logged in user had voted the question
-	//and question bookmark
-	if(state.isauth) {
-		//Question Vote
-		Appacitive.Connection.getBetweenArticlesForRelation({
-			relation: 'question_vote',
-			articleAId : state.userid, // id of logged in user
-			articleBId : qId // id of question
-		}, function(connection) {
-			if(connection){
-				if(connection.get('isupvote', 'boolean')) voted = 1;
-				else voted = -1;
-				voteconnid = connection.id();
-			}
-			merge();
-		}, function(err) {
-			merge();
-		});
-
-		//Question Bookmark
-		Appacitive.Connection.getBetweenArticlesForRelation({
-			relation: 'question_bookmark',
-			articleAId : state.userid, // id of logged in user
-			articleBId : qId // id of question
-		}, function(connection) {
-			if(connection) {
-				isBookmarked = true;
-				bookmarkConnId = connection.id();
-			}else isBookmarked = false;
-			merge();
-		}, function(err) {
-			merge();
-		});
-	} else {
-		//companset for question_vote
-		merge();
-		//companset for question_bookmark
-		merge();
-	}
 };
 
-//Step 1: Get the tag
-//Step 2: Get connected question for the tag
-//Step 3: Get all question details using graph query
+//Step 1: Get the question ids by tag name
+//Step 2: Get all question details using graph query
 var _tagSearch = function(req, res) {
 	var response = {
 		questions: [],
@@ -199,8 +156,9 @@ var _tagSearch = function(req, res) {
 	}
 
 	//validate input
-	var query = req.param('tag');
-	if(!query || query === '') return res.json(response);
+	var tagName = req.param('tag');
+	if(!tagName || tagName === '') return res.json(response);
+	tagName = tagName.toLowerCase();
 
 	//get the state of app
 	var app = require('../shared/app.init');
@@ -216,7 +174,10 @@ var _tagSearch = function(req, res) {
 	//First get the question according to the query
 	//then get the question details by making a graph query call
 	var orderBy = '__utcdatecreated',
-		filter = "*issearchable==true",
+		filter = Appacitive.Filter.And(
+					Appacitive.Filter.Property('issearchable').equalTo(true),
+					Appacitive.Filter.Property('type').equalTo('question'),
+					Appacitive.Filter.taggedWithOneOrMore([tagName])),
 		pagenumber = req.param('page');
 
 	if(!pagenumber) pagenumber = 1;
@@ -234,29 +195,16 @@ var _tagSearch = function(req, res) {
 			break;
 	}
 
-	var getTag = function(name, onsuccess, onfailure) {
-		var tagQuery = new Appacitive.Queries.FindAllQuery({
-					schema : 'tag',
-					fields : '__id,name,excerpt,$questioncount',
-					filter: "*name=='" + name + "'"
+	var getQuestions = function(onsuccess, onfailure) {
+		var questionQuery = new Appacitive.Queries.FindAllQuery({
+					schema : 'entity',
+					filter: filter,
+					orderBy: orderBy,
+				    pageNumber: pagenumber,
+				    pageSize: process.config.pagesize,
+				    fields: '__id'
 				});
-		tagQuery.fetch(function(tags) {
-			if(tags && tags.length > 0) onsuccess(tags[0]);
-			else onsuccess();
-		}, onfailure);
-	};
-
-	var getConnectedQuestion = function(aTag, onsuccess, onfailure) {
-		aTag.fetchConnectedArticles({
-			relation: 'question_tag',
-		    label: 'question',
-		    orderBy: orderBy,
-		    pageNumber: pagenumber,
-		    pageSize: process.config.pagesize,
-		    fields: '__id'
-		}, function(obj, paginginfo){
-			onsuccess(aTag.children['question_tag'], paginginfo);
-		}, onfailure);
+		questionQuery.fetch(onsuccess, onfailure);
 	};
 
 	var getQuestionDetails = function(questionIds, onsuccess, onfailure) {
@@ -265,43 +213,44 @@ var _tagSearch = function(req, res) {
 		query.fetch(onsuccess, onfailure);	
 	};
 
-	//get the tag
-	getTag(query, function(aTag) {
-		//tag name is invalid
-		if(!aTag) return res.status(400).json(transformer.toError('question_find_tag'));
-
-		//get the connected questions
-		getConnectedQuestion(aTag, function(questions, paginginfo) {
-			//extract the user ids from entities
-			var questionIds = [];
-			questions.forEach(function (question) {
-				questionIds.push(question.id());
-			});
-
-			//No questions found
-			if(questionIds.length === 0) return res.json(response);
-
-			//get the question details with user and tags
-			getQuestionDetails(questionIds, function(gQuestions) {
-
-				//if no data found
-				if(gQuestions && gQuestions.length > 0) response = transformer.toQuestions(gQuestions, paginginfo);
-				
-				//dump tag information
-				if(!response.meta) response.meta = {};
-				response.meta.tag = transformer.toTag(aTag);
-
-			    //return the response
-			    return res.json(response);
-
-			}, function(status) { // error while fetching users
-				return res.status(502).json(transformer.toError('question_find_tag_no_user', status));
-			});
-		}, function(status) {	// error while fetching question
-			return res.status(502).json(transformer.toError('question_find_tag_no_question', status));
+	//get the questions
+	getQuestions(function(questions, paginginfo) {
+		//extract the user ids from entities
+		var questionIds = [];
+		questions.forEach(function (question) {
+			questionIds.push(question.id());
 		});
-	}, function(status) {	// error while fetching tag
-		return res.status(502).json(transformer.toError('question_find_tag_no_tag', status));
+
+		//No questions found
+		if(questionIds.length === 0) return res.json(response);
+
+		//get the question details with user and tags
+		getQuestionDetails(questionIds, function(gQuestions) {
+
+			//if no data found
+			if(gQuestions && gQuestions.length > 0) response = transformer.toQuestions(gQuestions, paginginfo);
+			
+			//dump tag information
+			if(!response.meta) response.meta = {};
+			response.meta.tag = {};
+			//getting the tag information from the response
+			if(response.tags && response.tags.length > 0) {
+				for (var i = 0; i < response.tags.length; i++) {
+					if(tagName === response.tags[i]['name']) {
+						response.meta.tag.__id = response.tags[i]['__id'];
+						break;
+					}
+				};
+			}			
+
+		    //return the response
+		    return res.json(response);
+
+		}, function(status) { // error while fetching users
+			return res.status(502).json(transformer.toError('question_find_tag_no_user', status));
+		});
+	}, function(status) {	// error while fetching question
+		return res.status(502).json(transformer.toError('question_find_tag_no_question', status));
 	});
 };
 
@@ -612,6 +561,10 @@ exports.save = function(req, res) {
 		aQuestion.set('title', question.title);
 		aQuestion.set('text', question.text);
 		aQuestion.set('__createdby', state.userid);
+
+		//add tags
+		var tagsSplit = question.__tags.split(',');
+		for (var i = 0; i < tagsSplit.length; i++) aQuestion.addTag(tagsSplit[i]);
 
 		var shortText = question.text.substring(0, 200);
 		shortText = shortText.substring(0, Math.min(shortText.length, shortText.lastIndexOf(' ')));

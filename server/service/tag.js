@@ -38,3 +38,29 @@ exports.find = function(req, res) {
 		return res.status(502).json(transformer.toError('question_find_tag', status));
 	});
 };
+
+exports.findById = function(req, res) {
+	var response = {
+		tag: {}
+	};
+
+	//get the state of app
+	var app = require('../shared/app.init');
+	var state = app.init(req);
+
+	//initialize the sdk
+  	var sdk = require('./appacitive.init');
+	var Appacitive = sdk.init(state.token, state.debug);
+	
+	//get the transformer
+	var transformer = require('./infra/transformer');
+
+	var tag = new Appacitive.Article({ __id: req.param('id'), schema: 'tag' })
+	tag.fetch(function () {
+		//tranform		
+		response.tag = transformer.toTag(tag);
+		return res.json(response);
+	}, function (status) {
+		return res.status(404).json(transformer.toError('tag_find'));
+	});	
+};
