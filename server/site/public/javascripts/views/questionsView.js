@@ -11,8 +11,9 @@
 			$('#rootProgress').remove();
 
 			//enable the the active link
-			var sort = $.fn.parseParam('sort', 'popular').toLowerCase();
-			$('.sortGroup #' + 'a' +sort).addClass('active');
+			var sort = $.fn.parseParam('sort', $('.sortGroup').data('default')).toLowerCase();
+			$('.sortGroup #' + 'a' + sort).addClass('active');
+			
 			$("#h1Sortedby").html(sort + ' questions');
 
 			//cleanup html
