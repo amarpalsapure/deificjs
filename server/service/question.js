@@ -334,9 +334,9 @@ var _findAll = function(req, res) {
 	if(!pagenumber) pagenumber = 1;
 
 	var sort = req.query.sort;
-	sort = (!sort) ? 'popular' : sort.toLowerCase();
+	sort = (!sort) ? 'votes' : sort.toLowerCase();
 	switch(sort) {
-		case 'popular': 
+		case 'votes': 
 			orderBy = 'totalvotecount';
 			break;
 		case 'latest':
