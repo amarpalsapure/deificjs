@@ -50,49 +50,58 @@ if ('development' == app.get('env')) {
 // ***************************************************
 
 // ################# question api ####################
+function noCacheRequest() {
+	return function(req, res, next) {
+		res.header("Cache-Control", "no-cache, no-store, must-revalidate");
+		res.header("Pragma", "no-cache");
+		res.header("Expires", 0);
+		next();
+	};
+};
+
 // get all question
-app.get('/service/questions', questionApi.findQuestion);
+app.get('/service/questions', noCacheRequest(), questionApi.findQuestion);
 // save question
-app.post('/service/questions', questionApi.save);
+app.post('/service/questions', noCacheRequest(), questionApi.save);
 // update question
-app.put('/service/questions/:id', questionApi.update);
+app.put('/service/questions/:id', noCacheRequest(), questionApi.update);
 // delete question
-app.delete('/service/questions/:id', questionApi.del);
+app.delete('/service/questions/:id', noCacheRequest(), questionApi.del);
 
 
 // ################# answer api ####################
 // get answer
-app.get('/service/answers/:id', answerApi.findById);
+app.get('/service/answers/:id', noCacheRequest(), answerApi.findById);
 // save answer
-app.post('/service/answers', answerApi.save);
+app.post('/service/answers', noCacheRequest(), answerApi.save);
 // update answer
-app.put('/service/answers/:id', answerApi.update);
+app.put('/service/answers/:id', noCacheRequest(), answerApi.update);
 // delete comment
-app.delete('/service/answers/:id', answerApi.del);
+app.delete('/service/answers/:id', noCacheRequest(), answerApi.del);
 
 
 // ################# user api ####################
 // get user
-app.get('/service/users/:id', userApi.findById);
+app.get('/service/users/:id', noCacheRequest(), userApi.findById);
 // authenticate user
-app.post('/service/users/auth', userApi.auth);
+app.post('/service/users/auth', noCacheRequest(), userApi.auth);
 // logout user
-app.post('/service/users/logout', userApi.logout);
+app.post('/service/users/logout', noCacheRequest(), userApi.logout);
 
 
 // ################# comment api ####################
 // save comment
-app.post('/service/comments', commentApi.save)
+app.post('/service/comments', noCacheRequest(), commentApi.save)
 // delete comment
-app.delete('/service/comments/:id', commentApi.del);
+app.delete('/service/comments/:id', noCacheRequest(), commentApi.del);
 
 // ################# tag api ####################
 // find tag
-app.get('/service/tags', tagApi.find)
+app.get('/service/tags', noCacheRequest(), tagApi.find)
 
 // ################# search api ####################
 // free text search
-app.get('/service/entities', searchApi.search);
+app.get('/service/entities', noCacheRequest(), searchApi.search);
 
 
 // *************************************************
@@ -105,6 +114,9 @@ app.get('/', routes.index);
 
 //ask a question
 app.get('/questions/ask', questionRoute.ask);
+
+// all questions page
+app.get('/questions', questionRoute.all);
 
 // question list page by tag
 app.get('/questions/tagged/:tag', questionRoute.tagged);

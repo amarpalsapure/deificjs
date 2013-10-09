@@ -88,7 +88,7 @@
 	  	"<div {{bindAttr id='entityid'}} {{bindAttr class='istypeanswer:answer:question istypeanswer:hide :row isanswered:isanswered'}}> \
 		    <div class='col-xs-12 col-sm-1 col-lg-1'>   \
 		    	<div class='row'>	\
-				    <div class='col-xs-7 col-sm-12 col-lg-12 prni'>	\
+				    <div {{bindAttr class='view.questionpage:col-xs-7:col-xs-12 :col-sm-12 :col-lg-12 :prni'}}>	\
 		    			<!-- Entity posted by goes here --> \
 				        <div class='user-profile'>  \
 				            <div class='divPic'>    \
