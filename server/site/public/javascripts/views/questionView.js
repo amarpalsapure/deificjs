@@ -1,6 +1,14 @@
 (function() {
-	Deific.QuestionView =  Ember.View.extend({
+	Deific.QuestionView =  Deific.BaseView.extend({
+
+		question: {},
+		hidevotecount: true,
+		isTogglingBookmark: false,
+
 		didInsertElement: function(){
+			//hide the answer containers
+			$('.answer-section .question').addClass('hide');
+
 			var that = this;
 			//remove loader
 			$('#rootProgress').remove();
@@ -77,6 +85,7 @@
 				$(window).trigger('deificloaded');
 			}, 100);
 
+
 			if($('#tagSearch').length > 0) {
 				function tagFormatResult(tag) {
 					//add tags to local store, so that api called is not made, when find is done on them
@@ -84,15 +93,15 @@
 					store.push('tag', {
 						id: tag.__id,
 						name: tag.name,
-						description: tag.description
+						excerpt: tag.excerpt
 					});
 
 					//return the html
 			        var markup = "<table class='tag-result'><tr>";
 			        markup += "<td class='tag-info'><div class='tag-name font-bold'>" + tag.name + "</div>";
 			        markup += "<div class='tag-qcount mls font9'>x "+ tag.questioncount +"</div>"
-			        if (tag.description) {
-			            markup += "<div class='pas font8'>" + tag.description + "</div>";
+			        if (tag.excerpt) {
+			            markup += "<div class='pas font8'>" + tag.excerpt + "</div>";
 			        }
 			        markup += "</td></tr></table>"
 			        return markup;
@@ -148,13 +157,6 @@
 			}			
 		},
 		
-		showAllComment: function() {
-			var model = this.controller.get('model');
-			var $ele = $('#question-' + model.get('id'));
-			$ele.find('.comment').removeClass('hide');
-			$ele.find('.showMore').parent().remove();
-		},
-
 		newQuestionAddTag: function() {
 			var that = this;
 
@@ -190,9 +192,7 @@
 			this.__checkQuestionFormIsComplete();
 		},
 
-		question: {},
-
-		createQuestion: function() {
+		saveQuestion: function() {
 			var title = this.get('question').title.trim();
 			var text = this.get('question').text.trim();
 
@@ -204,7 +204,7 @@
 			//change the button state to loading (Bootstrap)
 			$('#btnSubmitQuestion').button('loading');
 
-			this.get('controller').createQuestion(title, text, tagIds, function(savedObj){
+			this.get('controller').saveQuestion(title, text, tagIds, function(savedObj){
 				//redirect user to the question page
 				window.location = savedObj.get('url');
 			}, function(error) {
@@ -215,6 +215,46 @@
 			});
 		},
 
+		saveAnswer: function() {
+			var that = this;
+			var text = that.get('newAnswer');
+
+			//validation
+			if (!text || !text.trim()) return;
+			var model = that.controller.get('model');
+			//change the button state to loading (Bootstrap)
+			$('#btnSubmitAnswer').button('loading');
+
+			var reset = function(answer) {
+				if(answer) answer.set('action', '');
+				//reset button state to loading (Bootstrap)
+				$('#btnSubmitAnswer').button('reset');
+			};
+
+			that.controller.saveAnswer(text, function(savedObj) {
+				$('.answer-section').removeClass('hide');
+				$('#wmd-input').val('');
+				$('#wmd-input').trigger('focus');
+
+				reset(savedObj);
+
+				//Set the location to # of answer
+				setTimeout(function() {
+					window.location = model.get('url') + '#' + savedObj.get('id');
+				}, 1000);
+			}, function(message) {
+				//in case of any error roll back the changes (if any)
+				//and show an error message
+				message = message || 'An error occurred during saving answer.';
+				var alert = '<div class="alert alert-block alert-danger font9"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' + message + '</div>';
+				$('.answerError').html(alert).alert();
+
+				reset();
+			});
+
+
+		},
+
 		__checkQuestionFormIsComplete: function() {
 			if($.trim($('#txtTitle').val()).length < 10 		//title
 			 || $.trim($('#wmd-input').val()).length < 20		//description 
@@ -223,6 +263,33 @@
 	        	return;
 	     	}
 	     	$('#btnSubmitQuestion').removeAttr('disabled');
+		},
+
+		notimplemented: function() {
+			alert('not implemented');
+		},
+
+		toggleBookmark: function() {
+			var that = this;
+
+			var model = that.controller.get('model');
+			//owner can't bookmark his own question
+			if(model.get('isowner') === true) {
+				var alert = '<div style="width: 275px;" class="alert alert-block alert-danger pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> You can\'t bookmark, your own question. </div>';
+				$('#question-' + model.get('id') + ' .action-toggle-bookmark-error').html(alert).alert();
+				return;
+			}
+
+			if(that.isTogglingBookmark === true) return;
+			that.isTogglingBookmark = true;
+
+			this.controller.toggleBookmark(function() {
+				that.isTogglingBookmark = false;
+			}, function(error) {
+				that.isTogglingBookmark = false;
+				var alert = '<div class="alert alert-block alert-danger pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred. </div>';
+				$('#question-' + model.get('id') + ' .action-toggle-bookmark-error').html(alert).alert();
+			});
 		}
 	});
 }).call(this);

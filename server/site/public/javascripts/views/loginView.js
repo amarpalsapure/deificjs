@@ -2,6 +2,12 @@
 	Deific.LoginView =  Ember.View.extend({
 		login: {},
 
+		submitTextField: Ember.TextField.extend({
+			insertNewline: function() {
+		        return this.get('parentView').login();
+	   		}
+		}),
+
 		didInsertElement: function(){
 			//remove loader
 			$('#rootProgress').remove();
@@ -11,12 +17,7 @@
 			if(isSessionExpired == '1') {
 				$('#modalSessionExpired').modal('show');
 			}
-		},
-		submitTextField: Ember.TextField.extend({
-			insertNewline: function() {
-		        return this.get('parentView').login();
-	   		}
-		}),
+		},		
 		
 		signIn: function() {
 			var that = this;
@@ -44,11 +45,11 @@
 			return Deific.AccountController.signIn(this.login, function() {
 				//logged in successfully, take back user to return url (if any)
 				window.location = $.fn.parseParam('returnurl', window.host);
-			}, function(error) {
+			}, function(message) {
 				$(".login-error").addClass('has-error').removeClass('hide');
 				$('#frmLogin input').removeAttr('disabled');
 				$('#frmLogin button').button('reset')
-				return that.set("login.error", error.message);
+				return that.set("login.error", message);
 			});
 		},
 

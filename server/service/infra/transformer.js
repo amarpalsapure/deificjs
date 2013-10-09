@@ -42,7 +42,7 @@ var _toUser = function(user) {
 exports.toUser = _toUser;
 
 
-var _toComment = function(comment) {
+var _toComment = function(comment, state) {
 	if(!comment) return {};
 	var response = {
 		'__id': comment.id(),
@@ -52,6 +52,8 @@ var _toComment = function(comment) {
 		'ishidden': false
 	};
 
+	if(state) response.isowner = response.author === state.userid;
+
 	return response;
 };
 
@@ -59,17 +61,18 @@ var _toTag = function(tag) {
 	var response = {
 		'__id': tag.id(),
 		'name': tag.get('name'),
+		'excerpt': tag.get('excerpt'),
 		'description': tag.get('description'),
 		'questioncount': 0
 	};
 
-	if(tag.aggregate('questioncount')) response.questioncount = tag.aggregate('questioncount').all;
+	if(tag.aggregate('questioncount')) response.questioncount = _toInt(tag.aggregate('questioncount').all);
 
 	return response;
 };
 exports.toTag = _toTag;
 
-var _toQuestion = function(question) {
+var _toQuestion = function(question, state) {
 	var response = {
 		question: {},
 		comments: [],
@@ -99,13 +102,21 @@ var _toQuestion = function(question) {
 		delete response.question.$answercount;
 	}
 
+	//Question Bookmark
+	response.question.bookmarkcount = 0;
+	if(question.aggregate('bookmarkcount')){
+		response.question.bookmarkcount = _toInt(question.aggregate('bookmarkcount').all);
+		//delete the proerty from the JSON as it is not required by client
+		delete response.question.$bookmarkcount;
+	}
+
 	//Comments
 	if(question.children.comments && question.children.comments.length > 0) {
 		response.question.comments = [];
 		for (var i = 0; i < question.children.comments.length; i++) {
 			var comment = question.children.comments[i];
 			response.question.comments.push(comment.id())
-			var commentJ = _toComment(comment);
+			var commentJ = _toComment(comment, state);
 			if(i >= process.config.comments) commentJ.ishidden = true;
 			response.comments.push(commentJ);
 		};
@@ -124,6 +135,7 @@ var _toQuestion = function(question) {
 	if(question.children.author && question.children.author.length > 0) {
 		var author = _toUser(question.children.author[0]);
 		response.question.author = author['__id'];
+		if(state) response.question.isowner = author['__id'] === state.userid;
 		response.users.push(author);
 	}
 
@@ -138,13 +150,20 @@ var _toQuestion = function(question) {
 };
 exports.toQuestion = _toQuestion;
 
-var _toQuestions = function(questions) {
+var _toQuestions = function(questions, paginginfo) {
 	var response = {
 		questions: [],
 		comments: [],
 		users: [],
 		tags: []
 	};
+
+	//set the paginginfo
+	if(paginginfo) {
+		response.meta = {
+			paginginfo: paginginfo
+		};
+	}
 
 	questions.forEach(function(question) {
 		var questionResponse = _toQuestion(question);
@@ -165,7 +184,7 @@ var _toQuestions = function(questions) {
 };
 exports.toQuestions = _toQuestions;
 
-var _toAnswer = function(answer) {
+var _toAnswer = function(answer, state) {
 	var response = {
 		answer: {},
 		comments: [],
@@ -178,9 +197,15 @@ var _toAnswer = function(answer) {
 	delete answerJ.__tags;
 	//UI will set action, when answer is updated
 	answerJ.action = '';
-	response.answer.iscorrect = answer.get('score') == 1;
-	delete answerJ.score;
 	response.answer = answerJ;
+	response.answer.iscorrectanswer = answer.get('score') === '1';
+	delete answerJ.score;
+
+	//Question and miniurl for answer
+	if(answer.children.question && answer.children.question.length > 0) {
+		response.answer.question = answer.children.question[0].id();
+		response.answer.murl = process.config.host + '/a/'+ response.answer.question + '/' + answer.id();
+	}
 
 	//Comments
 	if(answer.children.comments && answer.children.comments.length > 0) {
@@ -188,7 +213,7 @@ var _toAnswer = function(answer) {
 		for (var i = 0; i < answer.children.comments.length; i++) {
 			var comment = answer.children.comments[i];
 			response.answer.comments.push(comment.id())
-			var commentJ = _toComment(comment);
+			var commentJ = _toComment(comment, state);
 			if(i >= process.config.comments) commentJ.ishidden = true;
 			response.comments.push(commentJ);
 		};
@@ -198,12 +223,67 @@ var _toAnswer = function(answer) {
 	if(answer.children.author && answer.children.author.length > 0) {
 		var author = _toUser(answer.children.author[0]);
 		response.answer.author = author['__id'];
+		if(state) response.answer.isowner = author['__id'] === state.userid;
 		response.users.push(author);
+	}
+
+	//answer question
+	if(answer.children.question && answer.children.question.length > 0) {
+		response.answer.question = answer.children.question[0]['__id'];
 	}
 				
 	return response;
 };
 exports.toAnswer = _toAnswer;
+
+var _toEntities = function(entities, paginginfo) {
+	var response = {
+		entities: [],
+		users: []
+	};
+
+	//set paging info if it is available
+	if(paginginfo) {
+		response.meta = {
+			paginginfo : paginginfo
+		};
+	}
+
+	entities.forEach(function(entity) {
+		var jEntity = entity.toJSON();
+
+		//set the title for answer as question title from it's attribute
+		if(jEntity.type != 'question') jEntity.title = entity.attr('title');
+
+		//set the url
+		if(jEntity.type === 'question') 
+			jEntity.url = process.config.host + '/questions/' 
+						+ entity.id() + '/' + _urlEncode(entity.get('title'));
+		else
+			jEntity.url = process.config.host + '/questions/' 
+						+ entity.attr('question') + '/' + _urlEncode(entity.attr('title'))
+						+ '#' + entity.id();
+
+		//set the author
+		jEntity.author = jEntity.__createdby;
+
+		if(jEntity.text.length > 250) {
+			jEntity.text = jEntity.text.substring(0, 250);
+			jEntity.text = jEntity.text.substring(0, Math.min(jEntity.text.length, jEntity.text.lastIndexOf(' ')));
+		}
+
+		//delete unrequired properties, so that payload is less
+		delete jEntity.__schematype;
+		delete jEntity.__attributes;
+		delete jEntity.__tags;
+		delete jEntity.__createdby;
+
+		response.entities.push(jEntity);
+	});
+
+	return response;
+};
+exports.toEntities = _toEntities;
 
 var _to_Appacitive_Question = function(Appacitive, question) {
 	return new Appacitive.Article({
@@ -223,7 +303,69 @@ var _to_Appacitive_Answer = function(Appacitive, answer) {
 };
 exports.toAppacitiveAnswer = _to_Appacitive_Answer;
 
+// ASSUMPTION //
+//if status object is not provided, it means user has provided in valid input
+var _toError = function(origin, status) {
+	if(!status) status = {
+					code: '56789', //this code value is handled differently on client side
+					message: 'status object not provided',
+  					faulttype: null,
+  					version: '1.0',
+  					referenceid: 'notavailble',
+  					additionalmessages: []
+				};
+	var errorMap = {
+		default: 'Something went wrong.',
+		question_not_found: 'Question not found, it might be deleted.',
+		question_find_all: 'Looks like something has broken.',
+		question_find_tag: 'Tag name is invalid',
+		question_find_tag_no_tag: 'Some error occurred during fetching tag',
+		question_find_tag_no_question: 'Some error occurred during fetching question',
+		question_find_tag_no_user: 'Some error occurred during fetching user for the question',
+		questoin_save: 'Failed to save the question.',
+		question_delete: 'Failed to delete the question.',
+		entity_find_all: 'Looks like something has broken.',
+		entity_vote_up: 'Failed to register upvote',
+		entity_vote_up_undo: 'Failed to undo register upvote',
+		entity_vote_down: 'Failed to register downvote',
+		entity_vote_down_undo: 'Failed to undo register downvote',
+		entity_bookmark: 'Failed to bookmark the question',
+		entity_bookmark_undo: 'Failed to undo bookmark the question',
+		entity_invalid_action: 'Invalid action provided',
+		access_denied: 'You are not authorized for this action.',
+		user_login_validate: 'Email and Password are required.',
+		user_login: 'Authentication failed',
+		user_find: 'User not found',
+		comment_save: 'Failed to save the comment.',
+		comment_delete: 'Failed to delete the comment.',
+		answer_save: 'Failed to save the answer.',
+		answer_delete: 'Failed to delete the answer.',
+		answer_accept: 'Failed to accept the answer',
+		answer_accept_undo: 'Failed to undo accepted answer',
 
+	};
+	var message = errorMap[origin];
+	if(!message) message = errorMap['default'];
+	if(status.code === '19036') message = 'Your session has expired, please <a href="/users/login?returnurl=' + window.location.pathname + '">login</a> again. Thanks.';
+	status.error = message;
+	return status;
+};
+exports.toError = _toError;
+
+var _toSessionExpiredError = function(res, status) {
+	//clear the session cookie (if any)
+	if(res) res.clearCookie('u');
+
+	//if status is not provided, create one
+	if(!status) status = {
+		code: '19036',
+		message: 'Session expired'
+	}
+
+	status.error = 'Your session has expired, please <a href="/users/login?returnurl=' + window.location.pathname + '">login</a> again. Thanks.';
+	return status;
+};
+exports.toSessionExpiredError = _toSessionExpiredError;
 
 //private functions (for local use)
 var _toInt = function(number) { 
@@ -239,3 +381,4 @@ var _urlEncode = function(text) {
 	}
 	return text.toLowerCase();
 };
+

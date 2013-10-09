@@ -40,7 +40,6 @@
         signOut: function(onSuccess, onError) {
             var that = this;
             Ember.$.post('/service/users/logout').then(function(response) {
-                that.set('isLoggedIn', false);
                 onSuccess();
             }, function(error){
                 onError(Deific.localDataSource.handleError(error, 'Deific.AccountController-signOut'));

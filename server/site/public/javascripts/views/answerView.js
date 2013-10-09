@@ -1,12 +1,18 @@
 (function() {
-	Deific.AnswerView =  Ember.View.extend({
+	Deific.AnswerView =  Deific.BaseView.extend({
+
+		hidevotecount: true,
+		hideanswercount: true,
+		hideviewcount: true,
+		hidebookmarkcount: true,
+
 		didInsertElement: function(){
 			//remove loader and show answer
 			var asyncShowAnswer = function() {
 				setTimeout(function(){
 					var $loaderEle = $('#answer-loader-'+ model.get('id'));
 					//show answer
-					$loaderEle.next('.answer').removeClass('hide')
+					model.get('rootElement').removeClass('hide')
 					//remove loader
 					$loaderEle.remove();
 				}, 50);
@@ -39,14 +45,15 @@
 
 					//remove show more if there are no hidden comments
 					setTimeout(function(){
+						var $ele = $('#answer-' + model.get('id'));
 						var hiddenComments = model.get('comments').filter(function(comment) {
 							return comment.get('ishidden');
 						});
+
 						if(hiddenComments && hiddenComments.get('length') > 0) {
 							$ele.find('.showMore').removeClass('hide');
 							return;
 						}
-						var $ele = $('#answer-' + model.get('id'));
 						$ele.find('.showMore').parent().remove();			
 					}, 50);
 				});
@@ -59,11 +66,37 @@
 			}
 		},
 
-		showAllComment: function() {
+		toggleAnswer: function(isAccepted) {
 			var model = this.controller.get('model');
-			var $ele = $('#answer-' + model.get('id'));
-			$ele.find('.comment').removeClass('hide');
-			$ele.find('.showMore').parent().remove();
+			
+			//show the loader and disable the dropdown menu
+			var toggleView = function() {
+				model.get('rootElement').find('.action-toggle-accept').toggleClass('hide');
+				model.get('rootElement').find('.action-toggle-accept-progress').toggleClass('hide');
+			};
+
+			//hide action button and show the loader
+			toggleView();
+
+			//toggle the current state of the answer as accepted/unaccepted answer
+			//if user is switching the answer, 
+			//then unaccept the initial answer (this will be done in the service)
+			//on client side just mark the original answer as unaccepted
+			this.controller.toggleAnswer(isAccepted, function(answer) {
+				toggleView();
+			}, function(message) {
+				//show error message
+				message = message || 'An error occurred during unaccepting answer.';
+				var alert = '<div class="alert alert-block alert-danger pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' + message + '</div>';
+				model.get('rootElement').find('.action-toggle-accept-error').html(alert).alert();
+
+				//hide loader and show action button
+				toggleView();
+			});
+		},
+
+		notimplemented: function() {
+			alert('not implemented');
 		}
 	});
 }).call(this);

@@ -6,10 +6,50 @@ exports.index = function(req, res){
 	res.render('question', state);
 };
 
+exports.all = function(req, res) {
+	//initialize the app
+  	var app = require('../../shared/app.init');
+	var state = app.init(req);
+
+	switch(req.param('sort')) {
+		case 'latest':
+			state.title = "Latest Questions";
+			break;
+		case 'active':
+			state.title = "Most Active Questions";
+			break;
+		case 'unresolved':
+			state.title = "Unresolved Questions";
+			break;
+		default:
+			state.title = "Highest Voted Questions";
+			break;
+	}
+		
+	res.render('questions', state);
+};
+
 exports.tagged = function(req, res) {
 	//initialize the app
   	var app = require('../../shared/app.init');
 	var state = app.init(req);
+
+	state.tag = encodeURIComponent(req.param('tag'));
+
+	switch(req.param('sort')) {
+		case 'latest':
+			state.title = "Latest Questions tagged as '" + req.param('tag') + "'";
+			break;
+		case 'active':
+			state.title = "Most Active Questions tagged as '" + req.param('tag') + "'";
+			break;
+		case 'unresolved':
+			state.title = "Unresolved Questions tagged as '" + req.param('tag') + "'";
+			break;
+		default:
+			state.title = "Highest Voted Questions tagged as '" + req.param('tag') + "'";
+			break;
+	}
 
 	res.render('question-tagged', state);
 };

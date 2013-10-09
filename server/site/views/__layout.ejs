@@ -3,7 +3,7 @@
   <head>
     <!-- Meta, title, CSS, favicons, etc. -->
     <meta charset="utf-8">
-    <title><%= title %></title>
+    <title><%= title %> - <%= brand %></title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -11,13 +11,14 @@
     <link type='text/css' rel='stylesheet' href='/stylesheets/bootstrap-theme.css' />
     <link type='text/css' rel='stylesheet' href='/stylesheets/prettify.css' />
     <link type='text/css' rel='stylesheet' href='/stylesheets/select2.css' />
-    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+    <link type='text/css' rel='stylesheet' href='/stylesheets/font-awesome.min.css' />
+    <!--<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">-->
 
     <link type='text/css' rel='stylesheet' href='/stylesheets/master-style.css' />
     <link type='text/css' rel='stylesheet' href='/stylesheets/style.css' />
 
     <script type="text/javascript">
-      <%= user %>  
+      <%= context %>  
     </script>
 
   </head>
@@ -71,12 +72,12 @@
               <div class='row'>
                 <div class='col-xs-12 col-sm-10 col-lg-10'>
                   <div class='searchbox'>
-                    <input type="text" placeholder="Search questions and answers..." class="noborder noboxshadow" />
+                    {{view view.submitTextField valueBinding='view.searchtext' type='text' class='noborder noboxshadow' placeholder='Search questions and answers...'}}
                   </div>
                 </div>
                 <div class="pull-left mtl imglnk width2per"><img src="/images/img_searchlnk.png" alt=" " longdesc="#." style="width:100%;"></div>
                 <div class='col-xs-12 col-sm-2 col-lg-2'>
-                  <button href="#." class="btn btn-flat btn-green">Search</button>
+                  <button {{action search target=view}} class="btn btn-flat btn-green">Search</button>
                 </div>        
               </div> 
             </div>
@@ -114,7 +115,7 @@
 
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class='collapse navbar-collapse navbar-ex1-collapse'>
-            <ul id='ulLogin' class='nav navbar-nav navbar-left'>
+            <ul class='nav navbar-nav navbar-left plxl prxl'>
               <li><a href='#'>about</a></li>
               <li><a href='#'>contact us</a></li>
               <li><a href='#'>feedback</a></li>
@@ -150,6 +151,9 @@
     <!-- controllers -->
     <script type='text/javascript' src="/javascripts/controllers/accountController.js"></script>
     <script type='text/javascript' src="/javascripts/controllers/headerController.js"></script>
+    <script type='text/javascript' src="/javascripts/infra/commonTemplate.js"></script>
+    <script type='text/javascript' src="/javascripts/router/baseRoute.js"></script>
+    <script type='text/javascript' src="/javascripts/router/errorRouter.js"></script>
 
     <%- scripts %>
 
