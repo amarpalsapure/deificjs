@@ -162,11 +162,17 @@
 					                <div class='entity-info-container'>	\
 					                	<!-- Question bookmark goes here --> \
 					                    <div {{ bindAttr class='view.questionpage:question-bookmark:hide istypeanswer:hide'}}>	\
+					                    {{#if isLoggedIn}}	\
 					                        <a href='javascript:void(0)' {{action toggleBookmark target=view}}> \
 					                        	<i {{bindAttr class='isbookmarked:icon-star:icon-star-empty'}}></i>	\
 					                        </a>	\
 					                        <div class='alert-dismiss-container action-error position-absolute action-toggle-bookmark-error font9'>	\
 											</div>	\
+										{{else}}	\
+											<a {{bindAttr href='loginurl'}} title='Login to bookmark this question'>	\
+												<i {{bindAttr class='isbookmarked:icon-star:icon-star-empty'}}></i>	\
+											</a>	\
+										{{/if}}	\
 					                    </div>	\
 					                    <div class='entity-info'>	\
 					                    	<!-- Entity title goes here --> \
