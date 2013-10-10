@@ -1,5 +1,5 @@
 (function() {
-	Deific.TagsView =  Ember.View.extend({
+	Deific.UsersView =  Ember.View.extend({
         showTagContainer: true,
 
         didInsertElement: function() {
@@ -25,16 +25,16 @@
 
             //sort results
             var sort = $.fn.parseParam('sort', $('.sortGroup').data('default')).toLowerCase();
-
+            
             //page number
             var page = $.fn.parseParam('page', '1');
             if(query != '') page = 1;
 
-            $('#btnTagSearch').button('loading');
+            $('#btnUserSearch').button('loading');
 
             var resetView = function() {
                 //reset the button
-                $('#btnTagSearch').button('reset');
+                $('#btnUserSearch').button('reset');
                 //hide the pager
                 that.set('showTagContainer', query === '');
             }

@@ -1,4 +1,4 @@
-exports.find = function(req, res) {
+exports.findAll = function(req, res) {
 	var response = {
 		tags: []
 	};

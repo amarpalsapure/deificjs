@@ -90,6 +90,8 @@ app.delete('/service/answers/:id', noCacheRequest(), answerApi.del);
 
 
 // ################# user api ####################
+// get all users
+app.get('/service/users', noCacheRequest(), userApi.findAll);
 // get user
 app.get('/service/users/:id', noCacheRequest(), userApi.findById);
 // authenticate user
@@ -106,7 +108,7 @@ app.delete('/service/comments/:id', noCacheRequest(), commentApi.del);
 
 // ################# tag api ####################
 // find tag
-app.get('/service/tags', noCacheRequest(), tagApi.find)
+app.get('/service/tags', noCacheRequest(), tagApi.findAll)
 // find tag by id
 app.get('/service/tags/:id', noCacheRequest(), tagApi.findById);
 
@@ -147,14 +149,17 @@ app.get('/a/:qid/:aid', questionRoute.miniindex);
 
 
 // ################ user #######################
+//all users
+app.get('/users', userRoute.index);
+
 // user login page
 app.get('/users/login',userRoute.login);
 
 // get user by id withour name in url
-app.get('/users/:id', userRoute.index);
+app.get('/users/:id', userRoute.findById);
 
 // get user by id with name in url
-app.get('/users/:id/:title', userRoute.index);
+app.get('/users/:id/:title', userRoute.findById);
 
 
 // ################ search #######################

@@ -1,3 +1,63 @@
+exports.findAll = function(req, res) {
+	var response = {
+		tags: []
+	};
+
+	//get the state of app
+	var app = require('../shared/app.init');
+	var state = app.init(req);
+
+	//initialize the sdk
+  	var sdk = require('./appacitive.init');
+	var Appacitive = sdk.init(state.debug);
+
+	//get the transformer
+	var transformer = require('./infra/transformer');
+
+	//search for matching tags
+	var orderBy = '__utcdatecreated',
+		pagenumber = req.param('page'),
+		isAscending = false,
+		filter;
+
+	if(!pagenumber) pagenumber = 1;
+
+	var sort = req.query.sort;
+	sort = (!sort) ? 'reputation' : sort.toLowerCase();
+	switch(sort) {
+		case 'latest':
+			break;
+		case 'reputation': 
+			orderBy = '$questionupcount';
+			isAscending = true;
+			break;		
+		case 'name':
+			orderBy = 'firstname';
+			isAscending = true;
+			break;
+	}
+
+	var nameQuery = req.param('q');
+	if(nameQuery) filter = Appacitive.Filter.Or(
+						Appacitive.Filter.Property('firstname').like(nameQuery), 
+						Appacitive.Filter.Property('lastname').like(nameQuery));
+
+	var query = new Appacitive.Queries.FindAllQuery({
+						schema : 'user',
+						fields : 'firstname,lastname,email,reputation,$questionupcount,$questiondowncount,$answerupcount,$answerupcount,$correctanswercount,__utcdatecreated',
+						orderBy: orderBy,
+						filter: filter,
+						pageNumber: pagenumber,
+						isAscending: isAscending,
+						pageSize: 4
+					});
+
+	query.fetch(function (users, paginginfo) {
+		return res.json(transformer.toUsers(users, paginginfo));
+	}, function (status) {
+		return res.status(502).json(transformer.toError('question_find_tag', status));
+	});
+};
 exports.findById = function(req, res) {
 	var response = {
 		user: {}

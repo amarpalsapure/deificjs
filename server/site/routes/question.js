@@ -3,6 +3,8 @@ exports.index = function(req, res){
   	var app = require('../../shared/app.init');
 	var state = app.init(req);
 
+	state.title = 'Fetching question';
+
 	res.render('question', state);
 };
 
