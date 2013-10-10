@@ -81,6 +81,7 @@
                   <h1>Your Answer</h1>
                 </div>
               </div>
+              {{#if isLoggedIn}}
               <div class='row'>
                 <div class='col-xs-12 col-sm-12 col-lg-10 col-lg-offset-1'>
                   <div id='wmd-button-bar'>
@@ -111,6 +112,13 @@
                   </div>
                 </div>
               </div>
+              {{else}}
+              <div class='mtm'>
+                <a class='btn btn-sm font110' {{bindAttr href='loginurl'}} title='Login to answer'>
+                  Login to Answer this question
+                </a>
+              </div>
+              {{/if}}
             </div>
           </div>
         </div>
