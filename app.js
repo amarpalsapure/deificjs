@@ -11,6 +11,7 @@ var routes = require('./server/site/routes');
 var userRoute = require('./server/site/routes/user');
 var questionRoute = require('./server/site/routes/question');
 var searchRoute = require('./server/site/routes/search');
+var tagRoute = require('./server/site/routes/tag');
 var http = require('http');
 var path = require('path');
 process.config = require('./server/shared/configuration').load();
@@ -118,6 +119,7 @@ app.get('/service/entities', noCacheRequest(), searchApi.search);
 // ***************** site route ********************
 // *************************************************
 
+
 // ################ question #######################
 // index page
 app.get('/', routes.index);
@@ -143,6 +145,7 @@ app.get('/q/:qid', questionRoute.miniindex);
 //short url for answer
 app.get('/a/:qid/:aid', questionRoute.miniindex);
 
+
 // ################ user #######################
 // user login page
 app.get('/users/login',userRoute.login);
@@ -153,8 +156,16 @@ app.get('/users/:id', userRoute.index);
 // get user by id with name in url
 app.get('/users/:id/:title', userRoute.index);
 
+
 // ################ search #######################
 app.get('/search', searchRoute.search);
+
+
+// ################ tags #######################
+// all tags page
+app.get('/tags', tagRoute.index);
+// it renders the same page as all questions for a given tag
+app.get('/tags/:tag', questionRoute.tagged);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

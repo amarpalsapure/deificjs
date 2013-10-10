@@ -128,7 +128,7 @@ body { background-color: #eef0f3; }
 .time-date, .time-details { border: solid 1px #ddd; display: inline-block; padding: 4px 8px; float: left; }
 .tag-container div { display: inline; }
 .tag-container .popover-title { background-color: #999999; }
-.tag-container .popover-content { color: #444; display: block; line-height: 18px; font-size: 12px; font-weight: normal;}
+.tag-container .popover-content { color: #444; display: block; line-height: 18px; font-size: 1.1em; font-weight: normal;}
 .time-date, .time-month, .time-day { color: #777; }
 .time-date { height: 50px; font-size: 26px; font-weight: 700; line-height: 42px; }
 .time-month, .time-day { display: block; height: 20px; }
@@ -240,6 +240,12 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
 .lgn-cancel { vertical-align: bottom; line-height: 31px; }
 .icon_fb { background: url(../images/facebook.png) left center no-repeat; height: 32px; width: 32px; display: inline-block; line-height: 32px; margin-right: 3px; }
 
+.tags-list .tag-details-container { min-height: 140px; }
+.tags-list .tag-details > div {display: inline;}
+.tags-list .tag-excerpt { color: #888; font-size: 0.8em; font-style: normal; }
+.tags-list .txt-tag-search { min-width: 220px; padding: 4px 4px; font-size: 0.9em; }
+.tag-since { bottom: 2px; right: 5px; }
+.pagination { font-size: 0.85em }
 
 @media screen and (max-width: 1200px) {
     .btn.btn-flat.btn-skyblue { width: 100%; margin-top: 10px; }
@@ -257,6 +263,7 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
     .content .sideSection { display: none; }
     .question-page .col-entity-details { padding-left: 6.4%; margin-left: -4.2%; width: 95%; }
     .vote-cast { margin-left: 3px; }
+    .tags-list .tag-details-container { min-height: 130px; }
 }
 
 @media screen and (max-width: 767px) {
@@ -300,6 +307,7 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
     #wmd-spacer3, #wmd-undo-button, #wmd-redo-button { display: none !important; }
     .prni {padding-right: 0px !important;}
     .plni {padding-left: 0px !important;}
+    .tags-list .tag-details-container { min-height: 40px; }
 }
 
 /* Mobile */
@@ -308,6 +316,7 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
     td,
     textarea,
     input { font-size: 12px; }
+    .imglnk, .btn-green { display: none; }
     .user-profile img { width: 32px; }
     .prettyprint code { font-size: 11px;}
     .question-page .user-profile .spanPosted { display: none; }
@@ -317,11 +326,13 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
     .question-page .user-profile { padding-bottom: 6px; }
     .entity-title h1 { font-size: 1.1em; }
     .answer-accept > a { margin-right: 0px; }
+    .tag-search-container .btn {display: none; }
+    .tags-list .tag-details-container { min-height: 40px; }
+
 }
 
 @media (max-width: 400px) /* Mobile */ {
     #wmd-heading-button, #wmd-hr-button { display: none !important; }
-    .divUser a { overflow-x: hidden; float: left; text-overflow: ellipsis; width: 90px; white-space: nowrap; }
-    .question-search-page .divUser a { width: auto;}
+    .question-page .divUser a { overflow-x: hidden; float: left; text-overflow: ellipsis; width: 90px; white-space: nowrap; }
     .divPts { margin-top: -2px !important; }
 }

@@ -29,6 +29,6 @@ Deific.QuestionsRoute = Deific.BaseRoute.extend({
 		this.render('questions');
 		this.render('header', {	into: 'questions', outlet: 'headerBar', controller: 'header' });
 		this.render('paging', { into: 'questions', outlet: 'pagerBar', controller: 'paging'});
-		this.render('tags', { into: 'questions', outlet: 'relatedTags' })
+		this.render('relatedtags', { into: 'questions', outlet: 'relatedTags' })
 	}
 });

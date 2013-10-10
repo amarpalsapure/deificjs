@@ -63,6 +63,7 @@ var _toTag = function(tag) {
 		'name': tag.get('name'),
 		'excerpt': tag.get('excerpt'),
 		'description': tag.get('description'),
+		'__utcdatecreated': tag.get('__utcdatecreated'),
 		'questioncount': 0
 	};
 
@@ -71,6 +72,27 @@ var _toTag = function(tag) {
 	return response;
 };
 exports.toTag = _toTag;
+
+var _toTags = function(tags, paginginfo) {
+	var response = {
+		tags: []
+	};
+
+	//set the paginginfo
+	if(paginginfo) {
+		response.meta = {
+			paginginfo: paginginfo
+		};
+	}
+
+	//translate each tag
+	tags.forEach(function(tag) {
+		response.tags.push(_toTag(tag));
+	});
+
+	return response;
+};
+exports.toTags = _toTags;
 
 var _toQuestion = function(question, state) {
 	var response = {

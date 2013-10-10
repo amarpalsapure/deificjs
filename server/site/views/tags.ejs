@@ -1,0 +1,78 @@
+<% layout('__layout') -%>
+
+<% script('/javascripts/router/tagsRouter.js') -%>
+
+<% script('/javascripts/models/tag.js') -%>
+<% script('/javascripts/models/paging.js') -%>
+
+<% script('/javascripts/controllers/tagController.js') -%>
+<% script('/javascripts/controllers/pagingController.js') -%>
+
+<% script('/javascripts/views/tagsView.js') -%>
+<% script('/javascripts/views/pagingView.js') -%>
+
+<script type="text/x-handlebars", data-template-name="tags">
+  {{view Deific.HeaderView}} 
+
+  <div class='container'>
+    <div class='content'>
+      <div class='row tags-list-page'>
+        <div class='col-xs-12 col-sm-12 col-lg-12'>
+          <div class='mainSection'>
+            <div class='row contentTitle'>
+              <div class='col-xs-12 col-sm-7 col-lg-7'>
+                <h1 class='mtm' id='h1Sortedby'>Tags</h1>
+              </div>
+              <div class="col-xs-12 col-sm-5 col-lg-5">
+                <div class="sortGroup btn-group" data-default='popular'>
+                  <a id='apopular' href='/tags/?sort=popular' class="btn btn-danger">Popular</a>
+                  <a id='alatest' href='/tags/?sort=latest' class="btn btn-danger">Latest</a>
+                  <a id='aname' href='/tags/?sort=name' class="btn btn-danger">Name</a>
+                </div>
+              </div>
+            </div>
+            <div class='tags-list mtm'>
+            	<div class='row'>
+            		<div class='col-xs-12 col-sm-12 col-lg-12'>
+            			<div class='tag-search-container'>
+            				{{view view.submitTextField valueBinding='view.searchtext' type='text' class='txt-tag-search mrm' placeholder='Search tag...'}} <button id='btnTagSearch' {{action search target=view}} data-loading-text='Searching' class='btn btn-primary btn-sm'>Search</button>
+            			</div>
+            		</div>
+            	</div>
+            	<div class='row'>
+	                {{#each tag in tags itemController="tag"}}
+	                	<div class='col-xs-12 col-sm-4 col-lg-2'>
+	                		<div class='border-all-dashed pam mtm tag-details-container position-relative'>
+	                			<div class='tag-details'>
+	                				<div class='tag-container'>{{render 'tag' tag}}</div> <span class='muted font9'>x {{unbound tag.questioncount}}</span>
+	                			</div>
+	                			<div class='tag-excerpt mtm pbm'>
+	                				{{tag.minexcerpt}}
+	                			</div>
+	                			<div class='position-absolute tag-since'>
+	                				<span class='muted font8'>created {{unbound sincetime tag.__utcdatecreated}}</span>
+	                			</div>
+	                		</div>
+	                	</div>
+	                {{else}}
+		                <div class='col-xs-12 col-sm-12 col-lg-12'>
+	    	                <h5 class='muted mtm'>No tag found.</h5>
+	        	        </div>
+	            	{{/each}}
+              	</div>
+            </div>
+            <div {{bindAttr class=':pager-container view.showTagContainer:show:hide'}}>
+              <div class='row'>
+                <div class='col-xs-12 col-sm-12 col-lg-12'>
+                  {{outlet pagerBar}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{view Deific.FooterView}} 
+</script>

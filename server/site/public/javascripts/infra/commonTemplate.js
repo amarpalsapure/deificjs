@@ -42,7 +42,7 @@
 			</a>	\
   		</span>";
 
-  		var _tagsTemplate = 
+  		var _relatedtagsTemplate = 
   		"<ul class='tagCloud-container pan mtm'>	\
   			{{#each tag in tags itemController='question'}}	\
     			<li class='tag-container'>	\
@@ -371,7 +371,7 @@
 	    this.errorTemplate = _error;
 	  	this.pagingTemplate = _pagingTemplate;
 	  	this.tagTemplate = _tagTemplate;
-	  	this.tagsTemplate = _tagsTemplate;
+	  	this.relatedtagsTemplate = _relatedtagsTemplate;
 	  	this.timeTemplate = _timeTemplate;
 	  	this.shareTemplate = _shareTemplate;
   		this.entityTemplate = _entityTemplate;
@@ -382,7 +382,7 @@
 Ember.TEMPLATES.error = Ember.Handlebars.compile(templates.errorTemplate);
 Ember.TEMPLATES.paging = Ember.Handlebars.compile(templates.pagingTemplate);
 Ember.TEMPLATES.tag = Ember.Handlebars.compile(templates.tagTemplate);
-Ember.TEMPLATES.tags = Ember.Handlebars.compile(templates.tagsTemplate);
+Ember.TEMPLATES.relatedtags = Ember.Handlebars.compile(templates.relatedtagsTemplate);
 Ember.TEMPLATES.time = Ember.Handlebars.compile(templates.timeTemplate);
 Ember.TEMPLATES.share = Ember.Handlebars.compile(templates.shareTemplate);
 Ember.TEMPLATES.entity = Ember.Handlebars.compile(templates.entityTemplate);

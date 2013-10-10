@@ -1,12 +1,7 @@
 exports.find = function(req, res) {
 	var response = {
-		tags: [],
-		total: 0
+		tags: []
 	};
-
-	var term = req.param('q');
-	var pageSize = req.param('ps');
-	if(isNaN(pageSize)) pageSize = process.config.pagesize;
 
 	//get the state of app
 	var app = require('../shared/app.init');
@@ -20,20 +15,42 @@ exports.find = function(req, res) {
 	var transformer = require('./infra/transformer');
 
 	//search for matching tags
+	var orderBy = '__utcdatecreated',
+		pagenumber = req.param('page'),
+		isAscending = false,
+		filter;
+
+	if(!pagenumber) pagenumber = 1;
+
+	var sort = req.query.sort;
+	sort = (!sort) ? 'popular' : sort.toLowerCase();
+	switch(sort) {
+		case 'latest':
+			break;
+		case 'popular': 
+			orderBy = '$questioncount';
+			break;		
+		case 'name':
+			orderBy = 'name';
+			isAscending = true;
+			break;
+	}
+
+	var tagQuery = req.param('q');
+	if(tagQuery) filter = Appacitive.Filter.Property('name').like(tagQuery);
+
 	var query = new Appacitive.Queries.FindAllQuery({
 						schema : 'tag',
-						fields : 'name,excerpt,$questioncount',
-						isAscending: false,
-						filter: "(*name like '"+ term +"*')",
-						pageSize: pageSize
+						fields : 'name,excerpt,$questioncount,__utcdatecreated',
+						orderBy: orderBy,
+						filter: filter,
+						pageNumber: pagenumber,
+						isAscending: isAscending,
+						pageSize: 12
 					});
 
-	query.fetch(function (tags, pi) {
-		tags.forEach(function (tag) {
-			response.tags.push(transformer.toTag(tag));
-		});
-		response.total = pi.totalrecords;
-		return res.json(response);
+	query.fetch(function (tags, paginginfo) {
+		return res.json(transformer.toTags(tags, paginginfo));
 	}, function (status) {
 		return res.status(502).json(transformer.toError('question_find_tag', status));
 	});
