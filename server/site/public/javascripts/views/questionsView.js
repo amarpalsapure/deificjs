@@ -10,6 +10,9 @@
 			//remove loader
 			$('#rootProgress').remove();
 
+			//Set questions link as active
+			if(window.location.pathname.indexOf('/questions') === 0) $('.nav-questions').addClass('active');
+
 			//enable the the active link
 			var sort = $.fn.parseParam('sort', $('.sortGroup').data('default')).toLowerCase();
 			$('.sortGroup #' + 'a' + sort).addClass('active');

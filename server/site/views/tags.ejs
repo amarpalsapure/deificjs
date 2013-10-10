@@ -5,7 +5,7 @@
 <% script('/javascripts/models/tag.js') -%>
 <% script('/javascripts/models/paging.js') -%>
 
-<% script('/javascripts/controllers/tagController.js') -%>
+<% script('/javascripts/controllers/tagsController.js') -%>
 <% script('/javascripts/controllers/pagingController.js') -%>
 
 <% script('/javascripts/views/tagsView.js') -%>
@@ -40,7 +40,7 @@
             		</div>
             	</div>
             	<div class='row'>
-	                {{#each tag in tags itemController="tag"}}
+	                {{#each tag in tags}}
 	                	<div class='col-xs-12 col-sm-4 col-lg-2'>
 	                		<div class='border-all-dashed pam mtm tag-details-container position-relative'>
 	                			<div class='tag-details'>

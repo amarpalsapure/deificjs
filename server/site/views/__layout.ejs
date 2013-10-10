@@ -42,7 +42,7 @@
 
         <!-- Collect the nav links, forms, and other content for toggling -->
           <div class='collapse navbar-collapse navbar-ex1-collapse'>
-            <ul id='ulLogin' class='nav navbar-nav navbar-right'>
+            <ul id='ulLogin' class='nav navbar-nav navbar-right mll prs'>
               {{#if isLoggedIn}}
                 <li class="dropdown">
                   <a href='#' class='dropdown-toggle' data-toggle='dropdown'>
@@ -58,6 +58,11 @@
                 <li><a {{bindAttr href='loginurl'}}>Login</a></li>
                 <li><a {{bindAttr href='loginurl'}}>Signup</a></li>
               {{/if}}
+            </ul>
+            <ul class='nav navbar-nav navbar-right'>
+              <li class='nav-questions'><a href='/questions' title='Search and View all Questions'>Questions</a></li>
+              <li class='nav-tags'><a href='/tags' title='Search and View all Tags'>Tags</a></li>
+              <li class='nav-users'><a href='/users' title='Search and View all Users'>Users</a></li>
             </ul>
           </div><!-- /.navbar-collapse -->
           <div class='logoutError'>
@@ -104,7 +109,7 @@
         <nav class='footer navbar-default' role='navigation'>
           <!-- Brand and toggle get grouped for better mobile display -->
         <div class='navbar-header'>
-          <button type='button' class='navbar-toggle' data-toggle='collapse' data-target='.navbar-ex1-collapse'>
+          <button type='button' class='navbar-toggle' data-toggle='collapse' data-target='.navbar-ex2-collapse'>
             <span class='sr-only'>Toggle navigation</span>
             <span class='icon-bar'></span>
             <span class='icon-bar'></span>
@@ -113,7 +118,7 @@
         </div>
 
           <!-- Collect the nav links, forms, and other content for toggling -->
-          <div class='collapse navbar-collapse navbar-ex1-collapse'>
+          <div class='collapse navbar-collapse navbar-ex2-collapse'>
             <ul class='nav navbar-nav navbar-left plxl prxl'>
               <li><a href='#'>about</a></li>
               <li><a href='#'>contact us</a></li>

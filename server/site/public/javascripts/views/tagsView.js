@@ -6,6 +6,9 @@
             //remove loader
             $('#rootProgress').remove();
 
+            //Set tags link as active
+            $('.nav-tags').addClass('active');
+
             //enable the the active link
             var sort = $.fn.parseParam('sort', $('.sortGroup').data('default')).toLowerCase();
             $('.sortGroup #' + 'a' + sort).addClass('active');

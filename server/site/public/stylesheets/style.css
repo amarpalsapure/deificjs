@@ -276,6 +276,7 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
     td,
     textarea,
     input { font-size: 13px; }
+    #ulLogin { margin-left: -15px; padding-right: 0px;}
 
     .btn.btn-flat.btn-green { width: 100%; margin-top: 10px; margin-left: 0px; }
     .imglnk, .bubble { display: none; }
