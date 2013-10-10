@@ -9,7 +9,8 @@ var _toUser = function(user) {
 		'lastname': user.get('lastname'),
 		'gravtarurl': null,
 		'reputation': 0,
-		'url': ''
+		'url': '',
+		'__utcdatecreated': user.get('__utcdatecreated')
 	};
 	if(user.get('email'))
 		response.gravtarurl = 'http://www.gravatar.com/avatar/' + md5(user.get('email'));
@@ -41,6 +42,26 @@ var _toUser = function(user) {
 };
 exports.toUser = _toUser;
 
+var _toUsers = function(users, paginginfo) {
+	var response = {
+		users: []
+	};
+
+	//set the paginginfo
+	if(paginginfo) {
+		response.meta = {
+			paginginfo: paginginfo
+		};
+	}
+
+	//translate each tag
+	users.forEach(function(user) {
+		response.users.push(_toUser(user));
+	});
+
+	return response;
+};
+exports.toUsers = _toUsers;
 
 var _toComment = function(comment, state) {
 	if(!comment) return {};

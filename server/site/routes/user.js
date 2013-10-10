@@ -3,9 +3,19 @@ exports.index = function(req, res){
   	var app = require('../../shared/app.init');
 	var state = app.init(req);
 
+	state.title = 'Users';
+
 	res.render('users', state);
 };
+exports.findById = function(req, res) {
+	//initialize the app
+  	var app = require('../../shared/app.init');
+	var state = app.init(req);
 
+	state.title = 'User';
+
+	res.render('user', state);
+};
 exports.login = function(req, res){
 	//initialize the app
   	var app = require('../../shared/app.init');

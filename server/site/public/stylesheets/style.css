@@ -243,8 +243,13 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
 .tags-list .tag-details-container { min-height: 140px; }
 .tags-list .tag-details > div {display: inline;}
 .tags-list .tag-excerpt { color: #888; font-size: 0.8em; font-style: normal; }
-.tags-list .txt-tag-search { min-width: 220px; padding: 4px 4px; font-size: 0.9em; }
+.tags-list .txt-tag-search, .user-search-container .txt-user-search { min-width: 220px; padding: 4px 4px; font-size: 0.9em; }
 .tag-since { bottom: 2px; right: 5px; }
+.users-list .user-details-container { min-height: 70px; }
+.users-list .user-img, .users-list .user-details { float: left; }
+.users-list .user-name a { font-size: 1em; color: #222; font-weight: 700; line-height: 16px; }
+.users-list .user-points { color: #aaa; font-size: 0.85em; text-align: center; border: solid 1px #eee; width: 40px; margin-top: 4px; }
+.user-since { bottom: 2px; right: 6px; }
 .pagination { font-size: 0.85em }
 
 @media screen and (max-width: 1200px) {
