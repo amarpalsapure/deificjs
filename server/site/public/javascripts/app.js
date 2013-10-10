@@ -14,6 +14,7 @@
 	});
 
 	Ember.Handlebars.registerBoundHelper('sincetime', function(date) {return moment(date).fromNow();});
+	Ember.Handlebars.registerBoundHelper('sincetimeonly', function(date) {return moment(date).fromNow(true);});
 	Ember.Handlebars.registerBoundHelper('getfulldate', function(date) {return moment(date).format("DDMMMYYYY");});
 	Ember.Handlebars.registerBoundHelper('getdate', function(date) {return moment(date).format("DD");});		
 	Ember.Handlebars.registerBoundHelper('getday', function(date) {return moment(date).format("dddd");});	
