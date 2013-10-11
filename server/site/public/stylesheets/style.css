@@ -240,10 +240,10 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
 .lgn-cancel { vertical-align: bottom; line-height: 31px; }
 .icon_fb { background: url(../images/facebook.png) left center no-repeat; height: 32px; width: 32px; display: inline-block; line-height: 32px; margin-right: 3px; }
 
-.tags-list .tag-details-container { min-height: 140px; }
+.tags-list .tag-details-container { min-height: 160px; }
 .tags-list .tag-details > div {display: inline;}
 .tags-list .tag-excerpt { color: #888; font-size: 0.8em; font-style: normal; }
-.tags-list .txt-tag-search, .user-search-container .txt-user-search { min-width: 220px; padding: 4px 4px; font-size: 0.9em; }
+.tags-list .txt-tag-search, .user-search-container .txt-user-search { min-width: 220px; padding: 5px 4px; font-size: 0.9em; }
 .tag-since { bottom: 2px; right: 5px; }
 .users-list .user-details-container { min-height: 70px; }
 .users-list .user-img, .users-list .user-details { float: left; }
