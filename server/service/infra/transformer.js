@@ -10,7 +10,7 @@ var _toUser = function(user) {
 		'gravtarurl': null,
 		'reputation': 0,
 		'url': '',
-		'__utcdatecreated': user.get('__utcdatecreated')
+		'__utcdatecreated': _toISODateFormat(user.get('__utcdatecreated'))
 	};
 	if(user.get('email'))
 		response.gravtarurl = 'http://www.gravatar.com/avatar/' + md5(user.get('email'));
@@ -448,7 +448,12 @@ exports.toSessionExpiredError = _toSessionExpiredError;
 var _toInt = function(number) { 
 	if(!number || number == '' || isNaN(number)) return 0;
 	return parseInt(number, 10);
-}
+};
+
+var _toISODateFormat = function(dateString) {
+	if(isNaN(new Date(dateString))) return dateString;
+	return dateString.substring(0, dateString.lastIndexOf('.')) + 'Z';
+};
 
 var _urlEncode = function(text) {
 	if(!text) return '';
@@ -458,4 +463,3 @@ var _urlEncode = function(text) {
 	}
 	return text.toLowerCase();
 };
-

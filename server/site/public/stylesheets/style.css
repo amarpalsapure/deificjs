@@ -332,7 +332,7 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
     .question-page .user-profile { padding-bottom: 6px; }
     .entity-title h1 { font-size: 1.1em; }
     .answer-accept > a { margin-right: 0px; }
-    .tag-search-container .btn {display: none; }
+    .tag-search-container .btn, .user-search-container .btn {display: none; }
     .tags-list .tag-details-container { min-height: 40px; }
 
 }
