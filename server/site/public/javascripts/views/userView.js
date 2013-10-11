@@ -10,8 +10,8 @@
             $('.nav-users').addClass('active');
 
             //enable the the active link
-            var sort = $.fn.parseParam('sort', $('.sortGroup').data('default')).toLowerCase();
-            $('.sortGroup #' + 'a' + sort).addClass('active');
+            var tab = $.fn.parseParam('tab', $('.tabGroup').data('default')).toLowerCase();
+            $('.tabGroup #' + 'a' + tab).addClass('active');
         },
 
     	submitTextField: Ember.TextField.extend({
