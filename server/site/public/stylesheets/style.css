@@ -252,9 +252,13 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
 .user-since { bottom: 2px; right: 6px; }
 .pagination { font-size: 0.85em }
 
-.user-profile-page .enitity-row-container { padding: 8px 0px; border-bottom: 1px dashed #ADADAD; }
+.user-profile-page .enitity-row-container { padding: 8px 0px; border-top: 1px dashed #ADADAD; }
 .user-profile-page .time-container { min-width: 170px; }
+.user-profile-page .since-time { display: none; }
+.user-profile-page .since-time .muted { color: #bbb; text-transform: lowercase;}
 .user-profile-page .entity-title, .user-profile-page .entity-details { width: 75%;}
+.user-profile-page .entity-details { margin-top: -2px; }
+.entities-container { border-bottom: 1px dashed #ADADAD;}
 
 
 @media screen and (max-width: 1200px) {
@@ -319,6 +323,10 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
     .prni {padding-right: 0px !important;}
     .plni {padding-left: 0px !important;}
     .tags-list .tag-details-container { min-height: 40px; }
+    .user-profile-page .entity-title, .user-profile-page .entity-details, .user-profile-page .since-time { width: 100%; padding-left: 0px;}
+    .user-profile-page .entity-details { margin: -2px 0 2px 0; }
+    .user-profile-page .time-row { display: none; }
+    .user-profile-page .since-time { display: block; }
 }
 
 /* Mobile */

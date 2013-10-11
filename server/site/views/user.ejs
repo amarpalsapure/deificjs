@@ -24,10 +24,10 @@
                 <h1 class='mtm'>{{fullname}}</h1>
               </div>
               <div class="col-xs-12 col-sm-5 col-lg-5">
-                <div class="sortGroup btn-group" data-default='questions'>
-                  <a id='aquestions' href='?sort=questions' class="btn btn-danger">Questions</a>
-                  <a id='aanswers' href='?sort=answers' class="btn btn-danger">Answers</a>
-                  <a id='avotes' href='?sort=votes' class="btn btn-danger">Votes</a>
+                <div class="tabGroup btn-group" data-default='questions'>
+                  <a id='aquestions' href='?tab=questions' class="btn btn-danger">Questions</a>
+                  <a id='aanswers' href='?tab=answers' class="btn btn-danger">Answers</a>
+                  <a id='avotes' href='?tab=votes' class="btn btn-danger hide">Votes</a>
                 </div>
               </div>
             </div>
@@ -43,7 +43,7 @@
                       {{render time entity}}
                     </div>
                   </div>
-                  <div class='entity-title pull-left pls width-90p'>
+                  <div class='entity-title pull-left pls'>
                     <div class='col-xs-12 col-sm-12 col-lg-12'>
                       <a {{bindAttr title='entity.text'}} {{bindAttr href='entity.url'}} class='font120'>
                         {{entity.title}}
@@ -53,9 +53,14 @@
                   <div class='entity-details pull-left pls'>
                     <div class='col-xs-12 col-sm-12 col-lg-12'>
                       <span {{bindAttr class=':mrs :nowrap view.hidevotecount:hide'}}>{{entity.votecount}} {{pluralize entity.votecount s='vote'}}</span>
-                      <span {{bindAttr class=':mrs :nowrap view.hideviewcount:hide'}}><span {{bindAttr class='view.questionpage:hide'}}>&#8226;</span> {{entity.answercount}} {{pluralize answercount s='answer'}} </span>
-                      <span {{bindAttr class=':mrs :nowrap view.hideanswercount:hide'}}>&#8226; {{entity.viewcount}} {{pluralize entity.viewcount s='view'}}</span>
-                      <span {{bindAttr class=':mrs :nowrap view.hidebookmarkcount:hide'}}>&#8226; {{entity.bookmarkcount}} {{pluralize entity.bookmarkcount s='bookmark'}}</span>
+                      <span {{bindAttr class=':mrs :nowrap entity.isanswer:hide'}}><span {{bindAttr class='view.questionpage:hide'}}>&#8226;</span> {{entity.answercount}} {{pluralize answercount s='answer'}} </span>
+                      <span {{bindAttr class=':mrs :nowrap entity.isanswer:hide'}}>&#8226; {{entity.viewcount}} {{pluralize entity.viewcount s='view'}}</span>
+                      <span {{bindAttr class=':mrs :nowrap entity.isanswer:hide'}}>&#8226; {{entity.bookmarkcount}} {{pluralize entity.bookmarkcount s='bookmark'}}</span>
+                    </div>
+                  </div>
+                  <div class='since-time pull-left pls'>
+                    <div class='col-xs-12 col-sm-12 col-lg-12'>
+                      <span class='muted font9'>{{entity.postedaction}} on {{calendar entity.__utcdatecreated}}</span>
                     </div>
                   </div>
                 </div>

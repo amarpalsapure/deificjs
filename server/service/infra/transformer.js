@@ -334,8 +334,12 @@ var _toEntities = function(entities, paginginfo) {
 	}
 
 	entities.forEach(function(entity) {
-		var jEntity = entity.toJSON();
-		jEntity.__utcdatecreated = _toISODateFormat(entity.get('__utcdatecreated'));
+
+		var jEntity;
+		if(entity.get('type') === 'question') jEntity = _toQuestion(entity).question;
+		else jEntity = _toAnswer(entity).answer;
+
+		jEntity.type = entity.get('type');
 
 		//set the title for answer as question title from it's attribute
 		if(jEntity.type != 'question') jEntity.title = entity.attr('title');
