@@ -10,6 +10,10 @@
 		totalvotecount: DS.attr('number', { defaultValue: 0 }),
 		isanswered: DS.attr('boolean'),
 
+		answercount: DS.attr('number', { defaultValue: 0 }),
+		viewcount: DS.attr('number', { defaultValue: 0 }),
+		bookmarkcount: DS.attr('number', { defaultValue: 0 }),
+
 		author: DS.belongsTo('user'),
 
 		votecount: function(){
@@ -18,6 +22,10 @@
 
 		isquestion: function() {
 			return this.get('type') === 'question';
+		}.property('type'),
+
+		isanswer: function() {
+			return this.get('type') === 'answer';
 		}.property('type'),
 
 		postedaction: function() {

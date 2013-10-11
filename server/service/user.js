@@ -97,11 +97,11 @@ var _findByIdWithEntities = function(req, res) {
 		user.fetch(onSuccess, onError);
 	};
 
-	var getConnectedQuestions = function(userId, pagenumber, onSuccess, onError) {
+	var getConnectedEntities = function(userId, relation, label, pagenumber, onSuccess, onError) {
 		var userArticle = new Appacitive.Article({ __id : userId, schema : 'user' });
 		userArticle.fetchConnectedArticles({ 
-		    relation: 'question_user',
-		    label: 'question',
+		    relation: relation,
+		    label: label,
 		    pageSize: process.config.pagesize,
 		    pagenumber: pagenumber,
 		    orderBy: '__utcdatecreated',
@@ -109,26 +109,31 @@ var _findByIdWithEntities = function(req, res) {
 		    //fields: ['__id,__utcdatecreated'],
 		    returnEdge: false
 		}, function(obj, pi) {
-			onSuccess(userArticle.children['question_user'], pi);
+			onSuccess(userArticle.children[relation], pi);
 		}, onError);
 	};
 
+	var getVotedItems = function(userId, pagenumber, onSuccess, onError) {
 
-	var getConnectedEntities = function(userId, pagenumber, type, onSuccess, onError) {
-		switch(type.toLowerCase()){
-			case 'answers':
+	};
+
+	var getConnectedItems = function(userId, pagenumber, type, onSuccess, onError) {
+		switch(type.toLowerCase()) {
+			case 'answers': //answers
+				getConnectedEntities(userId, 'answer_user', 'answer', pagenumber, onSuccess, onError);
 				break;
 			case 'votes':
+				getConnectedEntities(userId, 'question_user', 'question', pagenumber, onSuccess, onError);
 				break;
 			default: //questions
-				getConnectedQuestions(userId, pagenumber, onSuccess, onError);
+				getConnectedEntities(userId, 'question_user', 'question', pagenumber, onSuccess, onError);
 				break;
 		}
 	};
 
 	getUser(userId, function(user) {
 		//get connected entities on basis of type
-		getConnectedEntities(userId, pagenumber, type, function(entities, paginginfo){
+		getConnectedItems(userId, pagenumber, type, function(entities, paginginfo){
 			var response = transformer.toEntities(entities, paginginfo);
 			
 			//add user to response
