@@ -353,13 +353,13 @@ exports.update = function(req, res) {
 
 	var aQuestion = transformer.toAppacitiveQuestion(Appacitive, question);
 
-	//creates 'question_vote' relation between user and question 
+	//creates 'entity_vote' relation between user and entity 
 	var question_vote_Create = function(isupvote, onsuccess, onfailure) {
-		var relation = new Appacitive.ConnectionCollection({ relation: 'question_vote' });
+		var relation = new Appacitive.ConnectionCollection({ relation: 'entity_vote' });
 		var connection = relation.createNewConnection({ 
 		  endpoints: [{
 		      articleid: question.id,
-		      label: 'question'
+		      label: 'entity'
 		  }, {
 		      articleid: state.userid,
 		      label: 'user'
@@ -372,16 +372,16 @@ exports.update = function(req, res) {
 		}, onfailure);
 	};
 
-	//updates 'question_vote' relation between user and question 
+	//updates 'entity_vote' relation between user and entity 
 	var question_vote_Update = function(isupvote, onsuccess, onfailure) {
-		var relation = new Appacitive.Connection({ relation: 'question_vote', __id: question.voteconnid });
+		var relation = new Appacitive.Connection({ relation: 'entity_vote', __id: question.voteconnid });
 		relation.set('isupvote', isupvote);
 		relation.save(onsuccess, onfailure);
 	};
 
-	//deletes 'question_vote' relation between user and question 
+	//deletes 'entity_vote' relation between user and entity 
 	var question_vote_Delete = function(onsuccess, onfailure) {
-		var relation = new Appacitive.Connection({ relation: 'question_vote', __id: question.voteconnid });
+		var relation = new Appacitive.Connection({ relation: 'entity_vote', __id: question.voteconnid });
 		relation.del(function() {
 			question.voteconnid = '';
 			onsuccess();
@@ -571,13 +571,13 @@ exports.save = function(req, res) {
 		shortText = shortText.substring(0, Math.min(shortText.length, shortText.lastIndexOf(' ')));
 		aQuestion.set('shorttext', shortText);
 
-		//creates 'question_user' relation between user and question
+		//creates 'entity_user' relation between user and question
 		var question_user_Create = function(onsuccess, onfailure) {
-			var relation = new Appacitive.ConnectionCollection({ relation: 'question_user' });
+			var relation = new Appacitive.ConnectionCollection({ relation: 'entity_user' });
 			var connection = relation.createNewConnection({ 
 			  endpoints: [{
 			      article: aQuestion,
-			      label: 'question'
+			      label: 'entity'
 			  }, {
 			      articleid: state.userid,
 			      label: 'user'
@@ -619,7 +619,7 @@ exports.save = function(req, res) {
 				return res.json(response);
 			}, function(status) {
 				aQuestion.del(function(){}, function(){}, true);
-				return res.status(500).json({ messsage: 'Unable to save answer' });		
+				return res.status(500).json(transformer.toError('question_save', status));		
 			});
 		};
 
@@ -637,7 +637,7 @@ exports.save = function(req, res) {
 		}, function(status) {
 			//rollback the question
 			aQuestion.del(function(){}, function(){}, true);
-			return res.status(500).json({ messsage: 'Unable to save answer' });		
+			return res.status(500).json(transformer.toError('question_save', status));		
 		});
 	};
 

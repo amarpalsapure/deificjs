@@ -97,11 +97,11 @@ var _findByIdWithEntities = function(req, res) {
 		user.fetch(onSuccess, onError);
 	};
 
-	var getConnectedEntities = function(userId, relation, label, pagenumber, onSuccess, onError) {
+	var getConnectedEntities = function(userId, relation, pagenumber, onSuccess, onError) {
 		var userArticle = new Appacitive.Article({ __id : userId, schema : 'user' });
 		userArticle.fetchConnectedArticles({ 
 		    relation: relation,
-		    label: label,
+		    label: 'entity',
 		    pageSize: process.config.pagesize,
 		    pagenumber: pagenumber,
 		    orderBy: '__utcdatecreated',
@@ -120,13 +120,13 @@ var _findByIdWithEntities = function(req, res) {
 	var getConnectedItems = function(userId, pagenumber, type, onSuccess, onError) {
 		switch(type.toLowerCase()) {
 			case 'answers': //answers
-				getConnectedEntities(userId, 'answer_user', 'answer', pagenumber, onSuccess, onError);
+				getConnectedEntities(userId, 'entity_user', pagenumber, onSuccess, onError);
 				break;
 			case 'votes':
-				getConnectedEntities(userId, 'question_user', 'question', pagenumber, onSuccess, onError);
+				getConnectedEntities(userId, 'entity_user', pagenumber, onSuccess, onError);
 				break;
 			default: //questions
-				getConnectedEntities(userId, 'question_user', 'question', pagenumber, onSuccess, onError);
+				getConnectedEntities(userId, 'entity_user', pagenumber, onSuccess, onError);
 				break;
 		}
 	};
