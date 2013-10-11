@@ -44,7 +44,7 @@ body { background-color: #eef0f3; }
     .question-list .question { padding: 18px 0 12px !important; border-bottom: 1px dashed #ADADAD; }
         .question-list .question .user-img { padding-bottom: 4px; }
         .question-list .col-entity-details { padding-left: 5px; padding-right: 5px; }
-        .question-list .isanswered, .question-list .isanswered .user-profile, .question-list .isanswered .vote-panel { background-color: #EFFFEF; }
+        .question-list .isanswered, .question-list .isanswered .user-profile, .question-list .isanswered .vote-panel, .user-profile-page .isanswered { background-color: #EFFFEF; }
 
 .entity-details span { font-size: 0.95em; color: #888; }
 #wmd-preview h1, .entity-description h1 { font-size: 1.7em; line-height: 1.4em; }
@@ -124,8 +124,8 @@ body { background-color: #eef0f3; }
 .user-name { font-size: 0.9em; line-height: 14px; }
 .user-points { font-size: 0.9em; }
 .time-row { padding-bottom: 0px !important; }
-.time-container { float: left; height: 50px; box-shadow: 1px 1px 4px #ddd; margin-left: -5px; }
-.time-date, .time-details { border: solid 1px #ddd; display: inline-block; padding: 4px 8px; float: left; }
+.time-container { float: left; height: 50px; box-shadow: 1px 1px 4px #ddd; margin-left: -5px; background-color: #fff; border: solid 1px #ddd; }
+.time-date, .time-details { display: inline-block; padding: 4px 8px; float: left; }
 .tag-container div { display: inline; }
 .tag-container .popover-title { background-color: #999999; }
 .tag-container .popover-content { color: #444; display: block; line-height: 18px; font-size: 1.1em; font-weight: normal;}
@@ -133,7 +133,7 @@ body { background-color: #eef0f3; }
 .time-date { height: 50px; font-size: 26px; font-weight: 700; line-height: 42px; }
 .time-month, .time-day { display: block; height: 20px; }
 .time-day { font-size: 16px; font-weight: 700; }
-.time-details { border-left: none; }
+.time-details { border-left: solid 1px #ddd; }
 
 .answer-list .odd, .answer-list .even { padding: 8px 12px; }
 .answer-list .odd { background-color: #fafafa; box-shadow: 1px 2px 4px #ddd; }
@@ -251,6 +251,11 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
 .users-list .user-points { color: #aaa; font-size: 0.85em; text-align: center; border: solid 1px #eee; width: 40px; margin-top: 4px; }
 .user-since { bottom: 2px; right: 6px; }
 .pagination { font-size: 0.85em }
+
+.user-profile-page .enitity-row-container { padding: 8px 0px; border-bottom: 1px dashed #ADADAD; }
+.user-profile-page .time-container { min-width: 170px; }
+.user-profile-page .entity-title, .user-profile-page .entity-details { width: 75%;}
+
 
 @media screen and (max-width: 1200px) {
     .btn.btn-flat.btn-skyblue { width: 100%; margin-top: 10px; }

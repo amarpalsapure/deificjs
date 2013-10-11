@@ -10,7 +10,8 @@
 
 		//relationship property
 		question: DS.belongsTo('question'),
-		answer: DS.belongsTo('user'),
+		answer: DS.belongsTo('answer'),
+		entities: DS.hasMany('entity'),
 		comment: DS.belongsTo('comment'),
 
 		//observing functions

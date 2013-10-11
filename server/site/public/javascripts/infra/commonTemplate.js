@@ -58,22 +58,18 @@
   		</ul>";
 
   		var _timeTemplate = 
-  		"<div class='row time-row'>	\
-            <div class='col-xs-12 col-sm-12 col-lg-12'>	\
-              	<div class='time-container'>	\
-                	<div class='time-date'>	\
-                  		{{getdate __utcdatecreated}}	\
-            		</div>	\
-                	<div class='time-details'>	\
-                  		<div class='time-day'>	\
-                    		{{getday __utcdatecreated}}	\
-                  		</div>	\
-	                  	<div class='time-month'>	\
-	                    	{{getmonth __utcdatecreated}} {{getyear __utcdatecreated}}	\
-	                  	</div>	\
-                	</div>	\
+  		"<div class='time-container'>	\
+        	<div class='time-date'>	\
+          		{{getdate __utcdatecreated}}	\
+    		</div>	\
+        	<div class='time-details'>	\
+          		<div class='time-day'>	\
+            		{{getday __utcdatecreated}}	\
+          		</div>	\
+              	<div class='time-month'>	\
+                	{{getmonth __utcdatecreated}} {{getyear __utcdatecreated}}	\
               	</div>	\
-            </div>	\
+        	</div>	\
       	</div>";
 
       	var _shareTemplate =

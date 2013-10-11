@@ -64,6 +64,5 @@ Deific.QuestionRoute = Deific.BaseRoute.extend({
 		this.render('question');
 		this.render('header', {	into: 'question', outlet: 'headerBar', controller: 'header' });
 		this.render('entity', { into: 'question', outlet: 'questionDetails' });
-		this.render('time', { into: 'question', outlet: 'questionDate' });
 	}
 });

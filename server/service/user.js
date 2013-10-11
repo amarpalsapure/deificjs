@@ -1,6 +1,11 @@
 exports.findAll = function(req, res) {
+	if(req.param('uId')) return _findByIdWithEntities(req, res);
+	else return _findAll(req, res);	
+};
+
+var _findAll = function(req, res) {
 	var response = {
-		tags: []
+		users: []
 	};
 
 	//get the state of app
@@ -14,7 +19,7 @@ exports.findAll = function(req, res) {
 	//get the transformer
 	var transformer = require('./infra/transformer');
 
-	//search for matching tags
+	//search for matching users
 	var orderBy = '__utcdatecreated',
 		pagenumber = req.param('page'),
 		isAscending = false,
@@ -58,6 +63,90 @@ exports.findAll = function(req, res) {
 		return res.status(502).json(transformer.toError('question_find_tag', status));
 	});
 };
+
+// Step 1 : Get the user
+// Step 2 : Depending upon the type of requested entity, get connected articles
+var _findByIdWithEntities = function(req, res) {
+	var response = {
+		users: [],
+		entities: []
+	};
+
+	//get the state of app
+	var app = require('../shared/app.init');
+	var state = app.init(req);
+
+	//initialize the sdk
+  	var sdk = require('./appacitive.init');
+	var Appacitive = sdk.init(state.debug);
+
+	//get the transformer
+	var transformer = require('./infra/transformer');
+
+	var userId = req.param('uId');
+	var type = req.param('type');
+	var pagenumber = req.param('page');
+
+	if(userId === '') return res.status(400).json(transformer.toError('Invalid input'));
+	if(!type) type = 'questions';
+	if(!pagenumber) pagenumber = 1;
+
+
+	var getUser = function(userId, onSuccess, onError) {
+		var user = new Appacitive.User({__id: userId});
+		user.fetch(onSuccess, onError);
+	};
+
+	var getConnectedQuestions = function(userId, pagenumber, onSuccess, onError) {
+		var userArticle = new Appacitive.Article({ __id : userId, schema : 'user' });
+		userArticle.fetchConnectedArticles({ 
+		    relation: 'question_user',
+		    label: 'question',
+		    pageSize: process.config.pagesize,
+		    pagenumber: pagenumber,
+		    orderBy: '__utcdatecreated',
+		    isAscending: false,
+		    //fields: ['__id,__utcdatecreated'],
+		    returnEdge: false
+		}, function(obj, pi) {
+			onSuccess(userArticle.children['question_user'], pi);
+		}, onError);
+	};
+
+
+	var getConnectedEntities = function(userId, pagenumber, type, onSuccess, onError) {
+		switch(type.toLowerCase()){
+			case 'answers':
+				break;
+			case 'votes':
+				break;
+			default: //questions
+				getConnectedQuestions(userId, pagenumber, onSuccess, onError);
+				break;
+		}
+	};
+
+	getUser(userId, function(user) {
+		//get connected entities on basis of type
+		getConnectedEntities(userId, pagenumber, type, function(entities, paginginfo){
+			var response = transformer.toEntities(entities, paginginfo);
+			
+			//add user to response
+			var userJ = transformer.toUser(user);
+			userJ.entities = [];
+			entities.forEach(function(entity) { userJ.entities.push(entity.id()); })
+			response.users.push(userJ);
+			
+			return res.json(response);
+		}, function(status){
+			return res.status(502).json(transformer.toError('user_find', status));
+		});
+	}, function(status) {
+		return res.status(502).json(transformer.toError('user_find', status));
+	});
+
+};
+
 exports.findById = function(req, res) {
 	var response = {
 		user: {}

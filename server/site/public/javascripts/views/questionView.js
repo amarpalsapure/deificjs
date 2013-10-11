@@ -29,7 +29,7 @@
 			var model = this.controller.get('model');
 			if(model && model.get('title')) {
 				//set the page title
-				var title = model.get('title') + ' - ' + $(document).attr('title');
+				var title = model.get('title') + ' - ' + window.init.config.brand;
 				var tags = model.get('tags');
 				if(tags && tags.get('length') > 0) {
 					tags = tags.toArray();

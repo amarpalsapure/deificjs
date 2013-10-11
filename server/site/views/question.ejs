@@ -20,7 +20,11 @@
         <div class='col-xs-12 col-sm-12 col-lg-9 z-index-1'>
           <div class='mainSection'>
             <div class='question pts'>
-              {{outlet questionDate}}
+              <div class='row time-row'>
+                <div class='col-xs-12 col-sm-12 col-lg-12'>
+                  {{render time this}}
+                </div>
+              </div>
               {{outlet questionDetails}}
             </div>
             <div class='bubble'>
@@ -45,19 +49,7 @@
                 {{#each group in groupedAnswers}}
                     <div class='row time-row'>
                       <div class='col-xs-12 col-sm-12 col-lg-12'>
-                        <div {{bindAttr name='getfulldate'}} class='time-container'>
-                          <div class='time-date'>
-                            {{getdate group.__utcdatecreated}}
-                          </div>
-                          <div class='time-details'>
-                            <div class='time-day'>
-                              {{getday group.__utcdatecreated}}
-                            </div>
-                            <div class='time-month'>
-                              {{getmonth group.__utcdatecreated}} {{getyear group.__utcdatecreated}}
-                            </div>
-                          </div>
-                        </div>
+                        {{render time group}}
                       </div>
                     </div>
                     <!-- Load answer here -->

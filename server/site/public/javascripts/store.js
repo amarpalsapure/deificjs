@@ -79,8 +79,10 @@
 		handleError: function(promiseError, source, action) {
 			this._logError(promiseError, source);
 			try {
-				return JSON.parse(promiseError.responseText).error;	
-			}catch(e){
+				var error = JSON.parse(promiseError.responseText).error;
+				if(typeof error === 'object') error = error.message || 'Some error occurred.'
+				return error;	
+			} catch(e){
 				return 'Network failure';
 			}			
 		},

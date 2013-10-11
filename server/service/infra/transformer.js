@@ -192,17 +192,21 @@ var _toQuestion = function(question, state) {
 	}
 
 	//question is bookmarked or not
-	response.question['voted'] = 0;
 	if(question.children.vote && question.children.vote.length > 0) {
 		response.question['voteconnid'] = question.children.vote[0].connection.id();
 		response.question['voted'] = question.children.vote[0].connection.get('isupvote', 'boolean') ? 1 : -1;
+	} else {
+		response.question['voted'] = 0;
+		response.question['voteconnid'] = '';
 	}
 
 	//question is voted or not
-	response.question['isbookmarked'] = false;
 	if(question.children.bookmark && question.children.bookmark.length > 0) {
 		response.question['isbookmarked'] = true;
 		response.question['bookmarkconnid'] = question.children.bookmark[0].connection.id();;
+	} else {
+		response.question['isbookmarked'] = false;
+		response.question['bookmarkconnid'] = '';
 	}
 	return response;
 };
@@ -427,6 +431,7 @@ var _toError = function(origin, status) {
 	var message = errorMap[origin];
 	if(!message) message = errorMap['default'];
 	if(status.code === '19036') message = 'Your session has expired, please <a href="/users/login?returnurl=' + window.location.pathname + '">login</a> again. Thanks.';
+	status.referenceid = status.referenceid || 'notavailble';
 	status.error = message;
 	return status;
 };
