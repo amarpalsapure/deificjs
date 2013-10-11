@@ -57,6 +57,7 @@ var _findById = function(req, res) {
 		//if the correct answer exists, then it will appear first in any sort
 		if(response.question.correctanswer) {
 			var newAnswerMeta = [];
+			response.question.correctanswer.__utcdatecreated = transformer.toISODateFormat(response.question.correctanswer.__utcdatecreated);
 			newAnswerMeta.push(response.question.correctanswer);
 			//remove the correct answer from answersMeta if it's there 
 			//else remove the last item, depending upon the page size
@@ -138,7 +139,7 @@ var _findById = function(req, res) {
 	    question.children['question_answer'].forEach(function(answer){
 	    	answersMeta.push({
 	    		__id: answer.id(),
-	    		__utcdatecreated: answer.get('__utcdatecreated')
+	    		__utcdatecreated: transformer.toISODateFormat(answer.get('__utcdatecreated'))
 	    	})
 	    });
 	    merge();

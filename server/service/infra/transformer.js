@@ -447,15 +447,16 @@ var _toSessionExpiredError = function(res, status) {
 };
 exports.toSessionExpiredError = _toSessionExpiredError;
 
+var _toISODateFormat = function(dateString) {
+	if(isNaN(new Date(dateString))) return dateString;
+	return dateString.substring(0, dateString.lastIndexOf('.')) + 'Z';
+};
+exports.toISODateFormat = _toISODateFormat;
+
 //private functions (for local use)
 var _toInt = function(number) { 
 	if(!number || number == '' || isNaN(number)) return 0;
 	return parseInt(number, 10);
-};
-
-var _toISODateFormat = function(dateString) {
-	if(isNaN(new Date(dateString))) return dateString;
-	return dateString.substring(0, dateString.lastIndexOf('.')) + 'Z';
 };
 
 var _urlEncode = function(text) {
