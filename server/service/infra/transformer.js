@@ -67,7 +67,7 @@ var _toComment = function(comment, state) {
 	if(!comment) return {};
 	var response = {
 		'__id': comment.id(),
-		'__utcdatecreated': comment.get('__utcdatecreated'),
+		'__utcdatecreated': _toISODateFormat(comment.get('__utcdatecreated')),
 		'text': comment.get('text'),
 		'author': comment.get('__createdby'),
 		'ishidden': false
@@ -84,7 +84,7 @@ var _toTag = function(tag) {
 		'name': tag.get('name'),
 		'excerpt': tag.get('excerpt'),
 		'description': tag.get('description'),
-		'__utcdatecreated': tag.get('__utcdatecreated'),
+		'__utcdatecreated': _toISODateFormat(tag.get('__utcdatecreated')),
 		'questioncount': 0
 	};
 
@@ -126,6 +126,7 @@ var _toQuestion = function(question, state) {
 	if(!question)  return response;
 
 	response.question = question.toJSON();
+	response.question.__utcdatecreated = _toISODateFormat(question.get('__utcdatecreated'));
 	delete response.question.__schematype;
 	delete response.question.__attributes;
 	delete response.question.__tags;
@@ -270,6 +271,7 @@ var _toAnswer = function(answer, state) {
 	};
 
 	var answerJ = answer.toJSON();
+	answerJ.__utcdatecreated = _toISODateFormat(answer.get('__utcdatecreated'));
 	delete answerJ.__schematype;
 	delete answerJ.__attributes;
 	delete answerJ.__tags;
@@ -329,6 +331,7 @@ var _toEntities = function(entities, paginginfo) {
 
 	entities.forEach(function(entity) {
 		var jEntity = entity.toJSON();
+		jEntity.__utcdatecreated = _toISODateFormat(entity.get('__utcdatecreated'));
 
 		//set the title for answer as question title from it's attribute
 		if(jEntity.type != 'question') jEntity.title = entity.attr('title');
