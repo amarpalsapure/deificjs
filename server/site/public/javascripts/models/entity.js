@@ -9,6 +9,7 @@
 		url: DS.attr('string'),
 		totalvotecount: DS.attr('number', { defaultValue: 0 }),
 		isanswered: DS.attr('boolean'),
+		isupvote: DS.attr('boolean'),
 
 		answercount: DS.attr('number', { defaultValue: 0 }),
 		viewcount: DS.attr('number', { defaultValue: 0 }),

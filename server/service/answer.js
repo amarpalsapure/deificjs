@@ -50,7 +50,7 @@ exports.findById = function(req, res) {
 	//Check if logged in user had voted the answer
 	if(state.isauth) {
 		Appacitive.Connection.getBetweenArticlesForRelation({
-			relation: 'answer_vote',
+			relation: 'entity_vote',
 			articleAId : state.userid, // id of logged in user
 			articleBId : answerId // id of answer
 		}, function(connection) {
@@ -91,18 +91,19 @@ exports.update = function(req, res) {
 
 	var aAnswer = transformer.toAppacitiveAnswer(Appacitive, answer);
 
-	//creates 'answer_vote' relation between user and answer 
+	//creates 'entity_vote' relation between user and answer 
 	var answer_vote_Create = function(isupvote, onsuccess, onfailure) {
-		var relation = new Appacitive.ConnectionCollection({ relation: 'answer_vote' });
+		var relation = new Appacitive.ConnectionCollection({ relation: 'entity_vote' });
 		var connection = relation.createNewConnection({ 
 		  endpoints: [{
 		      articleid: answer.id,
-		      label: 'answer'
+		      label: 'entity'
 		  }, {
 		      articleid: state.userid,
 		      label: 'user'
 		  }],
-		  isupvote: isupvote
+		  isupvote: isupvote,
+		  type: 'answer'
 		});
 		connection.save(function(){
 			answer.voteconnid = connection.id();
@@ -110,16 +111,16 @@ exports.update = function(req, res) {
 		}, onfailure);
 	};
 
-	//updates 'answer_vote' relation between user and answer 
+	//updates 'entity_vote' relation between user and answer 
 	var answer_vote_Update = function(isupvote, onsuccess, onfailure) {
-		var relation = new Appacitive.Connection({ relation: 'answer_vote', __id: answer.voteconnid });
+		var relation = new Appacitive.Connection({ relation: 'entity_vote', __id: answer.voteconnid });
 		relation.set('isupvote', isupvote);
 		relation.save(onsuccess, onfailure);
 	};
 
-	//deletes 'answer_vote' relation between user and answer 
+	//deletes 'entity_vote' relation between user and answer 
 	var answer_vote_Delete = function(onsuccess, onfailure) {
-		var relation = new Appacitive.Connection({ relation: 'answer_vote', __id: answer.voteconnid });
+		var relation = new Appacitive.Connection({ relation: 'entity_vote', __id: answer.voteconnid });
 		relation.del(function() {
 			answer.voteconnid = '';
 			onsuccess();
@@ -189,7 +190,7 @@ exports.update = function(req, res) {
 		case 'do:upvote':
 			//Step 1.0: check if connectionid exists, if yes means user has switched vote
 			//Step 1.1: update the connection, and increment upvotecount and decrement downvotecount
-			//Step 2.0: else create 'answer_vote' connection between user and answer
+			//Step 2.0: else create 'entity_vote' connection between user and answer
 			//Step 2.1: decrement upvotecount
 			if(answer.voteconnid != ''){
 				answer_vote_Update(true, function(){
@@ -213,7 +214,7 @@ exports.update = function(req, res) {
 			answer.voted = 1;
 			break;
 		case 'undo:upvote':
-			//Step 1: delete 'answer_vote' connection between user and answer
+			//Step 1: delete 'entity_vote' connection between user and answer
 			//Step 2: decrement upvotecount
 			answer_vote_Delete(function(){
 				aAnswer.decrement('upvotecount');
@@ -228,7 +229,7 @@ exports.update = function(req, res) {
 		case 'do:downvote':
 			//Step 1.0: check if connectionid exists, if yes means user has switched vote
 			//Step 1.1: update the connection, and decrement upvotecount and increment downvotecount
-			//Step 2.0: else create 'answer_vote' connection between user and answer
+			//Step 2.0: else create 'entity_vote' connection between user and answer
 			//Step 2.1: decrement upvotecount
 			if(answer.voteconnid != ''){
 				answer_vote_Update(false, function(){
@@ -252,7 +253,7 @@ exports.update = function(req, res) {
 			answer.voted = -1;
 			break;
 		case 'undo:downvote':
-			//Step 1: delete 'answer_vote' connection between user and answer
+			//Step 1: delete 'entity_vote' connection between user and answer
 			//Step 2: increment upvotecount
 			answer_vote_Delete(function(){
 				aAnswer.decrement('downvotecount');
@@ -338,10 +339,10 @@ exports.save = function(req, res) {
 
 	if(!state.userid) return res.status(401).json(transformer.toSessionExpiredError(res));
 
-	var rollbackAnswer = function(aAnswer) {
+	var rollbackAnswer = function(aAnswer, status) {
 		//Rollback the answer
 		aAnswer.del(function(){}, function(){}, true);
-		return res.status(500).json(transformer.toError('answer_save'));
+		return res.status(500).json(transformer.toError('answer_save', status));
 	};
 
 	//creates the answer and connects it with current logged in user
@@ -350,17 +351,16 @@ exports.save = function(req, res) {
 		//perform a basic transform
 		var aAnswer = transformer.toAppacitiveAnswer(Appacitive, answer);
 		aAnswer.set('text', answer.text);
-		aAnswer.set('__createdby', state.userid);
 		aAnswer.attr('question', answer.question);
 		aAnswer.attr('title', answer.title);
 
 		//creates 'answer_user' relation between user and answer
 		var answer_user_Create = function(onsuccess, onfailure) {
-			var relation = new Appacitive.ConnectionCollection({ relation: 'answer_user' });
+			var relation = new Appacitive.ConnectionCollection({ relation: 'entity_user' });
 			var connection = relation.createNewConnection({ 
 			  endpoints: [{
 			      article: aAnswer,
-			      label: 'answer'
+			      label: 'entity'
 			  }, {
 			      articleid: state.userid,
 			      label: 'user'
@@ -397,7 +397,7 @@ exports.save = function(req, res) {
 				response.answer.isowner = true;
 				return res.json(response);
 			}, function(status) {
-				return rollbackAnswer();
+				return rollbackAnswer(aAnswer, status);
 			});
 		};
 
@@ -409,11 +409,11 @@ exports.save = function(req, res) {
 				updateAnswer();
 			}, function(status) {
 				//rollback answer
-				return rollbackAnswer(aAnswer);
+				return rollbackAnswer(aAnswer, status);
 			});
 		}, function(status) {
 			//rollback answer
-			return rollbackAnswer(aAnswer);
+			return rollbackAnswer(aAnswer, status);
 		});
 	};
 

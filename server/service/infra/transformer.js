@@ -22,20 +22,16 @@ var _toUser = function(user) {
 	else url += _urlEncode(user.get('firstname') + '-' + user.get('lastname'));
 	response.url = process.config.host + url;
 
-	var answerdowncount = 0,
-		answerupcount = 0,
-		correctanswercount = 0,
-		questiondowncount = 0,
-		questionupcount = 0;
-
-	if(user.aggregate('answerdowncount')) answerdowncount = user.aggregate('answerdowncount').all;
-	if(user.aggregate('answerupcount')) answerupcount = user.aggregate('answerupcount').all;
+	var entitydowncount = 0,
+		entityupcount = 0,
+		correctanswercount = 0;
+		
+	if(user.aggregate('entitydowncount')) entitydowncount = user.aggregate('entitydowncount').all;
+	if(user.aggregate('entityupcount')) entityupcount = user.aggregate('entityupcount').all;
 	if(user.aggregate('correctanswercount')) correctanswercount = user.aggregate('correctanswercount').all;
-	if(user.aggregate('questiondowncount')) questiondowncount = user.aggregate('questiondowncount').all;
-	if(user.aggregate('questionupcount')) questionupcount = user.aggregate('questionupcount').all;
 
-	response.reputation = ((_toInt(answerupcount) + _toInt(questionupcount)) * process.config.upvotepts) -
-						  ((_toInt(answerdowncount) + _toInt(questiondowncount)) * process.config.downvotepts) +
+	response.reputation = (_toInt(entityupcount) * process.config.upvotepts) -
+						  (_toInt(entitydowncount) * process.config.downvotepts) +
 						  (_toInt(correctanswercount) * process.config.answerpts);
 
 	return response;
@@ -334,12 +330,16 @@ var _toEntities = function(entities, paginginfo) {
 	}
 
 	entities.forEach(function(entity) {
-
 		var jEntity;
 		if(entity.get('type') === 'question') jEntity = _toQuestion(entity).question;
 		else jEntity = _toAnswer(entity).answer;
 
 		jEntity.type = entity.get('type');
+
+		//in get connected vote calls fron user api, entity has connection
+		if(entity.connection && entity.connection.get('isupvote')) {
+			jEntity.isupvote = entity.connection.get('isupvote', 'boolean')
+		}
 
 		//set the title for answer as question title from it's attribute
 		if(jEntity.type != 'question') jEntity.title = entity.attr('title');
@@ -406,6 +406,7 @@ var _toError = function(origin, status) {
 	var errorMap = {
 		default: 'Something went wrong.',
 		question_not_found: 'Question not found, it might be deleted.',
+		question_save: 'Failed to save the question.',
 		question_find_all: 'Looks like something has broken.',
 		question_find_tag_no_tag: 'Some error occurred during fetching tag',
 		question_find_tag_no_question: 'Some error occurred during fetching question',
@@ -434,7 +435,7 @@ var _toError = function(origin, status) {
 	};
 	var message = errorMap[origin];
 	if(!message) message = errorMap['default'];
-	if(status.code === '19036') message = 'Your session has expired, please <a href="/users/login?returnurl=' + window.location.pathname + '">login</a> again. Thanks.';
+	if(status.code === '19036') message = 'Your session has expired, please <a href="/users/login?returnurl=PATHNAME">login</a> again. Thanks.';
 	status.referenceid = status.referenceid || 'notavailble';
 	status.error = message;
 	return status;

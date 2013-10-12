@@ -207,10 +207,14 @@
 			this.get('controller').saveQuestion(title, text, tagIds, function(savedObj){
 				//redirect user to the question page
 				window.location = savedObj.get('url');
-			}, function(error) {
+			}, function(message) {
 				//do the error handling
 				//errors can be session expired or bad gateway
 				//reset button state to loading (Bootstrap)
+				message = message || 'An error occurred during saving answer.';
+				var alert = '<div class="alert alert-block alert-danger font9"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' + message + '</div>';
+				$('.questionError').html(alert).alert();
+
 				$('#btnSubmitQuestion').button('reset');		
 			});
 		},

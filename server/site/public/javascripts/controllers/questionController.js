@@ -87,7 +87,9 @@
 				that.get('store').find('user', Deific.AccountController.user.userid).then(function(user) {
 					//set author of question
 					model.set('author', user);
-					model.save().then(onSuccess, onError);
+					model.save().then(onSuccess, function(error){
+						onError(Deific.localDataSource.handleError(error, 'Deific.QuestionController-saveQuestion'));
+					});
 				});
 			});
 		},
