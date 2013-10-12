@@ -27,7 +27,7 @@
                 <div class="tabGroup btn-group" data-default='questions'>
                   <a id='aquestions' href='?tab=questions' class="btn btn-danger">Questions</a>
                   <a id='aanswers' href='?tab=answers' class="btn btn-danger">Answers</a>
-                  <a id='avotes' href='?tab=votes' class="btn btn-danger hide">Votes</a>
+                  <a id='avotes' href='?tab=votes' class="btn btn-danger">Votes</a>
                 </div>
               </div>
             </div>
@@ -43,6 +43,13 @@
                       {{render time entity}}
                     </div>
                   </div>
+                  {{#if view.showVoteContainer}}
+                  <div class='entity-vote pull-left pls'>
+                    <div class='col-xs-12 col-sm-12 col-lg-12'>
+                      {{#if entity.isupvote}}<span class='success'>upvote</span>{{else}}<span class='failure'>downvote</span>{{/if}}
+                    </div>
+                  </div>
+                  {{/if}}
                   <div class='entity-title pull-left pls'>
                     <div class='col-xs-12 col-sm-12 col-lg-12'>
                       <a {{bindAttr title='entity.text'}} {{bindAttr href='entity.url'}} class='font120'>
@@ -50,6 +57,17 @@
                       </a>  
                     </div>
                   </div>
+                  {{#if view.showVoteContainer}}
+                  <div class='entity-vote-mobile pull-left pls'>
+                    <div class='col-xs-12 col-sm-12 col-lg-12'>
+                      {{#if entity.isupvote}}
+                        you <span class='success'>upvoted</span> the {{entity.type}}
+                      {{else}}
+                        you <span class='failure'>downvoted</span> the {{entity.type}}
+                      {{/if}}
+                    </div>
+                  </div>
+                  {{/if}}
                   <div class='entity-details pull-left pls'>
                     <div class='col-xs-12 col-sm-12 col-lg-12'>
                       <span {{bindAttr class=':mrs :nowrap view.hidevotecount:hide'}}>{{entity.votecount}} {{pluralize entity.votecount s='vote'}}</span>

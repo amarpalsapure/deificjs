@@ -330,12 +330,16 @@ var _toEntities = function(entities, paginginfo) {
 	}
 
 	entities.forEach(function(entity) {
-
 		var jEntity;
 		if(entity.get('type') === 'question') jEntity = _toQuestion(entity).question;
 		else jEntity = _toAnswer(entity).answer;
 
 		jEntity.type = entity.get('type');
+
+		//in get connected vote calls fron user api, entity has connection
+		if(entity.connection && entity.connection.get('isupvote')) {
+			jEntity.isupvote = entity.connection.get('isupvote', 'boolean')
+		}
 
 		//set the title for answer as question title from it's attribute
 		if(jEntity.type != 'question') jEntity.title = entity.attr('title');

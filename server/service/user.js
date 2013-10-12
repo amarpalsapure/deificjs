@@ -97,11 +97,12 @@ var _findByIdWithEntities = function(req, res) {
 		user.fetch(onSuccess, onError);
 	};
 
-	var getConnectedEntities = function(userId, relation, pagenumber, onSuccess, onError) {
+	var getConnectedEntities = function(userId, relation, entityType, pagenumber, onSuccess, onError) {
 		var userArticle = new Appacitive.Article({ __id : userId, schema : 'user' });
 		userArticle.fetchConnectedArticles({ 
 		    relation: relation,
 		    label: 'entity',
+		    filter: Appacitive.Filter.Property('type').equalTo(entityType),
 		    pageSize: process.config.pagesize,
 		    pagenumber: pagenumber,
 		    orderBy: '__utcdatecreated',
@@ -114,19 +115,30 @@ var _findByIdWithEntities = function(req, res) {
 	};
 
 	var getVotedItems = function(userId, pagenumber, onSuccess, onError) {
-
+		var userArticle = new Appacitive.Article({ __id : userId, schema : 'user' });
+		userArticle.fetchConnectedArticles({ 
+		    relation: 'entity_vote',
+		    label: 'entity',
+		    pageSize: process.config.pagesize,
+		    pagenumber: pagenumber,
+		    orderBy: '__utcdatecreated',
+		    isAscending: false,
+		    //fields: ['__id,__utcdatecreated'],
+		}, function(obj, pi) {
+			onSuccess(userArticle.children['entity_vote'], pi);
+		}, onError);
 	};
 
 	var getConnectedItems = function(userId, pagenumber, type, onSuccess, onError) {
 		switch(type.toLowerCase()) {
 			case 'answers': //answers
-				getConnectedEntities(userId, 'entity_user', pagenumber, onSuccess, onError);
+				getConnectedEntities(userId, 'entity_user', 'answer', pagenumber, onSuccess, onError);
 				break;
 			case 'votes':
-				getConnectedEntities(userId, 'entity_user', pagenumber, onSuccess, onError);
+				getVotedItems(userId, pagenumber, onSuccess, onError);
 				break;
 			default: //questions
-				getConnectedEntities(userId, 'entity_user', pagenumber, onSuccess, onError);
+				getConnectedEntities(userId, 'entity_user', 'question', pagenumber, onSuccess, onError);
 				break;
 		}
 	};

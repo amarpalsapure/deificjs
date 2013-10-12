@@ -364,7 +364,8 @@ exports.update = function(req, res) {
 		      articleid: state.userid,
 		      label: 'user'
 		  }],
-		  isupvote: isupvote
+		  isupvote: isupvote,
+		  type: 'question'
 		});
 		connection.save(function(){
 			question.voteconnid = connection.id();
