@@ -24,6 +24,8 @@ Deific.ErrorRoute = Ember.Route.extend({
 		//if status code is '19036', it means user token has expired,
 		//show user session expired message with login link
 		//it's a known error, removing code hides help message in the view
+		if(status.code === '19036') status.error = status.error.replace('PATHNAME', window.location.pathname);
+
 		if(status.code === '56789' || status.code === '19036') delete status.code;
 
 		//push the error object in store

@@ -1,5 +1,4 @@
-//Depending upon payload type question/answer
-//connect the comment to the entity
+//Connect the comment to the entity
 exports.save = function(req, res) {
 	var payload = req.body.comment;
 
@@ -19,32 +18,21 @@ exports.save = function(req, res) {
 	var response = {
 		comment: {}
 	};
-	var relation = 'answer_comment';
-	var label = 'answer';
-	var articleid = payload.answer;
-
+	
 	//create an appacitive article of type 'comment'
 	var comment = new Appacitive.Article({
 		schema: 'comment',
-		text: payload.text,
-		__createdby: state.userid
+		text: payload.text
 	});
 
-	//check if comment is for question
-	if(payload.question){
-		relation = 'question_comment';	
-		label = 'question';
-		articleid = payload.question;
-	}
-
 	//depending upon the payload create the connection
-	var relation = new Appacitive.ConnectionCollection({ relation: relation });
+	var relation = new Appacitive.ConnectionCollection({ relation: 'entity_comment' });
 
 	// setup the connection
 	var connection = relation.createNewConnection({ 
 	  endpoints: [{
-	      articleid: articleid,
-	      label: label
+	      articleid: payload.question ? payload.question : payload.answer,
+	      label: 'entity'
 	  }, {
 	      article: comment,
 	      label: 'comment'

@@ -256,8 +256,12 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
 .user-profile-page .time-container { min-width: 170px; }
 .user-profile-page .since-time { display: none; }
 .user-profile-page .since-time .muted { color: #bbb; text-transform: lowercase;}
-.user-profile-page .entity-title, .user-profile-page .entity-details { width: 75%;}
+.user-profile-page .entity-title, .user-profile-page .entity-details { width: 60%;}
 .user-profile-page .entity-details { margin-top: -2px; }
+.user-profile-page .entity-vote { padding-top: 11px; padding-bottom: 11px; margin-right: -10px; font-size: 13px; width: 80px; }
+.user-profile-page .entity-vote-mobile {display: none;}
+.success {color: green;}
+.failure {color: #E00000;}
 .entities-container { border-bottom: 1px dashed #ADADAD;}
 
 
@@ -323,10 +327,12 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
     .prni {padding-right: 0px !important;}
     .plni {padding-left: 0px !important;}
     .tags-list .tag-details-container { min-height: 40px; }
-    .user-profile-page .entity-title, .user-profile-page .entity-details, .user-profile-page .since-time { width: 100%; padding-left: 0px;}
-    .user-profile-page .entity-details { margin: -2px 0 2px 0; }
-    .user-profile-page .time-row { display: none; }
+    .user-profile-page .entity-title, .user-profile-page .entity-details, .user-profile-page .since-time, .user-profile-page .entity-vote-mobile { width: 100%; padding-left: 0px;}
+    .user-profile-page .entity-details { margin: -3px 0 1px; }
+    .user-profile-page .time-row, .user-profile-page .entity-vote { display: none; }
     .user-profile-page .since-time { display: block; }
+    .user-profile-page .entity-vote-mobile { display: block; margin: -2px 0 5px; font-size: 0.9em; }
+
 }
 
 /* Mobile */
