@@ -356,10 +356,12 @@ var _toEntities = function(entities, paginginfo) {
 		//set the author
 		jEntity.author = jEntity.__createdby;
 
-		if(jEntity.text.length > 250) {
-			jEntity.text = jEntity.text.substring(0, 250);
-			jEntity.text = jEntity.text.substring(0, Math.min(jEntity.text.length, jEntity.text.lastIndexOf(' ')));
-		}
+		if(jEntity.text) {
+			if(jEntity.text.length > 250) {
+				jEntity.text = jEntity.text.substring(0, 250);
+				jEntity.text = jEntity.text.substring(0, Math.min(jEntity.text.length, jEntity.text.lastIndexOf(' ')));
+			}
+		} else if(!jEntity.text && jEntity.shorttext) jEntity.text = jEntity.shorttext;
 
 		//delete unrequired properties, so that payload is less
 		delete jEntity.__schematype;

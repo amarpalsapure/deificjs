@@ -21,11 +21,11 @@ Deific.UserRoute = Deific.BaseRoute.extend({
 	},
 	setupController : function(controller, model) {
 		var that = this;
-		var model = model.get('firstObject');
-		that.controllerFor('user').set('content', model);
-
 		//set the paging info (if any)
 		that.setupPager(model);
+		
+		var model = model.get('firstObject');
+		that.controllerFor('user').set('content', model);
 	},
 	renderTemplate: function() {
 		this.render('user');

@@ -104,10 +104,10 @@ var _findByIdWithEntities = function(req, res) {
 		    label: 'entity',
 		    filter: Appacitive.Filter.Property('type').equalTo(entityType),
 		    pageSize: process.config.pagesize,
-		    pagenumber: pagenumber,
+		    pageNumber: pagenumber,
 		    orderBy: '__utcdatecreated',
 		    isAscending: false,
-		    //fields: ['__id,__utcdatecreated'],
+		    fields: ['__id,__attributes,title,text,shorttext,totalvotecount,isanswered,viewcount,score,type,__utcdatecreated,$answercount,$bookmarkcount,isupvote'],
 		    returnEdge: false
 		}, function(obj, pi) {
 			onSuccess(userArticle.children[relation], pi);
@@ -120,10 +120,10 @@ var _findByIdWithEntities = function(req, res) {
 		    relation: 'entity_vote',
 		    label: 'entity',
 		    pageSize: process.config.pagesize,
-		    pagenumber: pagenumber,
+		    pageNumber: pagenumber,
 		    orderBy: '__utcdatecreated',
 		    isAscending: false,
-		    //fields: ['__id,__utcdatecreated'],
+		    fields: ['__id,__attributes,title,shorttext,totalvotecount,isanswered,viewcount,score,type,__utcdatecreated,$answercount,$bookmarkcount,isupvote'],
 		}, function(obj, pi) {
 			onSuccess(userArticle.children['entity_vote'], pi);
 		}, onError);
