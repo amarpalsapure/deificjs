@@ -98,6 +98,10 @@ app.get('/service/users/:id', noCacheRequest(), userApi.findById);
 app.post('/service/users/auth', noCacheRequest(), userApi.auth);
 // logout user
 app.post('/service/users/logout', noCacheRequest(), userApi.logout);
+// register user
+app.post('/service/users/register', noCacheRequest(), userApi.register);
+// recover password
+app.post('/service/users/recover', noCacheRequest(), userApi.recover);
 
 
 // ################# comment api ####################

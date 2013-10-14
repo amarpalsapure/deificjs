@@ -424,9 +424,13 @@ var _toError = function(origin, status) {
 		entity_bookmark_undo: 'Failed to undo bookmark the question',
 		entity_invalid_action: 'Invalid action provided',
 		access_denied: 'You are not authorized for this action.',
+		user_signup_validate: 'Name, Email and Password are required.',
+		user_signup: 'Failed to sign up.',
 		user_login_validate: 'Email and Password are required.',
 		user_login: 'Authentication failed',
 		user_find: 'User not found',
+		user_recover_validate: 'Email address is required',
+		user_recover: 'Failed to recover the password. Please try again.',
 		comment_save: 'Failed to save the comment.',
 		comment_delete: 'Failed to delete the comment.',
 		answer_save: 'Failed to save the answer.',
@@ -437,7 +441,10 @@ var _toError = function(origin, status) {
 	};
 	var message = errorMap[origin];
 	if(!message) message = errorMap['default'];
+
 	if(status.code === '19036') message = 'Your session has expired, please <a href="/users/login?returnurl=PATHNAME">login</a> again. Thanks.';
+	if(origin === 'user_signup' && status.code === '600') message = 'Account already exists for given email address.';
+
 	status.referenceid = status.referenceid || 'notavailble';
 	status.error = message;
 	return status;

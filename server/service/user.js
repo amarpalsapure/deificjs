@@ -250,3 +250,81 @@ exports.logout = function(req, res){
 		success: true
 	});
 };
+
+exports.register = function(req, res) {
+	var email = req.body.email
+	var name = req.body.name;
+	var pwd = req.body.password;
+
+	//get the transformer
+	var transformer = require('./infra/transformer');
+
+	//validate the inputs
+	if(!email || email === '' || !pwd || pwd === '' || !name || name === '')
+		return res.status(400).json(transformer.toError('user_signup_validate'));
+
+	var split = name.split(' ');
+    var lastName = '', firstName = '';
+
+    firstName = split.shift();
+    lastName = split.join(' ');
+
+    var user = {
+            'firstname': firstName,
+            'lastname': lastName,
+            'username': email,
+            'email': email,
+            'password': pwd
+        };
+	
+	//initialize the SDK
+  	var sdk = require('./appacitive.init');
+	var Appacitive = sdk.init();
+
+	Appacitive.Users.signup(user, function (authResult) {
+		// User has been logged in successfully
+		// Set the cookie
+		res.cookie('u', {
+			i: authResult.user.id(),
+			f: authResult.user.get('firstname'),
+			l: authResult.user.get('lastname'),
+			e: authResult.user.get('email'),
+			t: authResult.token
+		},{
+			signed: true,
+			maxAge: 30*24*60*60*1000, //30 days
+			httpOnly: true
+		})
+
+    	return res.json({
+			user: {
+				id: authResult.user.id(),
+				fname: authResult.user.get('firstname'),
+				lname: authResult.user.get('lastname')
+			}
+		});
+	}, function(status) {
+		return res.status(401).json(transformer.toError('user_signup', status));
+	});	
+};
+
+exports.recover = function(req, res) {
+	var email = req.body.email;
+
+	//get the transformer
+	var transformer = require('./infra/transformer');
+
+	//validate the inputs
+	if(!email || email === '')
+		return res.status(400).json(transformer.toError('user_recover_validate'));
+	
+	//initialize the SDK
+  	var sdk = require('./appacitive.init');
+	var Appacitive = sdk.init();
+
+	Appacitive.Users.sendResetPasswordEmail(email, 'Account Recovery - ' + process.config.brand, function () {
+    	return res.status(204).json({});
+	}, function(status) {
+		return res.status(401).json(transformer.toError('user_recover', status));
+	});	
+};
