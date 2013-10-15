@@ -5,29 +5,11 @@
         },
         isLoggedIn: false,
         user: null,
-        fbSignIn: function(callback) {
-          var _this = this;
-
-          return Neptune.parseDataSource.fbLogin(function(data, error) {
-            var tempUser;
-
-            if (!error) {
-              _this.setUser();
-              callback(_this.user, null);
-              tempUser = _this.user;
-              return FB.api("/me", function(response) {
-                var _this = this;
-
-                tempUser.firstName = response.first_name;
-                tempUser.lastName = response.last_name;
-                return Neptune.parseDataSource.updateUser(tempUser, function(data, error) {
-                  Neptune.accountController.setUser();
-                  return callback(data, error);
-                });
-              });
-            } else {
-              return callback(null, Neptune.parseDataSource.getError(-1, 'Email or password is incorrect', 'ERROR', 'Neptune.AccountController-login'));
-            }
+        fbSignIn: function(accessToken, onSuccess, onError) {
+          Ember.$.post('/service/users/fbauth', { accessToken: accessToken }).then(function(response) {
+              onSuccess();
+          }, function(error){
+              onError(Deific.localDataSource.handleError(error, 'Deific.AccountController-fbSignIn'));
           });
         },
         signIn: function(login, onSuccess, onError) {

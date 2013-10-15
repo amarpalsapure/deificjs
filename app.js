@@ -96,6 +96,8 @@ app.get('/service/users', noCacheRequest(), userApi.findAll);
 app.get('/service/users/:id', noCacheRequest(), userApi.findById);
 // authenticate user
 app.post('/service/users/auth', noCacheRequest(), userApi.auth);
+// authenticate user using facebook
+app.post('/service/users/fbauth', noCacheRequest(), userApi.fbauth);
 // logout user
 app.post('/service/users/logout', noCacheRequest(), userApi.logout);
 // register user

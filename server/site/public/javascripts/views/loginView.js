@@ -4,9 +4,10 @@
 		showLogin: false,
 		showSignup: false,
 		showRecover: false,
+		showfblogin: false,
 
 		showRecoverForm: true,
-
+		
 		allowSignUp: window.init.config.allowsignup,
 
 		login: {},
@@ -33,7 +34,34 @@
 		lgnAppacitive: function() {
 			this.__hideView();
 			this.set('showLogin', true);
-		},	
+		},
+
+		lgnFacebook: function() {
+			var that = this;
+
+			that.__hideView();
+			this.set('showfblogin', true);
+			
+			//reset the state
+			setTimeout(function(){
+				that.__resetFbLogin();
+			}, 50);
+
+			if(FB) FB.login(function(response) {
+				if (response && response.status === 'connected' && response.authResponse) {
+					return Deific.AccountController.fbSignIn(response.authResponse.accessToken, function() {
+						//logged in successfully, take back user to return url (if any)
+						window.location = $.fn.parseParam('returnurl', window.host);
+					}, function(message) {
+						$('.fb-loggin-in').addClass('hide');
+						$(".fblogin .fb-login-error").addClass('has-error').removeClass('hide');
+						that.set('login.error', message);
+					});
+				} else {
+					that.cancel();
+				}
+			}, { scope:'email,user_birthday' });
+		},
 		
 		signIn: function() {
 			var that = this;
@@ -172,6 +200,7 @@
 			this.set('showLogin', false);
 			this.set('showSignup', false);
 			this.set('showRecover', false);
+			this.set('showfblogin', false);
 		},
 
 		__resetLogin: function() {
@@ -187,6 +216,12 @@
 		__resetRecover: function() {
 			$('#frmRecover .has-error').removeClass('has-error');
 			$(".recover-error").addClass('hide');
+		},
+
+		__resetFbLogin: function() {
+			$('.fblogin .has-error').removeClass('has-error');
+			$(".fb-login-error").addClass('hide');
+			$('.fb-loggin-in').removeClass('hide');
 		}
 	});
 }).call(this);

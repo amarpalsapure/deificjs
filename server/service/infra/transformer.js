@@ -428,6 +428,7 @@ var _toError = function(origin, status) {
 		user_signup: 'Failed to sign up.',
 		user_login_validate: 'Email and Password are required.',
 		user_login: 'Authentication failed',
+		user_fb_login_validate: 'Access token is required.',
 		user_find: 'User not found',
 		user_recover_validate: 'Email address is required',
 		user_recover: 'Failed to recover the password. Please try again.',

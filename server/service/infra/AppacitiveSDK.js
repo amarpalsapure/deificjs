@@ -4,7 +4,7 @@
  * MIT license  : http://www.apache.org/licenses/LICENSE-2.0.html
  * Project      : https://github.com/chiragsanghvi/JavascriptSDK
  * Contact      : support@appacitive.com | csanghvi@appacitive.com
- * Build time 	: Thu Oct  3 12:18:35 IST 2013
+ * Build time 	: Tue Oct 15 12:03:57 IST 2013
  */
 
 // Add ECMA262-5 method binding if not supported natively
@@ -1710,16 +1710,19 @@ Depends on  NOTHING
         taggedWithOneOrMore: "tagged_with_one_or_more"
     };
 
-    var _primitiveFieldValue = function(value) {
+    var _primitiveFieldValue = function(value, type) {
 
         if (value == null || value == undefined || value.length == 0) throw new Error("Specify value");
 
         this.value = value;
 
+        if (type) this.type = type;
+        else this.type = typeof this.value; 
+
         this.getValue = function() {
-            if (typeof this.value == 'string') return "'" + String.addSlashes(this.value) + "'";
-            else if (typeof this.value == 'number' || typeof this.value == 'boolean') return this.value;  
-            else if (typeof this.value == 'object' && this.value instanceof date) return "datetime('" + Appacitive.Date.toISOString(this.value) + "')";
+            if (this.type == 'string') return "'" + String.addSlashes(this.value) + "'";
+            else if (this.type == 'number' || typeof this.value == 'boolean') return this.value;  
+            else if (this.type == 'object' && this.value instanceof date) return "datetime('" + Appacitive.Date.toISOString(this.value) + "')";
             else return this.value.toString();
         };
     };
@@ -1762,6 +1765,10 @@ Depends on  NOTHING
         /* Helper functions for EqualTo */
         context.equalTo = function(value) {
             return new _fieldFilter({ field: this.name, fieldType: this.type, value: new _primitiveFieldValue(value), operator: _operators.isEqualTo });
+        };
+
+        context.equalToNumber = function(value){
+            return new _fieldFilter({ field: this.name, fieldType: this.type, value: new _primitiveFieldValue(value, 'number'), operator: _operators.isEqualTo });
         };
 
         context.equalToDate = function(value) {
@@ -2352,7 +2359,7 @@ Depends on  NOTHING
 		this.prev = options.prev;
 		
 		this.returnEdge = true;
-		if (options.returnEdge != undefined || options.returnEdge != null && !options.returnEdge && !this.prev) this.returnEdge = false;
+		if ((options.returnEdge != undefined || options.returnEdge != null) && !options.returnEdge && !this.prev) this.returnEdge = false;
 		
 		this.label = '';
 		var that = this;
@@ -4911,7 +4918,7 @@ Depends on  NOTHING
 			if (ignoreFBLogin) {
 				_callback();
 			} else { 
-				Appacitive.Facebook.requestLogin(function(authResponse) {
+				global.Appacitive.Facebook.requestLogin(function(authResponse) {
 					_callback();
 				}, onError);
 			}
@@ -5253,10 +5260,10 @@ Depends on  NOTHING
 		this.logout = function(onSuccess, onError) {
 			onSuccess = onSuccess || function() {};
 			onError = onError || function(){};
-			Appacitive.Facebook.accessToken = "";
+			global.Appacitive.Facebook.accessToken = "";
 			try {
 				FB.logout(function(response) {
-					Appacitive.Users.logout();
+					global.Appacitive.Users.logout();
 					if (typeof onSuccess == 'function') onSuccess();
 				});
 			} catch(e) {
@@ -5267,8 +5274,6 @@ Depends on  NOTHING
 
 	var _nodeFacebook = function() {
 
-		var Facebook = require('facebook-node-sdk');
-
 		var _accessToken = null;
 
 		this.FB = null;
@@ -5277,7 +5282,7 @@ Depends on  NOTHING
 
 		var _app_secret = null;
 
-		var _initialized = true;
+		var _initialized = false;
 
 		this.initialize = function (options) { 
 			if (!Facebook) throw new Error("node-facebook SDK needs be loaded before calling initialize.");
@@ -5286,18 +5291,13 @@ Depends on  NOTHING
 
 			_app_id = options.appId;
 			_app_secret = options.appSecret;
-		    this.FB = new Facebook({ appId: _appId, secret: _app_secret });
+		    this.FB = new (require('facebook-node-sdk'))({ appId: _appId, secret: _app_secret });
 		    _initialized = true;
-		}
+		};
 
 		this.requestLogin = function(onSuccess, onError, accessToken) {
-			if (!_initialized) {
-			  if (typeof onError == 'function') onError("Intialize facebook with your appid and appsecret");
-			  return;
-			}
-			_accessToken = accesstoken;
-			FB.setAccessToken(accessToken);
-			Appacitive.Users.loginWithFacebook(onSuccess, onError, true);
+			if(accessToken)	_accessToken = accessToken;
+			global.Appacitive.Users.loginWithFacebook(onSuccess, onError, true);
 		};
 
 		this.getCurrentUserInfo = function(onSuccess, onError) {
@@ -5333,7 +5333,7 @@ Depends on  NOTHING
 		this.logout = function(onSuccess, onError) {
 			onSuccess = onSuccess || function() {};
 			onError = onError || function(){};
-			Appacitive.Facebook.accessToken = "";
+			global.Appacitive.Facebook.accessToken = "";
 			if (typeof onSuccess == 'function') onSuccess();
 		}
 	}
@@ -5639,7 +5639,7 @@ Depends on  NOTHING
         date.setUTCHours(Number(timeHours));
         date.setUTCMinutes(Number(timeSubParts[1]));
         date.setUTCSeconds(Number(timeSecParts[0]));
-        if (timeSecParts[1]) date.setUTCMilliseconds(Number(timeSecParts[1]));
+        if (timeSecParts[1]) date.setUTCMilliseconds(Number(timeSecParts[1].substring(0, 3)));
 
         return date;
     } catch(e) {return null;}
@@ -5693,12 +5693,12 @@ Depends on  NOTHING
         date.setUTCHours(Number(timeHours));
         date.setUTCMinutes(Number(timeSubParts[1]));
         date.setUTCSeconds(Number(timeSecParts[0]));
-        if (timeSecParts[1]) date.setUTCMilliseconds(Number(timeSecParts[1]));
+        if (timeSecParts[1]) date.setUTCMilliseconds(Number(timeSecParts[1].substring(0, 3)));
       } else {
         date.setHours(Number(timeHours));
         date.setMinutes(Number(timeSubParts[1]));
         date.setSeconds(Number(timeSecParts[0]));
-        if (timeSecParts[1]) date.setMilliseconds(Number(timeSecParts[1]));
+        if (timeSecParts[1]) date.setMilliseconds(Number(timeSecParts[1].substring(0, 3)));
       }
 
       return date;

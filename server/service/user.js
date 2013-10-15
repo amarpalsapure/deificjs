@@ -54,7 +54,7 @@ var _findAll = function(req, res) {
 						filter: filter,
 						pageNumber: pagenumber,
 						isAscending: isAscending,
-						pageSize: 4
+						pageSize: 8
 					});
 
 	query.fetch(function (users, paginginfo) {
@@ -229,7 +229,50 @@ exports.auth = function(req, res){
 		});
 	}, function(status) {
 		return res.status(401).json(transformer.toError('user_login', status));
-	});	
+	});
+};
+
+exports.fbauth = function(req, res) {
+	var accessToken = req.body.accessToken;
+
+	//get the transformer
+	var transformer = require('./infra/transformer');
+
+	//validate the inputs
+	if(!accessToken || accessToken === '')
+		return res.status(400).json(transformer.toError('user_fb_login_validate'));
+	
+	//initialize the SDK
+  	var sdk = require('./appacitive.init');
+	var Appacitive = sdk.init();
+
+	Appacitive.Facebook.accessToken(accessToken);
+
+	Appacitive.Users.signupWithFacebook(function (authResult) {
+		// User has been logged in successfully
+		// Set the cookie
+		res.cookie('u', {
+			i: authResult.user.id(),
+			f: authResult.user.get('firstname'),
+			l: authResult.user.get('lastname'),
+			e: authResult.user.get('email'),
+			t: authResult.token
+		},{
+			signed: true,
+			maxAge: 30*24*60*60*1000, //30 days
+			httpOnly: true
+		})
+
+    	return res.json({
+			user: {
+				id: authResult.user.id(),
+				fname: authResult.user.get('firstname'),
+				lname: authResult.user.get('lastname')
+			}
+		});
+	}, function(status) {
+		return res.status(401).json(transformer.toError('user_login', status));
+	});
 };
 
 exports.logout = function(req, res){
