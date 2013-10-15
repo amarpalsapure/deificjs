@@ -32,6 +32,7 @@ exports.init = function (req) {
 					 	"maxpagecount: " + parseInt(process.config.maxpagecount) + "," +
 					 	"env: '" + process.config.env + "'," +
 					 	"brand: '" + process.config.brand + "'," +
+					 	"fbappid: '" + process.config.fbappid +"'," +
 					 	"allowsignup: " + process.config.allowsignup +
 					 "};" +
 					 "window.host = '" + config.host + "'";

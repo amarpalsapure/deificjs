@@ -5,6 +5,8 @@
 		showSignup: false,
 		showRecover: false,
 		showfblogin: false,
+		showtweetlogin: false,
+		twitterLoginFailed: false,
 
 		showRecoverForm: true,
 		
@@ -28,6 +30,18 @@
 			var isSessionExpired = $.fn.parseParam('s', '0');
 			if(isSessionExpired == '1') {
 				$('#modalSessionExpired').modal('show');
+			}
+
+			var tl = $.fn.parseParam('tl');
+			if(tl) {
+				if(tl === '1') {
+					this.__hideView();
+					this.set('twitterLoginFailed', true);
+				} else {
+					var returnurl = this.__getReturnUrl();
+					if(returnurl) window.location = returnurl.replace('returnurl=', '');
+					else window.location = '/';
+				}
 			}
 		},
 
@@ -61,6 +75,16 @@
 					that.cancel();
 				}
 			}, { scope:'email,user_birthday' });
+		},
+
+		lgnTwitter: function() {
+			document.cookie = 'returnurl=' + window.location.search +';path=/';
+			window.location = '/auth/twitter';
+		},
+
+		cancelTwitter: function() {
+		    var returnurl = this.__getReturnUrl();
+			window.location = window.host + '/users/login' + returnurl;
 		},
 		
 		signIn: function() {
@@ -201,6 +225,7 @@
 			this.set('showSignup', false);
 			this.set('showRecover', false);
 			this.set('showfblogin', false);
+			this.set('twitterLoginFailed', false);
 		},
 
 		__resetLogin: function() {
@@ -222,6 +247,20 @@
 			$('.fblogin .has-error').removeClass('has-error');
 			$(".fb-login-error").addClass('hide');
 			$('.fb-loggin-in').removeClass('hide');
+		},
+
+		__getReturnUrl: function() {
+			var i, x, y, returnurl, split = document.cookie.split(";");
+		    for (i = 0; i < split.length; i++) {
+		        x = split[i].substr(0, split[i].indexOf("="));
+		        y = split[i].substr(split[i].indexOf("=") + 1);
+		        x = x.replace(/^\s+|\s+$/g, "");
+		        if (x == 'returnurl') {
+		            returnurl = unescape(y);
+		        }
+		    }
+		    document.cookie = 'returnurl=;path=/;expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+		    return returnurl;
 		}
 	});
 }).call(this);
