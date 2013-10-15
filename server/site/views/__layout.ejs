@@ -56,7 +56,9 @@
                 </li>
               {{else}}
                 <li><a {{bindAttr href='loginurl'}}>Login</a></li>
-                <li><a {{bindAttr href='loginurl'}}>Signup</a></li>
+                {{#if isSignupAllowed}}
+                  <li><a {{bindAttr href='loginurl'}}>Signup</a></li>
+                {{/if}}
               {{/if}}
             </ul>
             <ul class='nav navbar-nav navbar-right'>
