@@ -27,6 +27,7 @@ var userApi = require('./server/service/user.js');
 var commentApi = require('./server/service/comment.js');
 var tagApi = require('./server/service/tag.js');
 var searchApi = require('./server/service/search.js');
+var callbackHandlerApi = require('./server/service/callbackHandlers.js');
 
 
 
@@ -38,19 +39,22 @@ passport.deserializeUser(function(obj, done) {
   done(null, obj);
 });
 
-passport.use(new TwitterStrategy({
-    consumerKey: process.config.twitter_consumer_key,
-    consumerSecret: process.config.twitter_consumer_secret,
-    callbackURL: "http://localhost:3000/auth/twitter/callback"
-  }, function(token, tokenSecret, profile, done) {
-    	// asynchronous verification, for effect..
-    	process.nextTick(function () {
-	    	profile.token = token;
-	    	profile.tokenSecret = tokenSecret;
-	    	return done(null, profile);
-  		});
+
+if (process.config.twitter_consumer_key != '' && process.config.twitter_consumer_secret != '') {
+    passport.use(new TwitterStrategy({
+        consumerKey: process.config.twitter_consumer_key,
+        consumerSecret: process.config.twitter_consumer_secret,
+        callbackURL: "http://localhost:3000/auth/twitter/callback"
+    }, function (token, tokenSecret, profile, done) {
+        // asynchronous verification, for effect..
+        process.nextTick(function () {
+            profile.token = token;
+            profile.tokenSecret = tokenSecret;
+            return done(null, profile);
+        });
     }
-));
+    ));
+}
 
 
 var app = express();
@@ -86,7 +90,7 @@ if ('development' == app.get('env')) {
 }
 
 // ***************************************************
-// ****************** Service rote ******************
+// ****************** Service route ******************
 // ***************************************************
 
 // ################# question api ####################
@@ -155,6 +159,10 @@ app.get('/service/tags/:id', noCacheRequest(), tagApi.findById);
 app.get('/service/entities', noCacheRequest(), searchApi.search);
 
 
+// ################# call back handler api ####################
+
+
+
 // *************************************************
 // ***************** site route ********************
 // *************************************************
@@ -209,8 +217,6 @@ app.get('/search', searchRoute.search);
 app.get('/tags', tagRoute.index);
 // it renders the same page as all questions for a given tag
 app.get('/tags/:tag', questionRoute.tagged);
-
-
 
 // GET /auth/twitter
 // Use passport.authenticate() as route middleware to authenticate the

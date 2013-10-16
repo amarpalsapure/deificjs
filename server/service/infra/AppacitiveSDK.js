@@ -4,7 +4,7 @@
  * MIT license  : http://www.apache.org/licenses/LICENSE-2.0.html
  * Project      : https://github.com/chiragsanghvi/JavascriptSDK
  * Contact      : support@appacitive.com | csanghvi@appacitive.com
- * Build time 	: Tue Oct 15 12:03:57 IST 2013
+ * Build time 	: Wed Oct 16 11:53:29 IST 2013
  */
 
 // Add ECMA262-5 method binding if not supported natively
@@ -4366,6 +4366,11 @@ Depends on  NOTHING
 			_convertEndpoint(this.get('__endpointb'), typeB, this);
 
 			this.endpoints = function() {
+				if (arguments.length === 1 && typeof arguments[0] == 'string') {
+					if (this.endpointA.label.toLowerCase() == arguments[0].toLowerCase()) return this.endpointA;
+					else if (this.endpointB.label.toLowerCase() == arguments[0].toLowerCase()) return this.endpointB;
+					else throw new Error("Invalid label provided");
+				}
 				var endpoints = [];
 				endpoints.push(this.endpointA);
 				endpoints.push(this.endpointB);
@@ -4420,6 +4425,13 @@ Depends on  NOTHING
 
 		// 3
 		this.endpoints = function() {
+
+			if (arguments.length === 1 && typeof arguments[0] == 'string') {
+				if (this.endpointA.label.toLowerCase() == arguments[0].toLowerCase()) return this.endpointA;
+				else if (this.endpointB.label.toLowerCase() == arguments[0].toLowerCase()) return this.endpointB;
+				else throw new Error("Invalid label provided");
+			}
+
 			var endpoints = [];
 			endpoints.push(this.endpointA);
 			endpoints.push(this.endpointB);
@@ -5296,14 +5308,14 @@ Depends on  NOTHING
 		};
 
 		this.requestLogin = function(onSuccess, onError, accessToken) {
-			if(accessToken)	_accessToken = accessToken;
+			if (accessToken) _accessToken = accessToken;
 			global.Appacitive.Users.loginWithFacebook(onSuccess, onError, true);
 		};
 
 		this.getCurrentUserInfo = function(onSuccess, onError) {
 			if (!_initialized) throw new Error("Either facebook sdk has not yet been initialized, or not yet loaded.");
 
-			if(this.FB && _accessToken){
+			if (this.FB && _accessToken){
 				onSuccess = onSuccess || function(){};
 				onError = onError || function(){};
 				this.FB.api('/me', function(err, response) {

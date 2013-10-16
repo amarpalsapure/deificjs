@@ -7,7 +7,7 @@ Deific.Router.map(function () {
 
 Deific.UsersRoute = Deific.BaseRoute.extend({
 	model: function(param){ 
-		var sort = $.fn.parseParam('sort', 'popular');
+	    var sort = $.fn.parseParam('sort', 'points');
 		var page = $.fn.parseParam('page', '1');
 		return this.get('store').find('user', {
 			sort: sort,

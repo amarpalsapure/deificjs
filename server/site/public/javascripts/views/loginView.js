@@ -11,6 +11,8 @@
 		showRecoverForm: true,
 		
 		allowSignUp: window.init.config.allowsignup,
+		allowFBLogin: window.init.config.fbenable,
+		allowTwitterLogin: window.init.config.twitterenable,
 
 		login: {},
 		register: {},

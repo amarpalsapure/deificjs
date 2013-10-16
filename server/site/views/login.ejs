@@ -27,16 +27,20 @@
                       login with <span><%= brand %></span>
                     </a>
                   </div>
+                  {{#if view.allowFBLogin}}
                   <div class='col-xs-12 col-sm-4 col-lg-3'>
                     <a href='javascript:void(0)' {{action lgnFacebook target=view}} class='btn btn-flat btn-skyblue'>
                       login with <span>facebook</span>
                     </a>
                   </div>
+                  {{/if}}
+                  {{#if view.allowTwitterLogin}}
                   <div class='col-xs-12 col-sm-4 col-lg-3'>
                     <a href='javascript:void(0)' {{action lgnTwitter target=view}} class='btn btn-flat btn-skyblue'>
                       login with <span>twitter</span>
                     </a>
                   </div>
+                  {{/if}}
                 </div>
                 <div {{bindAttr class=':row view.allowSignUp:show:hide'}}>
                   <div class='col-xs-12 mtl pts'>
