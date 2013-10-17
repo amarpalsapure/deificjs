@@ -44,7 +44,7 @@ if (process.config.twitter_consumer_key != '' && process.config.twitter_consumer
     passport.use(new TwitterStrategy({
         consumerKey: process.config.twitter_consumer_key,
         consumerSecret: process.config.twitter_consumer_secret,
-        callbackURL: "http://localhost:3000/auth/twitter/callback"
+        callbackURL: process.config.host + "/auth/twitter/callback"
     }, function (token, tokenSecret, profile, done) {
         // asynchronous verification, for effect..
         process.nextTick(function () {
