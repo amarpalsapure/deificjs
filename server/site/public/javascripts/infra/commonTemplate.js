@@ -153,7 +153,7 @@
           			</div>	\
 			        <div class='row'>	\
 			            <div class='col-xs-12 col-sm-12 col-lg-12'>	\
-			            	<div {{bindAttr class=':pull-left :width-100p view.questionpage:border-bottom view.questionpage:pbm istypeanswer:pbsi'}}>	\
+			            	<div {{bindAttr class=':pull-left :width-100p view.questionpage:border-bottom view.questionpage:pbm istypeanswer:pbsi istypeanswer:answer-accept-container'}}>	\
 				            	<div {{bindAttr class=':pull-left istypeanswer:width-90p:width-100p'}}>	\
 					                <div class='entity-info-container'>	\
 					                	<!-- Question bookmark goes here --> \

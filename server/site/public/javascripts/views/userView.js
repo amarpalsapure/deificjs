@@ -6,6 +6,10 @@
         didInsertElement: function() {
             var model = this.controller.get('model');
 
+            if (!Deific.AccountController.user 
+                || model.get('id') != Deific.AccountController.user.userid)
+                $('#avotes').remove();        
+
             //remove loader
             $('#rootProgress').remove();
 

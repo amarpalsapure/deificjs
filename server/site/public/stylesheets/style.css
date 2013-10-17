@@ -151,6 +151,7 @@ body { background-color: #eef0f3; }
 .answer-accept .dropdown-menu { min-width: 40px; font-size: 1em; left: auto; right: 0; top: 22px; }
 .answer-accept > a, .answer-accept > a:hover { padding: 3px; border-radius: 4px; font-size: 1em; text-decoration: none; cursor: pointer; border:solid 1px #777; border: solid 1px #dedede; color: #8f8f8f;}
 .iscorrectanswer > a, .iscorrectanswer > a:hover { background-color: green; color: #fff; border:solid 1px green; }
+.answer-accept-container { height: 30px; }
 .action-toggle-accept-error { z-index: 100; right: -33px; width: 350px; top: -2px;}
 .action-toggle-accept-error .alert { position: absolute; right: 26px;}
 .action-save-comment-error .alert {top: -2px;position: absolute;left: 14px;}
@@ -231,11 +232,9 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
 .tag-qcount { color: #aaa; }
 #selectedTags .select2-choices { border: none; background: none; }
 
-.login-input { width: 60%; line-height: 26px; height: 40px; padding: 6px; min-width: 200px; font-size: 1.2em; color: #444;}
-.login-nav li { display: inline; margin: 0 10px; }
-.login-nav li a { display: inline-block; padding: 15px 40px !important; white-space: normal; width: 165px; }
-.login-nav li a span { display: inline-block; }
-.login-nav li a:hover { background-color: #eee; }
+.login-input { width: 60%; line-height: 26px; height: 40px; padding: 6px; min-width: 225px; max-width: 500px; font-size: 1.2em; color: #444;}
+.login-nav a { font-size: 0.9em !important; font-weight: normal !important; min-width: 260px; }
+.login-nav a span { display: block; font-size: 1.8em !important;}
 .login-nav .btn.btn-flat.btn-skyblue { width: auto; }
 .lgn-cancel { vertical-align: bottom; line-height: 31px; }
 .icon_fb { background: url(../images/facebook.png) left center no-repeat; height: 32px; width: 32px; display: inline-block; line-height: 32px; margin-right: 3px; }
@@ -282,6 +281,7 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
     .question-page .col-entity-details { padding-left: 6.4%; margin-left: -4.2%; width: 95%; }
     .vote-cast { margin-left: 3px; }
     .tags-list .tag-details-container { min-height: 130px; }
+    .login-nav a { min-width: 208px; }
 }
 
 @media screen and (max-width: 767px) {
@@ -332,7 +332,7 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
     .user-profile-page .time-row, .user-profile-page .entity-vote { display: none; }
     .user-profile-page .since-time { display: block; }
     .user-profile-page .entity-vote-mobile { display: block; margin: -2px 0 5px; font-size: 0.9em; }
-
+    .login-nav a { min-width: 220px; }
 }
 
 /* Mobile */
@@ -353,7 +353,7 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
     .answer-accept > a { margin-right: 0px; }
     .tag-search-container .btn, .user-search-container .btn {display: none; }
     .tags-list .tag-details-container { min-height: 40px; }
-
+    .answer-accept-container { height: 28px; }
 }
 
 @media (max-width: 400px) /* Mobile */ {

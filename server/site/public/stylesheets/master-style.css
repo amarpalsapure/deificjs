@@ -1,4 +1,5 @@
 input { border: solid 1px #ddd;}
+.font130 {font-size: 1.3em; line-height: 1.7em;}
 .font120 {font-size: 1.2em; line-height: 1.6em;}
 .font110 {font-size: 1.1em;}
 .font105 {font-size: 1.05em;}
@@ -80,7 +81,8 @@ input { border: solid 1px #ddd;}
 .z-index-0 { z-index: 0; }
 .z-index-1 { z-index: 1; }
 .transform-lower { text-transform: lowercase !important;}
-.transform-upper { text-transform: uppercase; !important;}
+.transform-upper { text-transform: uppercase !important;}
+.transform-capitalize { text-transform: capitalize !important;}
 .alert-sm { padding: 8px; }
 .alert-error { border: solid 1px #b94a48; }
 .alert-dismiss-container .close {

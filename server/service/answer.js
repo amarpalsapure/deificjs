@@ -109,6 +109,9 @@ exports.update = function(req, res) {
 			answer.voteconnid = connection.id();
 			onsuccess();
 		}, onfailure);
+
+	    //update the author of answer
+		update_author(answer.author, isupvote ? process.config.upvotepts : -1 * process.config.downvotepts);
 	};
 
 	//updates 'entity_vote' relation between user and answer 
@@ -116,15 +119,22 @@ exports.update = function(req, res) {
 		var relation = new Appacitive.Connection({ relation: 'entity_vote', __id: answer.voteconnid });
 		relation.set('isupvote', isupvote);
 		relation.save(onsuccess, onfailure);
+
+	    //update the author of answer
+		var pts = process.config.upvotepts + process.config.downvotepts;
+		update_author(answer.author, isupvote ? pts : -1 * pts);
 	};
 
 	//deletes 'entity_vote' relation between user and answer 
-	var answer_vote_Delete = function(onsuccess, onfailure) {
+	var answer_vote_Delete = function(factor, onsuccess, onfailure) {
 		var relation = new Appacitive.Connection({ relation: 'entity_vote', __id: answer.voteconnid });
 		relation.del(function() {
 			answer.voteconnid = '';
 			onsuccess();
 		}, onfailure);
+
+	    //update the author of answer
+		update_author(answer.author, factor) ;
 	};
 
 	//check if correct_answer relation exists or not
@@ -140,7 +150,10 @@ exports.update = function(req, res) {
 				oldAcceptedAnswer = r.children['correct_answer'][0];
 				//delete the connection
 				var relation = new Appacitive.Connection({relation: 'correct_answer', __id: oldAcceptedAnswer.connection.id() });
-				relation.del(onsuccess, onfailure)
+				relation.del(onsuccess, onfailure);
+
+			    //update the author of answer
+				update_author(oldAcceptedAnswer.get('__createdby'), -1 * process.config.answerpts);
 			} else onsuccess();
 		}, onfailure);
 	};
@@ -158,6 +171,9 @@ exports.update = function(req, res) {
 		  }]
 		});
 		connection.save(onsuccess, onfailure);
+
+	    //update the author of answer
+		update_author(answer.author, process.config.answerpts);
 	};
 
 	//update the question and set isanswered to true
@@ -165,6 +181,17 @@ exports.update = function(req, res) {
 		var question = new Appacitive.Article({ __id : answer.question, schema : 'entity' });
 		question.set('isanswered', true);
 		question.save(onsuccess, onfailure);
+	};
+
+    //get the user and sum the entityupcount, entitydowncount and answercount and finally add the factor
+    //and update the user
+	var update_author = function (authorId, factor) {
+	    var user = new Appacitive.User({ __id: authorId });
+	    user.fetch(function () {
+	        var userJ = transformer.toUser(user);
+	        user.set('reputation', userJ.reputation + factor);
+	        user.save();
+	    }, function () { }, [ '$entityupcount', '$entitydowncount', '$correctanswercount'])
 	};
 
 	//saves the answer object on appacitive api
@@ -216,7 +243,7 @@ exports.update = function(req, res) {
 		case 'undo:upvote':
 			//Step 1: delete 'entity_vote' connection between user and answer
 			//Step 2: decrement upvotecount
-			answer_vote_Delete(function(){
+		    answer_vote_Delete(-1 * process.config.upvotepts, function () {
 				aAnswer.decrement('upvotecount');
 				aAnswer.decrement('totalvotecount');
 				save();
@@ -255,7 +282,7 @@ exports.update = function(req, res) {
 		case 'undo:downvote':
 			//Step 1: delete 'entity_vote' connection between user and answer
 			//Step 2: increment upvotecount
-			answer_vote_Delete(function(){
+		    answer_vote_Delete(process.config.downvotepts, function () {
 				aAnswer.decrement('downvotecount');
 				aAnswer.increment('totalvotecount');
 				save();
@@ -308,7 +335,8 @@ exports.update = function(req, res) {
 			//Step 1: Delete the connection
 			//Step 2: Update the score to 0 for current answer
 			check_n_delete_correct_answer(function() {
-				aAnswer.set('score', 0);
+			    aAnswer.set('score', 0);
+
 				save();
 			}, function() {
 				return res.status(502).json(transformer.toError('answer_accept_undo'));

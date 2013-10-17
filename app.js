@@ -6,6 +6,9 @@
 var express = require('express');
 var engine = require('ejs-locals');
 var minify = require('express-minify');
+var passport = require('passport');
+var util = require('util');
+var TwitterStrategy = require('passport-twitter').Strategy;
 
 var routes = require('./server/site/routes');
 var userRoute = require('./server/site/routes/user');
@@ -24,6 +27,35 @@ var userApi = require('./server/service/user.js');
 var commentApi = require('./server/service/comment.js');
 var tagApi = require('./server/service/tag.js');
 var searchApi = require('./server/service/search.js');
+var callbackHandlerApi = require('./server/service/callbackHandlers.js');
+
+
+
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(obj, done) {
+  done(null, obj);
+});
+
+
+if (process.config.twitter_consumer_key != '' && process.config.twitter_consumer_secret != '') {
+    passport.use(new TwitterStrategy({
+        consumerKey: process.config.twitter_consumer_key,
+        consumerSecret: process.config.twitter_consumer_secret,
+        callbackURL: "http://localhost:3000/auth/twitter/callback"
+    }, function (token, tokenSecret, profile, done) {
+        // asynchronous verification, for effect..
+        process.nextTick(function () {
+            profile.token = token;
+            profile.tokenSecret = tokenSecret;
+            return done(null, profile);
+        });
+    }
+    ));
+}
+
 
 var app = express();
 app.use(express.compress());
@@ -45,6 +77,10 @@ app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.cookieParser('9b7c1f44590b46e509db'));
 app.use(express.session());
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'server/site/public')));
 
@@ -54,7 +90,7 @@ if ('development' == app.get('env')) {
 }
 
 // ***************************************************
-// ****************** Service rote ******************
+// ****************** Service route ******************
 // ***************************************************
 
 // ################# question api ####################
@@ -96,8 +132,14 @@ app.get('/service/users', noCacheRequest(), userApi.findAll);
 app.get('/service/users/:id', noCacheRequest(), userApi.findById);
 // authenticate user
 app.post('/service/users/auth', noCacheRequest(), userApi.auth);
+// authenticate user using facebook
+app.post('/service/users/fbauth', noCacheRequest(), userApi.fbauth);
 // logout user
 app.post('/service/users/logout', noCacheRequest(), userApi.logout);
+// register user
+app.post('/service/users/register', noCacheRequest(), userApi.register);
+// recover password
+app.post('/service/users/recover', noCacheRequest(), userApi.recover);
 
 
 // ################# comment api ####################
@@ -115,6 +157,10 @@ app.get('/service/tags/:id', noCacheRequest(), tagApi.findById);
 // ################# search api ####################
 // free text search
 app.get('/service/entities', noCacheRequest(), searchApi.search);
+
+
+// ################# call back handler api ####################
+
 
 
 // *************************************************
@@ -171,6 +217,57 @@ app.get('/search', searchRoute.search);
 app.get('/tags', tagRoute.index);
 // it renders the same page as all questions for a given tag
 app.get('/tags/:tag', questionRoute.tagged);
+
+// GET /auth/twitter
+// Use passport.authenticate() as route middleware to authenticate the
+// request. The first step in Twitter authentication will involve redirecting
+// the user to twitter.com. After authorization, the Twitter will redirect
+// the user back to this application at /auth/twitter/callback
+app.get('/auth/twitter',
+  passport.authenticate('twitter'),
+  function(req, res){
+    // The request will be redirected to Twitter for authentication, so this
+    // function will not be called.
+  });
+
+// GET /auth/twitter/callback
+// Use passport.authenticate() as route middleware to authenticate the
+// request. If authentication fails, the user will be redirected back to the
+// login page. Otherwise, the primary route function function will be called,
+// which, in this example, will redirect the user to the home page.
+app.get('/auth/twitter/callback',
+  	passport.authenticate('twitter', { failureRedirect: '/users/login?tl=1' }),
+  	function(req, res) {
+	  	//initialize the SDK
+	  	var sdk = require('./server/service/appacitive.init');
+		var Appacitive = sdk.init();
+
+		var authRequest = {
+			'type': 'twitter',
+		  	'oauthtoken': req.user.token,
+		  	'oauthtokensecret': req.user.tokenSecret,
+		  	'createnew': true
+		}
+
+		Appacitive.Users.authenticateUser(authRequest, function(){ 
+		  	res.cookie('u', {
+				i: authResult.user.id(),
+				f: authResult.user.get('firstname'),
+				l: authResult.user.get('lastname'),
+				e: authResult.user.get('email'),
+				t: authResult.token
+			},{
+				signed: true,
+				maxAge: 30*24*60*60*1000, //30 days
+				httpOnly: true
+			});
+			res.redirect('/users/login?tl=0');
+		}, function(error) {
+			res.redirect('/users/login?tl=1');			  		
+		}, 'twitter');
+	}
+);
+
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
