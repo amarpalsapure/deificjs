@@ -371,6 +371,9 @@ exports.update = function(req, res) {
 			question.voteconnid = connection.id();
 			onsuccess();
 		}, onfailure);
+
+	    //update the author of question
+		update_author(question.author, isupvote ? process.config.upvotepts : -1 * process.config.downvotepts);
 	};
 
 	//updates 'entity_vote' relation between user and entity 
@@ -378,15 +381,22 @@ exports.update = function(req, res) {
 		var relation = new Appacitive.Connection({ relation: 'entity_vote', __id: question.voteconnid });
 		relation.set('isupvote', isupvote);
 		relation.save(onsuccess, onfailure);
+
+	    //update the author of question
+		var pts = process.config.upvotepts + process.config.downvotepts;
+		update_author(question.author, isupvote ? pts : -1 * pts);
 	};
 
 	//deletes 'entity_vote' relation between user and entity 
-	var question_vote_Delete = function(onsuccess, onfailure) {
+	var question_vote_Delete = function(factor, onsuccess, onfailure) {
 		var relation = new Appacitive.Connection({ relation: 'entity_vote', __id: question.voteconnid });
 		relation.del(function() {
 			question.voteconnid = '';
 			onsuccess();
 		}, onfailure);
+
+	    //update the author of question
+		update_author(question.author, factor);
 	};
 
 	//create 'question_bookmark' relation between question and user
@@ -413,6 +423,17 @@ exports.update = function(req, res) {
 			question.bookmarkconnid = '';
 			onsuccess();
 		}, onfailure);
+	};
+
+    //get the user and sum the entityupcount, entitydowncount and answercount and finally add the factor
+    //and update the user
+	var update_author = function (authorId, factor) {
+	    var user = new Appacitive.User({ __id: authorId });
+	    user.fetch(function () {
+	        var userJ = transformer.toUser(user);
+	        user.set('reputation', userJ.reputation + factor);
+	        user.save();
+	    }, function () { }, [ '$entityupcount', '$entitydowncount', '$correctanswercount'])
 	};
 
 	//saves the question object on appacitive api
@@ -466,7 +487,7 @@ exports.update = function(req, res) {
 		case 'undo:upvote':
 			//Step 1: delete 'question_vote' connection between user and question
 			//Step 2: decrement upvotecount
-			question_vote_Delete(function(){
+		    question_vote_Delete(-1 * process.config.upvotepts, function () {
 				aQuestion.decrement('upvotecount');
 				aQuestion.decrement('totalvotecount');
 				save();
@@ -505,7 +526,7 @@ exports.update = function(req, res) {
 		case 'undo:downvote':
 			//Step 1: delete 'question_vote' connection between user and question
 			//Step 2: increment upvotecount
-			question_vote_Delete(function(){
+		    question_vote_Delete(process.config.downvotepts, function () {
 				aQuestion.decrement('downvotecount');
 				aQuestion.increment('totalvotecount');
 				save();

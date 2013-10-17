@@ -28,13 +28,13 @@ var _findAll = function(req, res) {
 	if(!pagenumber) pagenumber = 1;
 
 	var sort = req.query.sort;
-	sort = (!sort) ? 'reputation' : sort.toLowerCase();
+	sort = (!sort) ? 'points' : sort.toLowerCase();
 	switch(sort) {
 		case 'latest':
 			break;
-		case 'reputation': 
-			orderBy = '$questionupcount';
-			isAscending = true;
+	    case 'points':
+		    orderBy = 'reputation';
+			isAscending = false;
 			break;		
 		case 'name':
 			orderBy = 'firstname';
@@ -49,12 +49,12 @@ var _findAll = function(req, res) {
 
 	var query = new Appacitive.Queries.FindAllQuery({
 						schema : 'user',
-						fields : 'firstname,lastname,email,reputation,$questionupcount,$questiondowncount,$answerupcount,$answerupcount,$correctanswercount,__utcdatecreated',
+						fields : 'firstname,lastname,email,reputation,$entityupcount,$entitydowncount,$correctanswercount,__utcdatecreated',
 						orderBy: orderBy,
 						filter: filter,
 						pageNumber: pagenumber,
 						isAscending: isAscending,
-						pageSize: 4
+						pageSize: 8
 					});
 
 	query.fetch(function (users, paginginfo) {
@@ -85,13 +85,20 @@ var _findByIdWithEntities = function(req, res) {
 
 	var userId = req.param('uId');
 	var type = req.param('type');
+	if (!type) type = 'questions';
+	else type = type.toLowerCase();
 	var pagenumber = req.param('page');
 
-	if(userId === '') return res.status(400).json(transformer.toError('Invalid input'));
-	if(!type) type = 'questions';
+
+	if (userId === '') return res.status(400).json(transformer.toError('Invalid input'));
+
+    //if user is logged in and trying to see votes of other user then fail the call
+	if((!state.userid && type ==='votes')
+        || (state.userid && state.userid != userId &&  type === 'votes'))
+	    return res.status(401).json(transformer.toError('access_denied'));
+	
 	if(!pagenumber) pagenumber = 1;
-
-
+    
 	var getUser = function(userId, onSuccess, onError) {
 		var user = new Appacitive.User({__id: userId});
 		user.fetch(onSuccess, onError);
@@ -229,7 +236,50 @@ exports.auth = function(req, res){
 		});
 	}, function(status) {
 		return res.status(401).json(transformer.toError('user_login', status));
-	});	
+	});
+};
+
+exports.fbauth = function(req, res) {
+	var accessToken = req.body.accessToken;
+
+	//get the transformer
+	var transformer = require('./infra/transformer');
+
+	//validate the inputs
+	if(!accessToken || accessToken === '')
+		return res.status(400).json(transformer.toError('user_fb_login_validate'));
+	
+	//initialize the SDK
+  	var sdk = require('./appacitive.init');
+	var Appacitive = sdk.init();
+
+	Appacitive.Facebook.accessToken(accessToken);
+
+	Appacitive.Users.signupWithFacebook(function (authResult) {
+		// User has been logged in successfully
+		// Set the cookie
+		res.cookie('u', {
+			i: authResult.user.id(),
+			f: authResult.user.get('firstname'),
+			l: authResult.user.get('lastname'),
+			e: authResult.user.get('email'),
+			t: authResult.token
+		},{
+			signed: true,
+			maxAge: 30*24*60*60*1000, //30 days
+			httpOnly: true
+		})
+
+    	return res.json({
+			user: {
+				id: authResult.user.id(),
+				fname: authResult.user.get('firstname'),
+				lname: authResult.user.get('lastname')
+			}
+		});
+	}, function(status) {
+		return res.status(401).json(transformer.toError('user_login', status));
+	});
 };
 
 exports.logout = function(req, res){
@@ -249,4 +299,82 @@ exports.logout = function(req, res){
 	res.json({
 		success: true
 	});
+};
+
+exports.register = function(req, res) {
+	var email = req.body.email
+	var name = req.body.name;
+	var pwd = req.body.password;
+
+	//get the transformer
+	var transformer = require('./infra/transformer');
+
+	//validate the inputs
+	if(!email || email === '' || !pwd || pwd === '' || !name || name === '')
+		return res.status(400).json(transformer.toError('user_signup_validate'));
+
+	var split = name.split(' ');
+    var lastName = '', firstName = '';
+
+    firstName = split.shift();
+    lastName = split.join(' ');
+
+    var user = {
+            'firstname': firstName,
+            'lastname': lastName,
+            'username': email,
+            'email': email,
+            'password': pwd
+        };
+	
+	//initialize the SDK
+  	var sdk = require('./appacitive.init');
+	var Appacitive = sdk.init();
+
+	Appacitive.Users.signup(user, function (authResult) {
+		// User has been logged in successfully
+		// Set the cookie
+		res.cookie('u', {
+			i: authResult.user.id(),
+			f: authResult.user.get('firstname'),
+			l: authResult.user.get('lastname'),
+			e: authResult.user.get('email'),
+			t: authResult.token
+		},{
+			signed: true,
+			maxAge: 30*24*60*60*1000, //30 days
+			httpOnly: true
+		})
+
+    	return res.json({
+			user: {
+				id: authResult.user.id(),
+				fname: authResult.user.get('firstname'),
+				lname: authResult.user.get('lastname')
+			}
+		});
+	}, function(status) {
+		return res.status(401).json(transformer.toError('user_signup', status));
+	});	
+};
+
+exports.recover = function(req, res) {
+	var email = req.body.email;
+
+	//get the transformer
+	var transformer = require('./infra/transformer');
+
+	//validate the inputs
+	if(!email || email === '')
+		return res.status(400).json(transformer.toError('user_recover_validate'));
+	
+	//initialize the SDK
+  	var sdk = require('./appacitive.init');
+	var Appacitive = sdk.init();
+
+	Appacitive.Users.sendResetPasswordEmail(email, 'Account Recovery - ' + process.config.brand, function () {
+    	return res.status(204).json({});
+	}, function(status) {
+		return res.status(401).json(transformer.toError('user_recover', status));
+	});	
 };

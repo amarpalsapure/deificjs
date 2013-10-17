@@ -1,6 +1,7 @@
 (function() {
 	Deific.HeaderController = Ember.ObjectController.extend({
 		isLoggedInBinding: Ember.Binding.oneWay('Deific.AccountController.isLoggedIn'),
+		isSignupAllowed: window.init.config.allowsignup,
 	   
 		loginurl: window.location.pathname.toLowerCase() === '/users/login'
 				? '/users/login'
