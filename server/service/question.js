@@ -383,7 +383,8 @@ exports.update = function(req, res) {
 		relation.save(onsuccess, onfailure);
 
 	    //update the author of question
-		update_author(question.author, isupvote ? process.config.upvotepts : -1 * process.config.downvotepts);
+		var pts = process.config.upvotepts + process.config.downvotepts;
+		update_author(question.author, isupvote ? pts : -1 * pts);
 	};
 
 	//deletes 'entity_vote' relation between user and entity 
@@ -395,7 +396,7 @@ exports.update = function(req, res) {
 		}, onfailure);
 
 	    //update the author of question
-		update_author(question.author, factor === 1 ? process.config.upvotepts : -1 * process.config.downvotepts);
+		update_author(question.author, factor);
 	};
 
 	//create 'question_bookmark' relation between question and user
@@ -486,7 +487,7 @@ exports.update = function(req, res) {
 		case 'undo:upvote':
 			//Step 1: delete 'question_vote' connection between user and question
 			//Step 2: decrement upvotecount
-			question_vote_Delete(-1, function(){
+		    question_vote_Delete(-1 * process.config.upvotepts, function () {
 				aQuestion.decrement('upvotecount');
 				aQuestion.decrement('totalvotecount');
 				save();
@@ -525,7 +526,7 @@ exports.update = function(req, res) {
 		case 'undo:downvote':
 			//Step 1: delete 'question_vote' connection between user and question
 			//Step 2: increment upvotecount
-			question_vote_Delete(1, function(){
+		    question_vote_Delete(process.config.downvotepts, function () {
 				aQuestion.decrement('downvotecount');
 				aQuestion.increment('totalvotecount');
 				save();

@@ -151,6 +151,7 @@ body { background-color: #eef0f3; }
 .answer-accept .dropdown-menu { min-width: 40px; font-size: 1em; left: auto; right: 0; top: 22px; }
 .answer-accept > a, .answer-accept > a:hover { padding: 3px; border-radius: 4px; font-size: 1em; text-decoration: none; cursor: pointer; border:solid 1px #777; border: solid 1px #dedede; color: #8f8f8f;}
 .iscorrectanswer > a, .iscorrectanswer > a:hover { background-color: green; color: #fff; border:solid 1px green; }
+.answer-accept-container { height: 30px; }
 .action-toggle-accept-error { z-index: 100; right: -33px; width: 350px; top: -2px;}
 .action-toggle-accept-error .alert { position: absolute; right: 26px;}
 .action-save-comment-error .alert {top: -2px;position: absolute;left: 14px;}
@@ -352,6 +353,7 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
     .answer-accept > a { margin-right: 0px; }
     .tag-search-container .btn, .user-search-container .btn {display: none; }
     .tags-list .tag-details-container { min-height: 40px; }
+    .answer-accept-container { height: 28px; }
 }
 
 @media (max-width: 400px) /* Mobile */ {
