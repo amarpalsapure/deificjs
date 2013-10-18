@@ -41,6 +41,13 @@
               onError(Deific.localDataSource.handleError(error, 'Deific.AccountController-register'));
           });
         },
+        resetPassword: function (oldpwd, newpwd, onSuccess, onError) {
+            Ember.$.post('/service/users/reset', { oldpwd: oldpwd, pwd: newpwd }).then(function(){
+                onSuccess();
+            }, function (error) {
+                onError(Deific.localDataSource.handleError(error, 'Deific.AccountController-resetPassword'));
+            });
+        },
         updateUser: function(user, callback) {
           var _this = this;
 

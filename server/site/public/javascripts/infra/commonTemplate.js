@@ -89,7 +89,7 @@
 				        <div class='user-profile'>  \
 				            <div class='divPic'>    \
 				                <a class='user-img' {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}>    \
-				                    <img {{bindAttr src='author.smallimgurl'}}/>    \
+				                    <img {{bindAttr src='author.smallimgurl'}} {{bindAttr title='author.fullname'}}/>    \
 				                </a>    \
 				            </div>  \
 				            <div class='divUserDetails'>    \

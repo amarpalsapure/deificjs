@@ -10,6 +10,7 @@
 		totalvotecount: DS.attr('number', { defaultValue: 0 }),
 		isanswered: DS.attr('boolean'),
 		isupvote: DS.attr('boolean'),
+		votedon: DS.attr('date'),
 
 		answercount: DS.attr('number', { defaultValue: 0 }),
 		viewcount: DS.attr('number', { defaultValue: 0 }),

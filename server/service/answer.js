@@ -6,21 +6,6 @@ exports.findById = function(req, res) {
 	};
 
 	var answerId = req.param('id');
-	// +    vote => +1
-	// -    vote => -1
-	// not voted =>  0
-	var voted = 0
-	var voteconnid = '';
-	var callCount = 2;
-
-	//merge the responses from the parallel calls
-	var merge = function(){
-		if(--callCount != 0) return;
-
-		response.answer['voteconnid'] = voteconnid;
-		response.answer['voted'] = voted;
-		return res.json(response);
-	}
 
 	//get the state of app
 	var app = require('../shared/app.init');
@@ -33,39 +18,25 @@ exports.findById = function(req, res) {
 	//get the transformer
 	var transformer = require('./infra/transformer');
 
-	//PARALLEL CALL 1 
-	//get the answer details
-	var query = new Appacitive.Queries.GraphProjectQuery('answer', [answerId]);
-	query.fetch(function (answers) {
-		//if no data found
-		if(!answers && answers.length == 0) return res.json(response);
-		
-		response = transformer.toAnswer(answers[0], state);
-		merge();
-	}, function (status) {
-		merge();
-	});
+    //set graph query name depending upon if user is logged in or not
+    //according to this it will be checked if current user has upvoted the answer or not
+	var graphQueryName = 'answer';
+	if (state.isauth) graphQueryName = 'answer_user';
 
-	//PARALLEL CALL 2
-	//Check if logged in user had voted the answer
-	if(state.isauth) {
-		Appacitive.Connection.getBetweenArticlesForRelation({
-			relation: 'entity_vote',
-			articleAId : state.userid, // id of logged in user
-			articleBId : answerId // id of answer
-		}, function(connection) {
-			if(connection){
-				if(connection.get('isupvote', 'boolean')) voted = 1;
-				else voted = -1;
-				voteconnid = connection.id();
-			}
-			merge();
-		}, function(err) {
-			merge();
-		});
-	}else {
-		merge();
-	}
+    //gets the details of answer using graph query
+	var getAnswer = function (queryName, entityId, userId, onSuccess, onError) {
+	    var query = new Appacitive.Queries.GraphProjectQuery(queryName, [entityId], { id: userId });
+	    query.fetch(onSuccess, onError);
+	};
+
+    //get the answer details
+	getAnswer(graphQueryName, answerId, state.userid, function (answers) {
+	    //if no data found
+	    if (!answers && answers.length == 0) return res.json(response);
+	    else return res.json(transformer.toAnswer(answers[0], state));
+	}, function (status) {
+	    return res.json(response);
+	});
 };
 
 exports.update = function(req, res) {
