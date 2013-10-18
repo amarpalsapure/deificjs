@@ -5,6 +5,7 @@
         isowner: true,
 
         reset: {},
+        profile: {},
 
         didInsertElement: function () {
             var that = this;
@@ -65,7 +66,8 @@
                 //must be more than 20 characters
                 $(window).on('deificloaded', function () {
                     $('.profile-description #wmd-input').keyup(function () {
-                        if ($.trim($('#wmd-input').val()).length > 20) $('#btnSubmit').removeAttr('disabled');
+                        var about = $.trim($('#wmd-input').val());
+                        if (about.length > 20 && about != model.get('about')) $('#btnSubmit').removeAttr('disabled');
                         else $('#btnSubmit').attr('disabled', 'disabled');
                     });
                     $('#wmd-input').val(model.get('about'));
@@ -104,11 +106,13 @@
 
         resetPassword: function () {
             var that = this;
+
             //Resetting password
             $('.reset-pwe-error').addClass('hide');
             $('.reset-password input').attr('disabled', 'disabled');
             $('#btnReset').button('loading')
 
+            //calling account controll as user model shouldn't contain password field
             Deific.AccountController.resetPassword(that.reset.oldpassword, that.reset.confirmpassword, function () {
                 //password changed successfully, show confirmation modal, and redirect to login again
                 $("#divSuccessModal").modal();
@@ -117,6 +121,34 @@
                 $('.reset-password input').removeAttr('disabled');
                 $('#btnReset').button('reset')
                 that.set("reset.error", message);
+            });
+        },
+
+        saveProfile: function () {
+            var that = this;
+
+            //updating profile
+            $('#wmd-input').attr('disabled', 'disabled');
+            $('#btnSubmit').button('loading')
+
+            var resetView = function () {
+                $('#wmd-input').removeAttr('disabled');
+                $('#btnSubmit').button('reset')
+            };
+
+            //calling account controll as user model shouldn't contain password field
+            that.controller.updateProfile(that.profile.about, function () {
+                //reset view
+                resetView();
+            }, function (message) {
+                //in case of any error roll back the changes (if any)
+                //and show an error message
+                message = message || 'An error occurred during updating profile.';
+                var alert = '<div class="alert alert-block alert-danger font9 mts pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' + message + '</div>';
+                $('.profileError').html(alert).alert();
+
+                //reset view
+                resetView();
             });
         }
 	});

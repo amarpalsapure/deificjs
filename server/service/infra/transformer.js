@@ -405,6 +405,13 @@ var _to_Appacitive_Answer = function(Appacitive, answer) {
 };
 exports.toAppacitiveAnswer = _to_Appacitive_Answer;
 
+var _to_Appacitive_User = function (Appacitive, user) {
+    return new Appacitive.User({
+        __id: user.id
+    });
+};
+exports.toAppacitiveUser = _to_Appacitive_User;
+
 // ASSUMPTION //
 //if status object is not provided, it means user has provided in valid input
 var _toError = function(origin, status) {
@@ -450,7 +457,8 @@ var _toError = function(origin, status) {
 		answer_accept: 'Failed to accept the answer',
 		answer_accept_undo: 'Failed to undo accepted answer',
 		tag_find: 'Tag not found',
-        user_pwd_reset: 'Failed to reset password.',
+		user_pwd_reset: 'Failed to reset password.',
+	    user_update: 'Failed to update profile.',
 	};
 	var message = errorMap[origin];
 	if(!message) message = errorMap['default'];

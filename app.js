@@ -130,6 +130,8 @@ app.delete('/service/answers/:id', noCacheRequest(), answerApi.del);
 app.get('/service/users', noCacheRequest(), userApi.findAll);
 // get user
 app.get('/service/users/:id', noCacheRequest(), userApi.findById);
+// update user
+app.put('/service/users/:id', noCacheRequest(), userApi.update);
 // authenticate user
 app.post('/service/users/auth', noCacheRequest(), userApi.auth);
 // authenticate user using facebook

@@ -580,10 +580,39 @@ exports.reset = function (req, res) {
         //delete the cookie
         return res.status(401).json(transformer.toSessionExpiredError(res));
     });
+};
 
-    
+exports.update = function (req, res) {
+    var response = {
+        user: {}
+    };
 
-      
+    var user = req.body.user;
+    if (!user) return res.status(400).json(req.body.user);
+    if (!req.param('id')) return res.status(400).json('Invalid Input');
+    user.__id = user.id = req.param('id');
 
-    
+    //get the state of app
+    var app = require('../shared/app.init');
+    var state = app.init(req);
+
+    //get the transformer
+    var transformer = require('./infra/transformer');
+
+    //validation
+    if (!state.userid) return res.status(401).json(transformer.toSessionExpiredError(res));
+    if (state.userid != user.id) return res.status(401).json(transformer.toError('access_denied'));
+
+    //initialize the sdk
+    var sdk = require('./appacitive.init');
+    var Appacitive = sdk.init(state.token, state.debug);
+
+    var aUser = transformer.toAppacitiveUser(Appacitive, user);
+    aUser.set('about', user.about);
+    aUser.save(function () {
+        response.user = user;
+        return res.json(response);
+    }, function (status) {
+        return res.status(502).json(transformer.toError('user_update', status));
+    });
 };
