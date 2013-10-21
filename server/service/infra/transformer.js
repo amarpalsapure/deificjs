@@ -7,6 +7,7 @@ var _toUser = function(user) {
 		'__id': user.id(),
 		'firstname': user.get('firstname'),
 		'lastname': user.get('lastname'),
+        'about': user.get('about'),
 		'gravtarurl': null,
 		'reputation': 0,
 		'url': '',
@@ -187,7 +188,7 @@ var _toQuestion = function(question, state) {
 		delete response.question.correctanswer.__tags;
 	}
 
-	//question is bookmarked or not
+    //question is voted or not
 	if(question.children.vote && question.children.vote.length > 0) {
 		response.question['voteconnid'] = question.children.vote[0].connection.id();
 		response.question['voted'] = question.children.vote[0].connection.get('isupvote', 'boolean') ? 1 : -1;
@@ -196,7 +197,7 @@ var _toQuestion = function(question, state) {
 		response.question['voteconnid'] = '';
 	}
 
-	//question is voted or not
+    //question is bookmarked or not
 	if(question.children.bookmark && question.children.bookmark.length > 0) {
 		response.question['isbookmarked'] = true;
 		response.question['bookmarkconnid'] = question.children.bookmark[0].connection.id();;
@@ -311,6 +312,15 @@ var _toAnswer = function(answer, state) {
 	if(answer.children.question && answer.children.question.length > 0) {
 		response.answer.question = answer.children.question[0]['__id'];
 	}
+
+    //answer is voted or not
+	if (answer.children.vote && answer.children.vote.length > 0) {
+	    response.answer['voteconnid'] = answer.children.vote[0].connection.id();
+	    response.answer['voted'] = answer.children.vote[0].connection.get('isupvote', 'boolean') ? 1 : -1;
+	} else {
+	    response.answer['voted'] = 0;
+	    response.answer['voteconnid'] = '';
+	}
 				
 	return response;
 };
@@ -338,7 +348,8 @@ var _toEntities = function(entities, paginginfo) {
 
 		//in get connected vote calls fron user api, entity has connection
 		if(entity.connection && entity.connection.get('isupvote')) {
-			jEntity.isupvote = entity.connection.get('isupvote', 'boolean')
+		    jEntity.isupvote = entity.connection.get('isupvote', 'boolean');
+		    jEntity.votedon = _toISODateFormat(entity.get('__utcdatecreated'));
 		}
 
 		//set the title for answer as question title from it's attribute
@@ -394,6 +405,13 @@ var _to_Appacitive_Answer = function(Appacitive, answer) {
 };
 exports.toAppacitiveAnswer = _to_Appacitive_Answer;
 
+var _to_Appacitive_User = function (Appacitive, user) {
+    return new Appacitive.User({
+        __id: user.id
+    });
+};
+exports.toAppacitiveUser = _to_Appacitive_User;
+
 // ASSUMPTION //
 //if status object is not provided, it means user has provided in valid input
 var _toError = function(origin, status) {
@@ -406,7 +424,7 @@ var _toError = function(origin, status) {
   					additionalmessages: []
 				};
 	var errorMap = {
-		default: 'Something went wrong.',
+	    default: 'Something went wrong.',
 		question_not_found: 'Question not found, it might be deleted.',
 		question_save: 'Failed to save the question.',
 		question_find_all: 'Looks like something has broken.',
@@ -439,11 +457,14 @@ var _toError = function(origin, status) {
 		answer_accept: 'Failed to accept the answer',
 		answer_accept_undo: 'Failed to undo accepted answer',
 		tag_find: 'Tag not found',
+		user_pwd_reset: 'Failed to reset password.',
+	    user_update: 'Failed to update profile.',
 	};
 	var message = errorMap[origin];
 	if(!message) message = errorMap['default'];
 
-	if(status.code === '19036') message = 'Your session has expired, please <a href="/users/login?returnurl=PATHNAME">login</a> again. Thanks.';
+	if (status.code === '19036') message = 'Your session has expired, please <a href="/users/login?returnurl=PATHNAME">login</a> again. Thanks.';
+	if (status.code === '25001') message = 'Old password is invalid';
 	if(origin === 'user_signup' && status.code === '600') message = 'Account already exists for given email address.';
 
 	status.referenceid = status.referenceid || 'notavailble';
@@ -462,7 +483,7 @@ var _toSessionExpiredError = function(res, status) {
 		message: 'Session expired'
 	}
 
-	status.error = 'Your session has expired, please <a href="/users/login?returnurl=' + window.location.pathname + '">login</a> again. Thanks.';
+	status.error = 'Your session has expired, please <a href="/users/login?returnurl=PATHNAME">login</a> again. Thanks.';
 	return status;
 };
 exports.toSessionExpiredError = _toSessionExpiredError;

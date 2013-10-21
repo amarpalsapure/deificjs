@@ -130,6 +130,8 @@ app.delete('/service/answers/:id', noCacheRequest(), answerApi.del);
 app.get('/service/users', noCacheRequest(), userApi.findAll);
 // get user
 app.get('/service/users/:id', noCacheRequest(), userApi.findById);
+// update user
+app.put('/service/users/:id', noCacheRequest(), userApi.update);
 // authenticate user
 app.post('/service/users/auth', noCacheRequest(), userApi.auth);
 // authenticate user using facebook
@@ -140,7 +142,8 @@ app.post('/service/users/logout', noCacheRequest(), userApi.logout);
 app.post('/service/users/register', noCacheRequest(), userApi.register);
 // recover password
 app.post('/service/users/recover', noCacheRequest(), userApi.recover);
-
+// reset password
+app.post('/service/users/reset', noCacheRequest(), userApi.reset);
 
 // ################# comment api ####################
 // save comment
@@ -200,6 +203,9 @@ app.get('/users', userRoute.index);
 
 // user login page
 app.get('/users/login',userRoute.login);
+
+// user edit page
+app.get('/users/edit/:id', userRoute.edit);
 
 // get user by id withour name in url
 app.get('/users/:id', userRoute.findById);

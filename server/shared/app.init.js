@@ -10,6 +10,7 @@ exports.init = function (req) {
         isauth: false,
         userid: '',
         fullname: '',
+        authtype: '',
         context: 'window.init = {};',
         token: ''
     };
@@ -19,6 +20,7 @@ exports.init = function (req) {
         state.isauth = true;
         state.userid = req.signedCookies.u.i;
         state.fullname = req.signedCookies.u.f + ' ' + req.signedCookies.u.l;
+        state.authtype = req.signedCookies.u.a;
         state.context += "window.init.user = { " +
 						"id: '" + req.signedCookies.u.i + "', " +
 						"fname: '" + req.signedCookies.u.f + "', " +

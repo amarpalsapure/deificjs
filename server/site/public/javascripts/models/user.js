@@ -7,6 +7,9 @@
 		reputation: DS.attr('number'),
 		gravtarurl: DS.attr('string'),
 		url: DS.attr('string'),
+		views: DS.attr('string'),
+		about: DS.attr('string'),
+		authtype: DS.attr('string'),
 
 		//relationship property
 		question: DS.belongsTo('question'),
@@ -30,7 +33,15 @@
 		fullname: function(){
 			if(!this.get('firstname') && !this.get('lastname')) return '...';
 			else return this.get('firstname') + ' ' + this.get('lastname');
-		}.property('firstname', 'lastname')
+		}.property('firstname', 'lastname'),
+
+		editprofileurl: function () {
+		    return '/users/edit/' + this.get('id');
+		}.property('id'),
+
+		isappacitiveauth: function () {
+		    return (this.get('authtype') === 'appacitive');
+		}.property('authtype'),
 	});
 
 	Deific.LocalUser = Ember.Object.extend({
