@@ -1,17 +1,23 @@
 <% layout('__layout') -%>
 
-<% script('/javascripts/router/questionRouter.js') -%>
+<%if (environment === 'production') { %>
+    <script type='text/javascript' src='/_min/js/global.combined.js?v=<%=rv%>'></script>
+    <script type='text/javascript' src='/_min/js/question.combined.js?v=<%= rv %>'></script>
+<% } %>
+<%if (environment === 'development') { %>
+    <% script('/javascripts/router/questionRouter.js') -%>
 
-<% script('/javascripts/infra/prettify.js') -%>
-<% script('/javascripts/controllers/baseController.js') -%>
-<% script('/javascripts/controllers/questionController.js') -%>
-<% script('/javascripts/controllers/answerController.js') -%>
+    <% script('/javascripts/infra/prettify.js') -%>
+    <% script('/javascripts/controllers/baseController.js') -%>
+    <% script('/javascripts/controllers/questionController.js') -%>
+    <% script('/javascripts/controllers/answerController.js') -%>
 
-<% script('/javascripts/views/baseView.js') -%>
-<% script('/javascripts/views/questionView.js') -%>
-<% script('/javascripts/views/answerView.js') -%>
-<% script('/javascripts/views/commentView.js') -%>
-<% script('/javascripts/views/tagView.js') -%>
+    <% script('/javascripts/views/baseView.js') -%>
+    <% script('/javascripts/views/questionView.js') -%>
+    <% script('/javascripts/views/answerView.js') -%>
+    <% script('/javascripts/views/commentView.js') -%>
+    <% script('/javascripts/views/tagView.js') -%>
+<% } %>
 
 <script type='text/x-handlebars', data-template-name='question'>
   {{outlet headerBar}} 
@@ -38,11 +44,11 @@
                     <h1>{{answercount}} Answers</h1>
                   </div>
                   <div class='col-xs-12 col-sm-5 col-lg-5'>
-                    <div class='sortGroup mtm btn-group' >
-                      <a id='aactive' href='?sort=active' class='btn btn-danger'>Active</a>
-                      <a id='avotes' href='?sort=votes' class='btn btn-danger'>Votes</a>
-                      <a id='aoldest' href='?sort=oldest' class='btn btn-danger'>Oldest</a>
-                    </div>
+                    <ul class="nav nav-tabs right-nav-tabs" data-default='active'>
+                      <li><a id='aactive' href='?sort=active'>Active</a></li>
+                      <li><a id='avotes' href='?sort=votes'>Votes</a></li>
+                      <li><a id='aoldest' href='?sort=oldest'>Oldest</a></li>
+                    </ul>
                   </div>
                 </div>
               </div>

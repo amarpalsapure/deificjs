@@ -7,7 +7,6 @@ body { background-color: #eef0f3; }
 .footer, .footer .navbar-default { background-color: #888; background-image: none; border: none; }
     .footer .navbar-default .navbar-nav > li > a { color: #eee; text-shadow: none; }
         .footer .navbar-default .navbar-nav > li > a:hover { color: #cdcdcd; }
-    .footer .navbar-default .navbar-nav > li:first-child > a { padding-left: 0px; }
 .footer { border-top: solid 5px #222; min-height: 80px; padding: 10px 0; }
 .searchbox { padding-left: 6px; background-color: #fff; color: #adadad !important; border: 10px solid #52a82b; height: 66px; line-height: 52px; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; }
     .searchbox input { width: 90%; display: inline-block; height: 30px; padding: 4px 6px; margin-bottom: 10px; font-size: 14px; line-height: 20px; color: #555555; vertical-align: middle; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; outline: none; }
@@ -61,9 +60,11 @@ body { background-color: #eef0f3; }
 
 .mainSection .row { padding: 2px 0 6px; }
 
+.right-nav-tabs { margin-bottom: -7px; float: right; }
+.right-nav-tabs a { border-radius: 0px !important; padding: 8px 18px !important; text-transform: lowercase; margin-top: 4px !important; }
+
 .contentTitle { border-bottom: solid 1px #cdcdcd; }
-    .contentTitle h1 { font-size: 1.5em; font-weight: 700; display: inline-block; margin-bottom: 0px; text-transform: capitalize; }
-    .contentTitle .btn-group { float: right; }
+    .contentTitle h1 { font-size: 1.5em; font-weight: 700; display: inline-block; margin-bottom: 0px; text-transform: capitalize; margin-top: 9px; }
     .contentTitle .btn { font-size: 13px; border-radius: 2px; }
 
 .action-question, .action-question:hover { display: inline-block; float: right; margin: 14px 8px 0 0; padding: 4px 8px; background-color: #428bca; color: #fff; cursor: pointer; }
@@ -279,6 +280,7 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
 /* tablets */
 @media screen and (max-width: 980px) {
     .navbar-brand { line-height: 40px; }
+    .right-nav-tabs a { padding: 8px 10px !important; }
     .content .sideSection { display: none; }
     .question-page .col-entity-details { padding-left: 6.4%; margin-left: -4.2%; width: 95%; }
     .vote-cast { margin-left: 3px; }
@@ -292,12 +294,12 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
     textarea,
     input { font-size: 13px; }
     #ulLogin { margin-left: -15px; padding-right: 0px;}
+    .contentTitle div:first-child { padding-bottom: 6px; margin-bottom: 2px !important; border-bottom: dashed 1px #ddd; }
+    .right-nav-tabs { margin-top: 4px; float: left; }
 
     .btn.btn-flat.btn-green { width: 100%; margin-top: 10px; margin-left: 0px; }
     .imglnk, .bubble { display: none; }
-    .contentTitle .btn { font-size: 11px; }
     .contentTitle h1 { font-size: 18px; margin-bottom: 0px; }
-    .contentTitle .btn-group { float: left; }
     .user-profile .spanPosted { display: inline-block; font-weight: 700; font-size: 0.95em; margin-left: 2px; margin-top: 2px; text-transform: lowercase;}
     .question-page .col-entity-details { padding-top: 0px !important; padding-left: 15px; margin-left: 0px; width: 100%; border-left: none; }
     .time-container { margin-left: 0px; }

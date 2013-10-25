@@ -66,7 +66,7 @@
 
 			//highlight the sort order for the answer
 			var sort = $.fn.parseParam('sort', 'active').toLowerCase();
-			$('.sortGroup #' + 'a' +sort).addClass('active');
+			$('.right-nav-tabs #' + 'a' + sort).parent().addClass('active');
 
 			asyncPrettyPrint();
 
@@ -85,32 +85,31 @@
 				$(window).trigger('deificloaded');
 			}, 100);
 
+			function tagFormatResult(tag) {
+			    //add tags to local store, so that api called is not made, when find is done on them
+			    var store = that.controller.get('store');
+			    store.push('tag', {
+			        id: tag.__id,
+			        name: tag.name,
+			        excerpt: tag.excerpt
+			    });
+
+			    //return the html
+			    var markup = "<table class='tag-result'><tr>";
+			    markup += "<td class='tag-info'><div class='tag-name font-bold'>" + tag.name + "</div>";
+			    markup += "<div class='tag-qcount mls font9'>x " + tag.questioncount + "</div>"
+			    if (tag.excerpt) {
+			        markup += "<div class='pas font8'>" + tag.excerpt + "</div>";
+			    }
+			    markup += "</td></tr></table>"
+			    return markup;
+			};
+
+			function tagFormatSelection(tag) {
+			    return tag.name;
+			};
 
 			if($('#tagSearch').length > 0) {
-				function tagFormatResult(tag) {
-					//add tags to local store, so that api called is not made, when find is done on them
-					var store = that.controller.get('store');
-					store.push('tag', {
-						id: tag.__id,
-						name: tag.name,
-						excerpt: tag.excerpt
-					});
-
-					//return the html
-			        var markup = "<table class='tag-result'><tr>";
-			        markup += "<td class='tag-info'><div class='tag-name font-bold'>" + tag.name + "</div>";
-			        markup += "<div class='tag-qcount mls font9'>x "+ tag.questioncount +"</div>"
-			        if (tag.excerpt) {
-			            markup += "<div class='pas font8'>" + tag.excerpt + "</div>";
-			        }
-			        markup += "</td></tr></table>"
-			        return markup;
-			    };
-
-			    function tagFormatSelection(tag) {
-			        return tag.name;
-			    };
-
 				//select2 for tag search
 				$('#tagSearch').select2({
 		            placeholder: { title: 'Search for tag' },

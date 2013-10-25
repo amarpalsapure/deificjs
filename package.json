@@ -9,13 +9,13 @@
     "express": "3.3.5",
     "ejs": "*",
     "ejs-locals": "*",
-    "xmlhttprequest": "1.x",
+    "xmlhttprequest-with-globalagent": "1.x",
     "facebook-node-sdk": "0.2",
-    "phantom": "*",
-    "node-phantom": "*",
     "MD5": "*",
     "express-minify": "*",
     "passport": "*",
-    "passport-twitter": "*"
+    "passport-twitter": "*",
+    "prerender-node": "~0.1.3",
+	"web-combiner": "*"
   }
 }

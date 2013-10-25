@@ -1,13 +1,19 @@
 <% layout('__layout') -%>
 
-<% script('/javascripts/router/edit-userRouter.js') -%>
+<%if (environment === 'production') { %>
+    <script type='text/javascript' src='/_min/js/global.combined.js?v=<%=rv%>'></script>
+    <script type='text/javascript' src='/_min/js/editUser.combined.js?v=<%= rv %>'></script>
+<% } %>
+<%if (environment === 'development') { %>
+    <% script('/javascripts/router/edit-userRouter.js') -%>
 
-<% script('/javascripts/infra/prettify.js') -%>
-<% script('/javascripts/models/user.js') -%>
+    <% script('/javascripts/infra/prettify.js') -%>
+    <% script('/javascripts/models/user.js') -%>
 
-<% script('/javascripts/controllers/userController.js') -%>
+    <% script('/javascripts/controllers/userController.js') -%>
 
-<% script('/javascripts/views/userView.js') -%>
+    <% script('/javascripts/views/userView.js') -%>
+<% } %>
 
 <script type="text/x-handlebars", data-template-name="user">
   {{view Deific.HeaderView}} 

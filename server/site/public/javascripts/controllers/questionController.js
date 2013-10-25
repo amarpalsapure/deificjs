@@ -20,6 +20,7 @@
 					var model = that.get('model');
 					savedObj.set('author', user);
 					savedObj.set('question', model);
+					savedObj.set('isowner', true);
 					model.get('answersMeta').pushObject({
 						__id: savedObj.get('id'),
 						__utcdatecreated: savedObj.get('__utcdatecreated')

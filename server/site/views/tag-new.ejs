@@ -1,0 +1,117 @@
+<% layout('__layout') -%>
+
+<%if (environment === 'production') { %>
+    <script type='text/javascript' src='/_min/js/global.combined.js?v=<%=rv%>'></script>
+    <script type='text/javascript' src='/_min/js/newTag.combined.js?v=<%= rv %>'></script>
+<% } %>
+<%if (environment === 'development') { %>
+    <% script('/javascripts/router/new-tagRouter.js') -%>
+    <% script('/javascripts/infra/prettify.js') -%>
+
+    <% script('/javascripts/controllers/newtagController.js') -%>
+
+    <% script('/javascripts/views/newtagView.js') -%>
+<% } %>
+
+<script type='text/x-handlebars', data-template-name='newtag'>
+{{outlet headerBar}} 
+
+<div class='container'>
+  <div class='content'>
+      <div class='row tag-new-page'>
+      <div class='col-xs-12 col-sm-12 col-lg-9 z-index-1'>
+        <div class='mainSection'>
+            <div id="divSuccess" class="hide">
+                <div class="row">
+                    <div class='col-lg-12'>
+                        <h4 class='mbs mtm'>Tag added successfully</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        Thanks for adding the Tag. Now you can use it to tag any of the new question.
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 mts">
+                        Want more? <a href="#" {{action addmore target="view"}}>Add another Tag</a>
+                    </div>
+                </div>
+            </div>
+            <form id='frmNewTag' class='form-horizontal' role='form'>
+            <div class='form-group mbn'>
+              <div class='col-lg-12'>
+                <h4 class='mbs mts'>Tag Name</h4>
+              </div>
+              <div class='col-lg-12'>
+                {{view Ember.TextField id='txtName' valueBinding='view.tag.name' type='text' class='form-control input-large font110 no-radius'}}
+              </div>
+            </div>
+            <div class='form-group mbs mtm'>
+                <div class='col-lg-12'>
+                    <h4 class='mbs mts'>Excerpt</h4>
+                </div>
+                <div class='col-lg-12'>
+                    {{view Ember.TextArea id='txtExcerpt' valueBinding='view.tag.excerpt' type='text' class='form-control input-large no-radius'}}
+                    <span class="muted font9">enter at least 20 characters</span>
+                </div>
+            </div>
+            <div class='form-group mbm'>
+              <div class='col-lg-12 '>
+                <div id='wmd-button-bar'>
+                </div>
+              </div>
+            </div>
+            <div class='form-group mbm'>
+              <div class='col-lg-12'>
+                {{view Ember.TextArea class='resizable width-100p' id='wmd-input' name='wmd-input' placeholder='You can use Markdown language to write tag description.' valueBinding='view.tag.description'}}
+              </div>
+            </div>
+            <div class='form-group mts'>
+              <div class='col-lg-12'>
+                <small class='muted'>Watch the preview of tag description here.</small>
+                <div id='wmd-preview'></div>
+              </div>
+            </div>
+            <div class='form-group hide'>
+              <div class='col-xs-12 col-sm-12 col-lg-10 col-lg-offset-1'>
+                <div id='wmd-output'>
+                </div>
+              </div>
+            </div>
+            <div class='form-group ptxxl mtl'>
+              <div class='col-lg-12'>
+                  <button id='btnSaveTag' disabled='disabled' class='btn btn-large btn-primary mrm' data-loading-text='Saving Tag' href='javascript:void(0)' {{action 'saveTag' target=view}}>Save Tag</button>
+              </div>
+              <div class='col-lg-12'>
+                  <div class='alert-dismiss-container tagError'>
+                  </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class='col-xs-12 col-sm-12 col-lg-3 z-index-0'>
+        <div class='sideSection'>
+          <div class='row'>
+              <div class="col-lg-12">
+                  <h4>What are Tag Wikis?</h4>
+                   <p>The tag wiki <b>excerpt</b> is a brief plain text introduction to the topic that the tag represents. It is shown at the top of tag question lists, and as a tooltip wherever the tag appears. </p>
+                   <p>The <b>full tag wiki</b> is a detailed introduction to the topic, suitable as a destination for those curious about it:</p>
+                   <ul class="pan mll">
+                        <li>what questions should have this tag?</li>
+                        <li>some basic definitions</li>
+                        <li>brief introduction to the subject</li>
+                        <li>important links for learning more</li>
+                        <li>one reasonably sized page</li>
+                   </ul>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{render 'footer'}} 
+</script>

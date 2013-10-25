@@ -3,7 +3,7 @@ exports.index = function(req, res){
   	var app = require('../../shared/app.init');
 	var state = app.init(req);
 
-	switch(req.param('sort')) {
+	switch(req.param('tab')) {
 		case 'votes':
 			state.title = "Highest Voted Questions";
 			break;

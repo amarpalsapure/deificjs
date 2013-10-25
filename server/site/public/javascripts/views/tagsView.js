@@ -10,8 +10,8 @@
             $('.nav-tags').addClass('active');
 
             //enable the the active link
-            var sort = $.fn.parseParam('sort', $('.sortGroup').data('default')).toLowerCase();
-            $('.sortGroup #' + 'a' + sort).addClass('active');
+            var sort = $.fn.parseParam('tab', $('.right-nav-tabs').data('default')).toLowerCase();
+            $('.right-nav-tabs #' + 'a' + sort).parent().addClass('active');
         },
 
     	submitTextField: Ember.TextField.extend({
@@ -27,7 +27,7 @@
     		var query = this.get('searchtext').trim();
 
             //sort results
-            var sort = $.fn.parseParam('sort', $('.sortGroup').data('default')).toLowerCase();
+    		var sort = $.fn.parseParam('tab', $('.right-nav-tabs').data('default')).toLowerCase();
 
             //page number
             var page = $.fn.parseParam('page', '1');

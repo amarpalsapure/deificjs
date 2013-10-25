@@ -7,6 +7,16 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
+    <link rel="shortcut icon" href="http://www.tavisca.com/live/Uploads/Sites/Tavisca/Themes/tavisca/favicon.ico?v=OWCktKJeMU2q41xqDBaf2w">
+
+
+    <%if (environment === 'production') { %>
+      
+      <link type='text/css' rel='stylesheet' href='/_min/css/global.combined.css?v=<%=rv%>' />
+
+    <% } %>
+    <%if (environment === 'development') { %>
+
     <link type='text/css' rel='stylesheet' href='/stylesheets/bootstrap.css' />
     <link type='text/css' rel='stylesheet' href='/stylesheets/bootstrap-theme.css' />
     <link type='text/css' rel='stylesheet' href='/stylesheets/prettify.css' />
@@ -16,8 +26,10 @@
     <link type='text/css' rel='stylesheet' href='/stylesheets/master-style.css' />
     <link type='text/css' rel='stylesheet' href='/stylesheets/style.css' />
 
+    <% } %>
+
     <script type="text/javascript">
-      <%= context %>  
+        <%= context %>  
     </script>
 
   </head>
@@ -121,7 +133,7 @@
 
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class='collapse navbar-collapse navbar-ex2-collapse'>
-            <ul class='nav navbar-nav navbar-left plxl prxl'>
+            <ul class='nav navbar-nav navbar-left'>
               <li><a href='#'>about</a></li>
               <li><a href='#'>contact us</a></li>
               <li><a href='#'>feedback</a></li>
@@ -132,6 +144,12 @@
       </div>
     </script>
 
+    <%if (environment === 'production') { %>
+      
+      <%- scripts %>
+
+    <% } %>
+    <%if (environment === 'development') { %>
     <script type='text/javascript' src='/javascripts/infra/jquery.js'></script>
     <script type='text/javascript' src='/javascripts/infra/bootstrap.js'></script>
     <script type='text/javascript' src='/javascripts/infra/util.js'></script>
@@ -161,11 +179,13 @@
     <script type='text/javascript' src="/javascripts/infra/commonTemplate.js"></script>
     <script type='text/javascript' src="/javascripts/router/baseRoute.js"></script>
     <script type='text/javascript' src="/javascripts/router/errorRouter.js"></script>
+     
 
     <%- scripts %>
 
     <!-- views -->
     <script type='text/javascript' src="/javascripts/views/headerView.js"></script>
     <script type='text/javascript' src="/javascripts/views/footerView.js"></script>
+    <% } %>
   </body>
 </html>

@@ -14,14 +14,14 @@
 			$('#rootProgress').remove();
 
 			//enable the the active link
-			var sort = $.fn.parseParam('sort', $('.sortGroup').data('default')).toLowerCase();
-			$('.sortGroup #' + 'a' + sort).addClass('active');
+			var sort = $.fn.parseParam('tab', $('.right-nav-tabs').data('default')).toLowerCase();
+			$('.right-nav-tabs #' + 'a' + sort).parent().addClass('active');
 
 			//update the href of all the sort
 			//add query to the href
 			var query = $.fn.parseParam('q');
 			if(query) {
-				$.each($('.sortGroup a'), function(i, ele) {
+			    $.each($('.right-nav-tabs a'), function (i, ele) {
 					$(ele).attr('href', $(ele).attr('href') + '&q=' + query);
 				});
 			}

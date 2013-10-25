@@ -351,7 +351,7 @@ var global = {};
 
 	var _XMLHttpRequest = null;
 
-	_XMLHttpRequest = (global.Appacitive.runtime.isBrowser) ?  XMLHttpRequest : require('xmlhttprequest').XMLHttpRequest;
+	_XMLHttpRequest = (global.Appacitive.runtime.isBrowser) ? XMLHttpRequest : require('xmlhttprequest-with-globalagent').XMLHttpRequest;
 
 	var _XDomainRequest = function(request) {
 	    var xdr = new XDomainRequest();

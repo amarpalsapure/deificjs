@@ -7,7 +7,7 @@ Deific.Router.map(function () {
 
 Deific.QuestionsRoute = Deific.BaseRoute.extend({
 	model: function(){ 
-		var sort = $.fn.parseParam('sort', 'votes');
+	    var sort = $.fn.parseParam('tab', 'votes');
 		var page = $.fn.parseParam('page', '1');
 		return this.get('store').find('question', {
 			sort: sort,

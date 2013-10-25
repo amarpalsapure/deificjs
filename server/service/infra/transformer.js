@@ -425,6 +425,7 @@ var _toError = function(origin, status) {
 				};
 	var errorMap = {
 	    default: 'Something went wrong.',
+        feedback: 'Failed to submit feedback.',
 		question_not_found: 'Question not found, it might be deleted.',
 		question_save: 'Failed to save the question.',
 		question_find_all: 'Looks like something has broken.',
@@ -458,14 +459,17 @@ var _toError = function(origin, status) {
 		answer_accept_undo: 'Failed to undo accepted answer',
 		tag_find: 'Tag not found',
 		user_pwd_reset: 'Failed to reset password.',
-	    user_update: 'Failed to update profile.',
+		user_update: 'Failed to update profile.',
+		invalid_input: 'Invalid input',
+        tag_save: 'Failed to save the tag',
 	};
 	var message = errorMap[origin];
 	if(!message) message = errorMap['default'];
 
 	if (status.code === '19036') message = 'Your session has expired, please <a href="/users/login?returnurl=PATHNAME">login</a> again. Thanks.';
 	if (status.code === '25001') message = 'Old password is invalid';
-	if(origin === 'user_signup' && status.code === '600') message = 'Account already exists for given email address.';
+	if (origin === 'user_signup' && status.code === '600') message = 'Account already exists for given email address.';
+	if (origin === 'tag_save' && status.code === '600') message = "Tag already exists.";
 
 	status.referenceid = status.referenceid || 'notavailble';
 	status.error = message;

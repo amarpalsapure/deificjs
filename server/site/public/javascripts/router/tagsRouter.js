@@ -7,7 +7,7 @@ Deific.Router.map(function () {
 
 Deific.TagsRoute = Deific.BaseRoute.extend({
 	model: function(param){ 
-		var sort = $.fn.parseParam('sort', 'popular');
+		var sort = $.fn.parseParam('tab', 'popular');
 		var page = $.fn.parseParam('page', '1');
 		return this.get('store').find('tag', {
 			sort: sort,

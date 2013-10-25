@@ -13,7 +13,7 @@ exports.all = function(req, res) {
   	var app = require('../../shared/app.init');
 	var state = app.init(req);
 
-	switch(req.param('sort')) {
+	switch(req.param('tab')) {
 		case 'latest':
 			state.title = "Latest Questions";
 			break;
@@ -38,7 +38,7 @@ exports.tagged = function(req, res) {
 
 	state.tag = encodeURIComponent(req.param('tag'));
 
-	switch(req.param('sort')) {
+	switch(req.param('tab')) {
 		case 'latest':
 			state.title = "Latest Questions tagged as '" + req.param('tag') + "'";
 			break;
@@ -88,7 +88,7 @@ exports.ask = function(req, res) {
 	var state = app.init(req);
 
 	//set the title of the page
-	state.title = 'Ask a Question - ' + state.title;
+	state.title = 'Ask a Question';
 
 	//initialize the context
 	var context = require('../../shared/context');

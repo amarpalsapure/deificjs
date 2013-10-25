@@ -34,10 +34,10 @@
             //if tab are not preset trigger editors code
 
             //enable the the active link
-            var tab = $.fn.parseParam('tab', $('.tabGroup').data('default'));
+            var tab = $.fn.parseParam('tab', $('.right-nav-tabs').data('default'));
             if (tab) {
                 tab = tab.toLowerCase();
-                $('.tabGroup #' + 'a' + tab).addClass('active');
+                $('.right-nav-tabs #' + 'a' + tab).parent().addClass('active');
 
                 var count = model.get('entities').get('length');
 

@@ -3,7 +3,8 @@
 // 1) find question by Id (query string will have question id)
 // 2) find question by Tag (query string will have tag)
 // 3) find all questions (no query search string)
-exports.findQuestion = function(req, res) {
+exports.findQuestion = function (req, res) {
+    
 	if(req.param('qId')) return _findById(req, res);
 	else if(req.param('tag')) return _tagSearch(req, res);
 	else return _findAll(req, res);
@@ -194,6 +195,9 @@ var _tagSearch = function(req, res) {
 		case 'active':
 			orderBy = '__utclastupdateddate';
 			break;
+	    case 'unresolved':
+	        filter = Appacitive.Filter.And(filter, Appacitive.Filter.Property('isanswered').equalTo(false));
+	        break;
 	}
 
 	var getQuestions = function(onsuccess, onfailure) {

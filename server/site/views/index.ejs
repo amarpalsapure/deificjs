@@ -1,10 +1,16 @@
 <% layout('__layout') -%>
 
-<% script('/javascripts/router/indexRouter.js') -%>
-<% script('/javascripts/controllers/baseController.js') -%>
-<% script('/javascripts/controllers/questionController.js') -%>
-<% script('/javascripts/views/questionsView.js') -%>
-<% script('/javascripts/views/tagView.js') -%>
+    <%if (environment === 'production') { %>
+        <script type='text/javascript' src='/_min/js/global.combined.js?v=<%=rv%>'></script>
+        <script type='text/javascript' src='/_min/js/index.combined.js?v=<%= rv %>'></script>
+    <% } %>
+    <%if (environment === 'development') { %>
+        <% script('/javascripts/router/indexRouter.js') -%>
+        <% script('/javascripts/controllers/baseController.js') -%>
+        <% script('/javascripts/controllers/questionController.js') -%>
+        <% script('/javascripts/views/questionsView.js') -%>
+        <% script('/javascripts/views/tagView.js') -%>
+    <% } %>
 
 <script type='text/x-handlebars', data-template-name='questions'>
   {{outlet headerBar}}
@@ -19,12 +25,12 @@
                 <h1 class='mtm' id='h1Sortedby'></h1>
               </div>
               <div class="col-xs-12 col-sm-5 col-lg-5">
-                <div class="sortGroup btn-group" data-default='latest'>
-                  <a id='alatest' href='/?sort=latest' class="btn btn-danger">Latest</a>
-                  <a id='avotes' href='/?sort=votes' class="btn btn-danger">Votes</a>
-                  <a id='aactive' href='/?sort=active' class="btn btn-danger">Active</a>
-                  <a id='aunresolved' href='/?sort=unresolved' class="btn btn-danger">Unresolved</a>
-                </div>
+                <ul class="nav nav-tabs right-nav-tabs" data-default='latest'>
+                  <li><a id='alatest' href='/?tab=latest'>Latest</a></li>
+                  <li><a id='avotes' href='/?tab=votes'>Votes</a></li>
+                  <li><a id='aactive' href='/?tab=active'>Active</a></li>
+                  <li><a id='aunresolved' href='/?tab=unresolved'>Unresolved</a></li>
+                </ul>
               </div>
             </div>
             <div class='question-list'>

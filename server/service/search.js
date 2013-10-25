@@ -58,7 +58,7 @@ exports.search = function(req, res) {
 		Appacitive.Article.multiGet({ 
 		    schema: 'user',
 		    ids: userIds,
-		    fields: ['firstname,lastname,email,$answerdowncount,$answerupcount,$correctanswercount,$questiondowncount,$questionupcount']// this denotes the fields to be returned in the article object, to avoid increasing the payload : optional
+		    fields: ['firstname,lastname,email,$entitydowncount,$entityupcount,$correctanswercount']
 		}, onsuccess, onfailure);
 	};
 

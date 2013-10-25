@@ -1,24 +1,22 @@
 
-/**
- * Module dependencies.
- */
-
+//Module dependencies.
 var express = require('express');
 var engine = require('ejs-locals');
 var minify = require('express-minify');
 var passport = require('passport');
 var util = require('util');
 var TwitterStrategy = require('passport-twitter').Strategy;
+var http = require('http');
+var path = require('path');
+var cacheControl = require('./server/node_module_ext/cache-control');
 
+// routes
 var routes = require('./server/site/routes');
 var userRoute = require('./server/site/routes/user');
 var questionRoute = require('./server/site/routes/question');
 var searchRoute = require('./server/site/routes/search');
 var tagRoute = require('./server/site/routes/tag');
-var http = require('http');
-var path = require('path');
-process.config = require('./server/shared/configuration').load();
-//var googlebot = require("./server/googlebot.js");
+var feedbackRoute = require('./server/site/routes/feedback');
 
 // api
 var questionApi = require('./server/service/question.js');
@@ -28,15 +26,17 @@ var commentApi = require('./server/service/comment.js');
 var tagApi = require('./server/service/tag.js');
 var searchApi = require('./server/service/search.js');
 var callbackHandlerApi = require('./server/service/callbackHandlers.js');
+var feedbackApi = require('./server/service/feedback.js');
 
+// load the config
+process.config = require('./server/shared/configuration').load();
 
-
-passport.serializeUser(function(user, done) {
-  done(null, user);
+passport.serializeUser(function (user, done) {
+    done(null, user);
 });
 
-passport.deserializeUser(function(obj, done) {
-  done(null, obj);
+passport.deserializeUser(function (obj, done) {
+    done(null, obj);
 });
 
 
@@ -56,13 +56,16 @@ if (process.config.twitter_consumer_key != '' && process.config.twitter_consumer
     ));
 }
 
-
 var app = express();
 app.use(express.compress());
 
-console.log(app.get('env'));
+// only production
 if ('production' == app.get('env')) {
-	app.use(minify({ cache: path.join(__dirname, 'server/site/public/_cache') }));
+    // enable minification of static content
+    app.use(minify({ cache: path.join(__dirname, 'server/site/public/_cache') }));
+
+    // add resource combiner
+    require('./server/node_module_ext/combiner.js').initialize(__dirname);
 }
 
 // all environments
@@ -70,100 +73,100 @@ app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/server/site/views');
 app.set('view engine', 'ejs');
 app.engine('ejs', engine);
-//app.use(googlebot());
-app.use(express.favicon());
+
+// prerender html (for google bot)
+app.use(require('prerender-node'));
+
+// express related stuff
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.cookieParser('9b7c1f44590b46e509db'));
 app.use(express.session());
+app.use(app.router);
+app.use(express.static(path.join(__dirname, 'server/site/public'), { maxAge: Infinity }));
 
+// passport related stuff
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(app.router);
-app.use(express.static(path.join(__dirname, 'server/site/public')));
-
 // development only
+process.config.environment = app.get('env');
 if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
+    app.use(express.errorHandler());
 }
+
 
 // ***************************************************
 // ****************** Service route ******************
 // ***************************************************
 
 // ################# question api ####################
-function noCacheRequest() {
-	return function(req, res, next) {
-		res._no_minify = true;
-		res.header("Cache-Control", "no-cache, no-store, must-revalidate");
-		res.header("Pragma", "no-cache");
-		res.header("Expires", 0);
-		next();
-	};
-};
-
 // get all question
-app.get('/service/questions', noCacheRequest(), questionApi.findQuestion);
+app.get('/service/questions', cacheControl.timeCacheRequest, questionApi.findQuestion);
 // save question
-app.post('/service/questions', noCacheRequest(), questionApi.save);
+app.post('/service/questions', cacheControl.noCacheRequest, questionApi.save);
 // update question
-app.put('/service/questions/:id', noCacheRequest(), questionApi.update);
+app.put('/service/questions/:id', cacheControl.noCacheRequest, questionApi.update);
 // delete question
-app.delete('/service/questions/:id', noCacheRequest(), questionApi.del);
+app.delete('/service/questions/:id', cacheControl.noCacheRequest, questionApi.del);
 
 
 // ################# answer api ####################
 // get answer
-app.get('/service/answers/:id', noCacheRequest(), answerApi.findById);
+app.get('/service/answers/:id', cacheControl.noCacheRequest, answerApi.findById);
 // save answer
-app.post('/service/answers', noCacheRequest(), answerApi.save);
+app.post('/service/answers', cacheControl.noCacheRequest, answerApi.save);
 // update answer
-app.put('/service/answers/:id', noCacheRequest(), answerApi.update);
+app.put('/service/answers/:id', cacheControl.noCacheRequest, answerApi.update);
 // delete comment
-app.delete('/service/answers/:id', noCacheRequest(), answerApi.del);
+app.delete('/service/answers/:id', cacheControl.noCacheRequest, answerApi.del);
 
 
 // ################# user api ####################
 // get all users
-app.get('/service/users', noCacheRequest(), userApi.findAll);
+app.get('/service/users', cacheControl.timeCacheRequest, userApi.findAll);
 // get user
-app.get('/service/users/:id', noCacheRequest(), userApi.findById);
+app.get('/service/users/:id', cacheControl.timeCacheRequest, userApi.findById);
 // update user
-app.put('/service/users/:id', noCacheRequest(), userApi.update);
+app.put('/service/users/:id', cacheControl.noCacheRequest, userApi.update);
 // authenticate user
-app.post('/service/users/auth', noCacheRequest(), userApi.auth);
+app.post('/service/users/auth', cacheControl.noCacheRequest, userApi.auth);
 // authenticate user using facebook
-app.post('/service/users/fbauth', noCacheRequest(), userApi.fbauth);
+app.post('/service/users/fbauth', cacheControl.noCacheRequest, userApi.fbauth);
 // logout user
-app.post('/service/users/logout', noCacheRequest(), userApi.logout);
+app.post('/service/users/logout', cacheControl.noCacheRequest, userApi.logout);
 // register user
-app.post('/service/users/register', noCacheRequest(), userApi.register);
+app.post('/service/users/register', cacheControl.noCacheRequest, userApi.register);
 // recover password
-app.post('/service/users/recover', noCacheRequest(), userApi.recover);
+app.post('/service/users/recover', cacheControl.noCacheRequest, userApi.recover);
 // reset password
-app.post('/service/users/reset', noCacheRequest(), userApi.reset);
+app.post('/service/users/reset', cacheControl.noCacheRequest, userApi.reset);
 
 // ################# comment api ####################
 // save comment
-app.post('/service/comments', noCacheRequest(), commentApi.save)
+app.post('/service/comments', cacheControl.noCacheRequest, commentApi.save)
 // delete comment
-app.delete('/service/comments/:id', noCacheRequest(), commentApi.del);
+app.delete('/service/comments/:id', cacheControl.noCacheRequest, commentApi.del);
 
 // ################# tag api ####################
 // find tag
-app.get('/service/tags', noCacheRequest(), tagApi.findAll)
+app.get('/service/tags', cacheControl.timeCacheRequest, tagApi.findAll)
 // find tag by id
-app.get('/service/tags/:id', noCacheRequest(), tagApi.findById);
+app.get('/service/tags/:id', cacheControl.timeCacheRequest, tagApi.findById);
+// save tag
+app.post('/service/tags/add', cacheControl.noCacheRequest, tagApi.save);
 
 // ################# search api ####################
 // free text search
-app.get('/service/entities', noCacheRequest(), searchApi.search);
+app.get('/service/entities', cacheControl.timeCacheRequest, searchApi.search);
 
 
 // ################# call back handler api ####################
+app.post('/service/callback/entitycreate', cacheControl.noCacheRequest, callbackHandlerApi.entitycreate);
 
+// ################ feedback #######################
+app.post('/service/feedback', feedbackApi.send);
 
 
 // *************************************************
@@ -202,7 +205,7 @@ app.get('/a/:qid/:aid', questionRoute.miniindex);
 app.get('/users', userRoute.index);
 
 // user login page
-app.get('/users/login',userRoute.login);
+app.get('/users/login', userRoute.login);
 
 // user edit page
 app.get('/users/edit/:id', userRoute.edit);
@@ -217,12 +220,16 @@ app.get('/users/:id/:title', userRoute.findById);
 // ################ search #######################
 app.get('/search', searchRoute.search);
 
-
 // ################ tags #######################
 // all tags page
 app.get('/tags', tagRoute.index);
+// add new tag
+app.get('/tags/add', tagRoute.add);
 // it renders the same page as all questions for a given tag
 app.get('/tags/:tag', questionRoute.tagged);
+
+// ################ feedback #######################
+app.get('/feedback', feedbackRoute.index);
 
 // GET /auth/twitter
 // Use passport.authenticate() as route middleware to authenticate the
@@ -231,9 +238,9 @@ app.get('/tags/:tag', questionRoute.tagged);
 // the user back to this application at /auth/twitter/callback
 app.get('/auth/twitter',
   passport.authenticate('twitter'),
-  function(req, res){
-    // The request will be redirected to Twitter for authentication, so this
-    // function will not be called.
+  function (req, res) {
+      // The request will be redirected to Twitter for authentication, so this
+      // function will not be called.
   });
 
 // GET /auth/twitter/callback
@@ -243,38 +250,38 @@ app.get('/auth/twitter',
 // which, in this example, will redirect the user to the home page.
 app.get('/auth/twitter/callback',
   	passport.authenticate('twitter', { failureRedirect: '/users/login?tl=1' }),
-  	function(req, res) {
-	  	//initialize the SDK
-	  	var sdk = require('./server/service/appacitive.init');
-		var Appacitive = sdk.init();
+  	function (req, res) {
+  	    //initialize the SDK
+  	    var sdk = require('./server/service/appacitive.init');
+  	    var Appacitive = sdk.init();
 
-		var authRequest = {
-			'type': 'twitter',
-		  	'oauthtoken': req.user.token,
-		  	'oauthtokensecret': req.user.tokenSecret,
-		  	'createnew': true
-		}
+  	    var authRequest = {
+  	        'type': 'twitter',
+  	        'oauthtoken': req.user.token,
+  	        'oauthtokensecret': req.user.tokenSecret,
+  	        'createnew': true
+  	    }
 
-		Appacitive.Users.authenticateUser(authRequest, function(){ 
-		  	res.cookie('u', {
-				i: authResult.user.id(),
-				f: authResult.user.get('firstname'),
-				l: authResult.user.get('lastname'),
-				e: authResult.user.get('email'),
-				t: authResult.token
-			},{
-				signed: true,
-				maxAge: 30*24*60*60*1000, //30 days
-				httpOnly: true
-			});
-			res.redirect('/users/login?tl=0');
-		}, function(error) {
-			res.redirect('/users/login?tl=1');			  		
-		}, 'twitter');
-	}
+  	    Appacitive.Users.authenticateUser(authRequest, function () {
+  	        res.cookie('u', {
+  	            i: authResult.user.id(),
+  	            f: authResult.user.get('firstname'),
+  	            l: authResult.user.get('lastname'),
+  	            e: authResult.user.get('email'),
+  	            t: authResult.token
+  	        }, {
+  	            signed: true,
+  	            maxAge: 30 * 24 * 60 * 60 * 1000, //30 days
+  	            httpOnly: true
+  	        });
+  	        res.redirect('/users/login?tl=0');
+  	    }, function (error) {
+  	        res.redirect('/users/login?tl=1');
+  	    }, 'twitter');
+  	}
 );
 
 
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+http.createServer(app).listen(app.get('port'), function () {
+    console.log('Express server listening on port ' + app.get('port'));
 });

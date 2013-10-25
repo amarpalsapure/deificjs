@@ -8,6 +8,8 @@ input { border: solid 1px #ddd;}
 .font9 { font-size: 0.9em;}
 .font85 { font-size: 0.85em;}
 .font8 { font-size: 0.8em;}
+.verticle-super { vertical-align: super; }
+.text-no-underline, .text-no-underline:hover {text-decoration: none;}
 .font-bold { font-weight: bold; }
 .no-padding {padding: 0px;}
 .no-padding-left {padding-left: 0px;}

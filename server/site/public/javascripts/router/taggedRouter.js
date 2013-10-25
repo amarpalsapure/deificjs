@@ -11,7 +11,7 @@ Deific.QuestionsRoute = Deific.BaseRoute.extend({
 		var tagName = split.pop();
 		if (tagName === '') tagName = split.pop();
 		if(tagName === '') window.location = '/error.html';
-		var sort = $.fn.parseParam('sort', 'votes');
+		var sort = $.fn.parseParam('tab', 'votes');
 		var page = $.fn.parseParam('page', '1');
 		return this.get('store').find('question', {
 			tag: decodeURI(tagName),

@@ -5,7 +5,7 @@ Deific.Router.map(function () {
 	this.resource('error', {path: '/error'});
 });
 Deific.Router.reopen({
-	location: 'none'
+    location: 'none'
 });
 Deific.ErrorView = Ember.View.extend({
 	didInsertElement: function() {

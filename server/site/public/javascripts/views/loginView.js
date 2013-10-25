@@ -209,7 +209,7 @@
 
 		showCreateAccount: function() {
 			this.__hideView();
-			$('#title').html('Create '+ window.init.config.brand +' Account');
+			$('#title').html('Create DeepThought Account');
 			this.set('showSignup', true);
 		},
 

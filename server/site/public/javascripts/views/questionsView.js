@@ -14,9 +14,10 @@
 			if(window.location.pathname.indexOf('/questions') === 0) $('.nav-questions').addClass('active');
 
 			//enable the the active link
-			var sort = $.fn.parseParam('sort', $('.sortGroup').data('default')).toLowerCase();
-			$('.sortGroup #' + 'a' + sort).addClass('active');
+			var sort = $.fn.parseParam('tab', $('.right-nav-tabs').data('default')).toLowerCase();
+			$('.right-nav-tabs #' + 'a' + sort).parent().addClass('active');
 			
+            if(sort === 'votes') sort = 'Highest Voted'
 			$("#h1Sortedby").html(sort + ' questions');
 
 			//cleanup html

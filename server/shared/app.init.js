@@ -2,6 +2,7 @@ exports.init = function (req) {
     var config = require('../shared/configuration').load();
 
     var state = {
+        environment: process.config.environment,
         debug: false,
         brand: process.config.brand,
         title: process.config.brand,
@@ -32,7 +33,7 @@ exports.init = function (req) {
     }
     var isfbenabled = false, istwitterenbalbed = false;
     if (process.config.fbappid != '') isfbenabled = true;
-    if (process.config.twitter_consumer_key!= '') istwitterenbalbed = true;
+    if (process.config.twitter_consumer_key != '') istwitterenbalbed = true;
     state.context += "window.init.config = { " +
 					 	"maxpagecount: " + parseInt(process.config.maxpagecount) + "," +
 					 	"env: '" + process.config.env + "'," +
@@ -47,6 +48,8 @@ exports.init = function (req) {
         if (req.param('debug') === 'on') req.session.debug = true;
         else if (req.param('debug') === 'off') req.session.debug = false;
     }
+    //resource version (js and css)
+    state.rv = process.config.rv;
     state.debug = req.session.debug;
     return state;
 };

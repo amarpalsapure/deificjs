@@ -31,7 +31,7 @@ exports.login = function(req, res){
 	var state = app.init(req);
 
 	//set the title of the page
-	state.title = 'Log In - ' + state.brand;
+	state.title = 'Log In';
 
 	//initialize the context
 	var context = require('../../shared/context');

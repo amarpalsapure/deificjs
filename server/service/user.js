@@ -57,7 +57,7 @@ var _findAll = function(req, res) {
 						filter: filter,
 						pageNumber: pagenumber,
 						isAscending: isAscending,
-						pageSize: 8
+						pageSize: 20
 					});
 
 	query.fetch(function (users, paginginfo) {

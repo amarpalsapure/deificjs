@@ -26,7 +26,9 @@
 		}.property('gravtarurl'),
 
 		largeimgurl: function() {
-			if(this.get('gravtarurl')) return this.get('gravtarurl') + '?s=128';
+		    if (this.get('gravtarurl'))
+		        if (window.host.indexOf('localhost:3000') === -1) return this.get('gravtarurl') + '?s=128&d=' + encodeURI(window.host + '/images/user-default-large.png');
+		        else return this.get('gravtarurl') + '?s=128&d=' + encodeURI('https://raw.github.com/amarpalsapure/deificjs/master/server/site/public/images/user-default.png');
 			else return '/images/user-default.png';
 		}.property('gravtarurl'),
 
