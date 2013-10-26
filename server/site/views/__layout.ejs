@@ -87,16 +87,18 @@
         <div class='sub-header'>
           <div class='row'>
             <div class='mainSection col-xs-12 col-sm-12 col-lg-9'>
-              <div class='row'>
+              <div class='row header-search'>
+                <form>
                 <div class='col-xs-12 col-sm-10 col-lg-10'>
                   <div class='searchbox'>
                     {{view view.submitTextField valueBinding='view.searchtext' type='text' class='noborder noboxshadow' placeholder='Search questions and answers...'}}
                   </div>
                 </div>
-                <div class="pull-left mtl imglnk width2per"><img src="/images/img_searchlnk.png" alt=" " longdesc="#." style="width:100%;"></div>
+                <div class="pull-left mtl imglnk width2per"><span class="imglnkhover"></span></div>
                 <div class='col-xs-12 col-sm-2 col-lg-2'>
                   <button {{action search target=view}} class="btn btn-flat btn-green">Search</button>
                 </div>        
+                </form>
               </div> 
             </div>
             <div class='sideSection col-xs-12 col-sm-12 col-lg-3'>

@@ -11,11 +11,17 @@ body { background-color: #eef0f3; }
 .searchbox { padding-left: 6px; background-color: #fff; color: #adadad !important; border: 10px solid #52a82b; height: 66px; line-height: 52px; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; }
     .searchbox input { width: 90%; display: inline-block; height: 30px; padding: 4px 6px; margin-bottom: 10px; font-size: 14px; line-height: 20px; color: #555555; vertical-align: middle; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; outline: none; }
 .btn.btn-flat.btn-green { background: #52a82b; color: #fff; font-size: 112.5%; width: 106%; text-decoration: none; font-family: 'Open Sans', sans-serif; font-weight: 600; border-bottom: 1px solid #777879; line-height: 52px; padding-left: 34px; padding-right: 34px; border-left: none !important; margin-left: -9px; }
+.imglnk { margin-left: -15px; margin-right: -15px; width: 22px; height: 24px; background: transparent url(/images/img_searchlnk.png) no-repeat; }
+.header-search:hover .btn.btn-flat.btn-green{ background: #39990e; text-decoration: none; }
+.header-search:hover .searchbox { border: 10px solid #39990e; }
+.header-search:hover .imglnk, .imglnkhover { background: transparent url(/images/img_searchlnk.hover.png) no-repeat; }
+
+.btn.btn-flat.btn-green { background: #52a82b; color: #fff; font-size: 112.5%; width: 106%; text-decoration: none; font-family: 'Open Sans', sans-serif; font-weight: 600; border-bottom: 1px solid #777879; line-height: 52px; padding-left: 34px; padding-right: 34px; border-left: none !important; margin-left: -9px; }
     .btn.btn-flat.btn-green:hover { background: #39990e; text-decoration: none; }
 .imglnk { margin-left: -15px; margin-right: -15px; }
 .btn.btn-flat.btn-skyblue { background: #0db0ff; color: #fff; font-size: 112.5%; width: 100%; text-decoration: none; font-family: 'Open Sans', sans-serif; font-weight: 600; border-bottom: 1px solid #777879; padding-left: 59px; padding-right: 59px; }
     .btn.btn-flat.btn-skyblue:hover { background: #01608e; text-decoration: none; }
-.icon_ask { background: url(../images/icon_ask.png) left center no-repeat; height: 54px; width: 24px; display: inline-block; line-height: 54px; margin-right: 3px; }
+.icon_ask { background: url(/images/icon_ask.png) left center no-repeat; height: 54px; width: 24px; display: inline-block; line-height: 54px; margin-right: 3px; }
 .answer .entity-container { padding-bottom: 50px !important; }
 .bubble { border: solid 15px #eee; border-radius: 15px; float: left; margin-top: -8px; margin-left: 5px;}
 .user-profile img { box-shadow: 1px 1px 3px #ccc; width: 40px;}
@@ -116,7 +122,7 @@ body { background-color: #eef0f3; }
 .entity-action-menu .owner > a { border-left: solid 1px #aaa;}
 .entity-action-menu .popover-content { padding: 7px 12px; }
 .comment-add { display: inline-block; }
-.comment-add-action { width: 16px; height: 16px; background: transparent url('../images/comment-add.png') no-repeat; display: block; }
+.comment-add-action { width: 16px; height: 16px; background: transparent url('/images/comment-add.png') no-repeat; display: block; }
 .action-delete-entity-error { position: absolute; right: 15px; top: 35px; z-index: 100; }
 
 .share-popup, .share-popup input { width: 200px; font-size: 0.9em; }
@@ -162,8 +168,8 @@ body { background-color: #eef0f3; }
 .arrow-container { position: absolute; left: -10px; top: 14px; z-index: 100; }
 .correct-answer { display: block; margin-top: 12px; }
 .checked, .unchecked { width: 40px; height: 36px; display: inline-block;  }
-.checked { background: transparent url(../images/checked.png) center center no-repeat; }
-.unchecked { background: transparent url(../images/unchecked.png) center center no-repeat; }
+.checked { background: transparent url(/images/checked.png) center center no-repeat; }
+.unchecked { background: transparent url(/images/unchecked.png) center center no-repeat; }
 .voteError, .answerError, .tagError, .logoutError { position: relative; }
 .voteError .alert { position: absolute; width: 290px; top: 12px; padding: 8px 14px 6px;}
 .answerError .alert, .tagError .alert, .logoutError .alert { position: absolute; padding: 8px 14px 6px; top: 10px; z-index: 1; }
@@ -185,7 +191,7 @@ body { background-color: #eef0f3; }
 .comment-error .alert { position: absolute; right: 0px; z-index: 1; }
 .showMore, .showMore:hover { padding: 0px 18px; background-color: #eee; color: #666; display: inline-block; text-decoration: none; line-height: 1.3em; }
 
-div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll center 2px; border-color: #DDDDDD; border-style: solid; border-width: 0pt 1px 1px; cursor: s-resize; height: 9px; overflow: hidden; }
+div.grippie { background: #eeeeee url(/images/grippie.png) no-repeat scroll center 2px; border-color: #DDDDDD; border-style: solid; border-width: 0pt 1px 1px; cursor: s-resize; height: 9px; overflow: hidden; }
 
 .wmd-panel { margin-left: 25%; margin-right: 25%; width: 50%; min-width: 500px; }
 
@@ -200,7 +206,7 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
 /* sprite button slicing style information */
 #wmd-button-bar { background-color: #FEFEFE; border: 1px solid #DDD; margin-bottom: 4px; padding: 0px 3px 5px; margin-top: 15px;}
 #wmd-button-bar #wmd-button-row { position: relative; margin: 10px 5px 5px 5px; padding: 0px; height: 20px; background: #fff; }
-#wmd-button-bar #wmd-button-row .wmd-button { width: 20px; height: 20px; margin-left: 5px; margin-right: 5px; position: absolute; background: url(../images/wmd-buttons.png) no-repeat; display: inline-block; list-style: none; }
+#wmd-button-bar #wmd-button-row .wmd-button { width: 20px; height: 20px; margin-left: 5px; margin-right: 5px; position: absolute; background: url(/images/wmd-buttons.png) no-repeat; display: inline-block; list-style: none; }
 #wmd-button-bar #wmd-button-row .wmd-spacer { width: 1px; height: 20px; margin-left: 14px; position: absolute; background-color: Silver; display: inline-block; list-style: none; }
 #wmd-button-bar #wmd-button-row #wmd-bold-button { left: 0px; background-position: 0px 0; }
 #wmd-button-bar #wmd-button-row #wmd-italic-button { left: 25px; background-position: -20px 0; }
@@ -238,7 +244,7 @@ div.grippie { background: #eeeeee url(../images/grippie.png) no-repeat scroll ce
 .login-nav a span { display: block; font-size: 1.8em !important;}
 .login-nav .btn.btn-flat.btn-skyblue { width: auto; }
 .lgn-cancel { vertical-align: bottom; line-height: 31px; }
-.icon_fb { background: url(../images/facebook.png) left center no-repeat; height: 32px; width: 32px; display: inline-block; line-height: 32px; margin-right: 3px; }
+.icon_fb { background: url(/images/facebook.png) left center no-repeat; height: 32px; width: 32px; display: inline-block; line-height: 32px; margin-right: 3px; }
 
 .tags-list .tag-details-container { min-height: 160px; }
 .tags-list .tag-details > div {display: inline;}
