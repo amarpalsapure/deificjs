@@ -63,6 +63,9 @@
                   </a>
                   <ul class='dropdown-menu font9'>
                     <li><a href='/users/<%= userid %>'>My Profile</a></li>
+                    <%if (isSA === true) { %>
+                        <li><a href='/admin/setup'>Manage Application</a></li>
+                    <% } %>
                     <li><a href='javascript:void(0)' {{action signOut target=view}}>Logout</a></li>
                   </ul>
                 </li>

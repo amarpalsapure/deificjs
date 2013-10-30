@@ -22,6 +22,7 @@ exports.init = function (req) {
         state.userid = req.signedCookies.u.i;
         state.fullname = req.signedCookies.u.f + ' ' + req.signedCookies.u.l;
         state.authtype = req.signedCookies.u.a;
+        state.isSA = process.config.sa.indexOf(req.signedCookies.u.e) === 0;
         state.context += "window.init.user = { " +
 						"id: '" + req.signedCookies.u.i + "', " +
 						"fname: '" + req.signedCookies.u.f + "', " +

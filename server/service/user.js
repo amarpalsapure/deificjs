@@ -376,7 +376,7 @@ exports.auth = function(req, res){
 			i: authResult.user.id(),
 			f: authResult.user.get('firstname'),
 			l: authResult.user.get('lastname'),
-			e: authResult.user.get('email'),
+			e: authResult.user.get('email').toLowerCase(),
             a: 'appacitive',
 			t: authResult.token
 		},{
