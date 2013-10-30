@@ -1,0 +1,17 @@
+﻿appId=
+apikey=
+env=
+sa=
+allowsignup=
+brand=
+host=
+feedbackemail=
+fbappid=
+twitter_consumer_key=
+twitter_consumer_secret=
+upvotepts=
+downvotepts=
+answerpts=
+pagesize=
+maxpagecount=
+comments=

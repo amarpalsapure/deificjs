@@ -1,0 +1,232 @@
+<% layout('../__layout') -%>
+
+    <%if (environment === 'production') { %>
+        <script type='text/javascript' src='/_min/js/global.combined.js?v=<%=rv%>'></script>
+        <script type='text/javascript' src='/_min/js/index.combined.js?v=<%= rv %>'></script>
+    <% } %>
+    <%if (environment === 'development') { %>
+        <% script('/javascripts/router/admin/indexRouter.js') -%>
+        <% script('/javascripts/controllers/admin/configurationController.js') -%>
+        <% script('/javascripts/models/admin/configuration.js') -%>
+        <% script('/javascripts/views/admin/configurationView.js') -%>
+    <% } %>
+
+<script type='text/x-handlebars', data-template-name='configurations'>
+  {{outlet headerBar}}
+  
+  <div class='container'>
+    <div class='content'>
+      <div class='row question-list-page'>
+        <div class='col-xs-12 col-sm-12 col-lg-9 z-index-1'>
+          <div class='mainSection'>
+            <div class='row border-bottom-dark'>
+              <div class='col-lg-12'>
+                <h3 class='mtm mbn'>Configurations</h3>
+              </div>
+            </div>
+            <div class='configurations ptm'>
+                <div class="row">
+                    <div class="col-lg-12 pbm">
+                        <h4 class="display-inline mrs">Application Settings</h4><span class="muted font8">(all are required fields)</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3 col-lg-3 config-label">
+                        Brand Name
+                    </div>
+                    <div class="col-xs-12 col-sm-9 col-lg-9 config-value">
+                        {{view Ember.TextField valueBinding='view.brand' type='text' placeholder='Your brand name (appears in title by default)'}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3 col-lg-3 config-label">
+                        Appacitive App Id
+                    </div>
+                    <div class="col-xs-12 col-sm-9 col-lg-9 config-value">
+                        {{view Ember.TextField valueBinding='view.appId' type='text' placeholder='Can be obtained from Appacitive Portal'}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3 col-lg-3 config-label">
+                        API Key
+                    </div>
+                    <div class="col-xs-12 col-sm-9 col-lg-9 config-value">
+                        {{view Ember.TextField valueBinding='view.apikey' type='text' placeholder='API Key fo the Appacitive Application'}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3 col-lg-3 config-label">
+                        Environment
+                    </div>
+                    <div class="col-xs-12 col-sm-9 col-lg-9 config-value">
+                        {{view Ember.TextField valueBinding='view.env' type='text' placeholder='Target Appacitive Environment'}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3 col-lg-3 config-label">
+                        System Admins
+                    </div>
+                    <div class="col-xs-12 col-sm-9 col-lg-9 config-value">
+                        {{view Ember.TextField valueBinding='view.sa' type='text' placeholder='Comma seperated email list of Admin Users'}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3 col-lg-3 config-label">
+                        Application Host
+                    </div>
+                    <div class="col-xs-12 col-sm-9 col-lg-9 config-value">
+                        {{view Ember.TextField valueBinding='view.host' type='text' placeholder='By default it is http://localhost:3000'}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3 col-lg-3 config-label">
+                        Allow Signups
+                    </div>
+                    <div class="col-xs-12 col-sm-9 col-lg-9 config-value">
+                        {{view Ember.TextField valueBinding='view.allowsignup' type='text' placeholder='If signup is allowed, user will able to create account in this app.'}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3 col-lg-3 config-label">
+                        Feedback Email
+                    </div>
+                    <div class="col-xs-12 col-sm-9 col-lg-9 config-value">
+                        {{view Ember.TextField valueBinding='view.feedbackemail' type='text' placeholder='Comma seperated list of email address'}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 pbm ptl">
+                        <h4 class="ptm display-inline mrs">Social Setup</h4><span class="muted font8">(optional fields)</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3 col-lg-3 config-label">
+                        Facebook App Id
+                    </div>
+                    <div class="col-xs-12 col-sm-9 col-lg-9 config-value">
+                        {{view Ember.TextField valueBinding='view.fbappid' type='text' placeholder='Allows users to login with facebook'}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3 col-lg-3 config-label">
+                        Twitter Consumer Key
+                    </div>
+                    <div class="col-xs-12 col-sm-9 col-lg-9 config-value">
+                        {{view Ember.TextField valueBinding='view.twitter_consumer_key' type='text' placeholder='Allows users to login with twitter'}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3 col-lg-3 config-label">
+                        Twitter Consumer Secret
+                    </div>
+                    <div class="col-xs-12 col-sm-9 col-lg-9 config-value">
+                        {{view Ember.TextField valueBinding='view.twitter_consumer_secret' type='text' placeholder=''}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 pbm ptl">
+                        <h4 class="ptm display-inline mrs">User Point System</h4><span class="muted font8">(all are required fields)</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3 col-lg-3 config-label">
+                        Up Vote Points
+                    </div>
+                    <div class="col-xs-12 col-sm-9 col-lg-9 config-value">
+                        {{view Ember.TextField valueBinding='view.upvotepts' type='text' placeholder='On every up vote, post author will get these points'}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3 col-lg-3 config-label">
+                        Down Vote Points
+                    </div>
+                    <div class="col-xs-12 col-sm-9 col-lg-9 config-value">
+                        {{view Ember.TextField valueBinding='view.downvotepts' type='text' placeholder='On every down vote, these points will get deducted from post\'s author points'}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3 col-lg-3 config-label">
+                        Correct Answer Points
+                    </div>
+                    <div class="col-xs-12 col-sm-9 col-lg-9 config-value">
+                        {{view Ember.TextField valueBinding='view.answerpts' type='text' placeholder='For accepting any answer, respective author will get these points'}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 pbm ptl">
+                        <h4 class="ptm display-inline mrs">Performance Tweaks</h4><span class="muted font8">(all are required fields)</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3 col-lg-3 config-label">
+                        Max Items per Page
+                    </div>
+                    <div class="col-xs-12 col-sm-9 col-lg-9 config-value">
+                        {{view Ember.TextField valueBinding='view.pagesize' type='text' placeholder='These many items will be shown per page (max)'}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3 col-lg-3 config-label">
+                        Max Visible Page Count
+                    </div>
+                    <div class="col-xs-12 col-sm-9 col-lg-9 config-value">
+                        {{view Ember.TextField valueBinding='view.maxpagecount' type='text' placeholder='After this number next or previous pager will be shown'}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3 col-lg-3 config-label">
+                        Max Visible Comments
+                    </div>
+                    <div class="col-xs-12 col-sm-9 col-lg-9 config-value">
+                        {{view Ember.TextField valueBinding='view.comments' type='text' placeholder='If any post has comments more than this number, those will be hidden'}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-lg-offset-3 col-sm-offset-3 col-sm-9 col-lg-9 ptl mtl">
+                        <button id="btnSubmit" data-loading-text="Saving Configurations" class="btn btn-primary" {{action saveConfiguration target="view"}}>Save Configurations</button>
+                    </div>
+                    <div class="col-xs-12 col-lg-offset-3 col-sm-offset-3 col-sm-9 col-lg-9 mtm pbl">
+                        <div class='alert-dismiss-container configError pull-left'>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class='col-xs-12 col-sm-12 col-lg-3 z-index-0'>
+          <div class='sideSection'>
+            <div class='row border-bottom-dark'>
+              <div class='col-lg-12'>
+                <h3 class='mtm' style="margin-bottom: 8px;">Important Information</h3>
+              </div>
+            </div>
+            <div class="ptm">
+                <div class='row'>
+                  <div class='col-xs-12 col-sm-12 col-lg-12 help-desc'>
+                    <p><b>Brand Name </b>: Mainly displayed in header and page title.</p>
+                    <p><b>Appacitive App Id </b>: Your appacitive application Id, can be found on portal.</p>
+                    <p><b>API Key </b>: Application access key, can be found on portal.</p>
+                    <p><b>Envrionment </b>: Environment you want to target (sandbox or live).</p>
+                    <p><b>System Admins </b>: Comma separated list of email address, whom application will grand Sys Admin Access.</p>
+                    <p><b>Application Host </b>: This URI will be used as base or root URI by the application. It can be your domain. Default is http://localhost:3000.</p>
+                    <p><b>Allow Signups </b>: If this is set to application will users to allow signups. (true or false)</p>
+                    <p><b>Feedback Email </b>: All the feedbacks will be sent to these comma separated email ids.</p>
+                    <p><b>Facebook App Id </b>: If provided application will users to login using facebook</p>
+                    <p><b>Twitter Consumer Key </b>&<b> Twitter Consumer Secret </b>: If both are provided application will users to login using twitter</p>
+                    <p><b>Up Vote Points </b>: For every up vote on a post, author of that post will get these points.</p>
+                    <p><b>Down Vote Points </b>: For every down vote on a post, these many points will be deducted from author's points.</p>
+                    <p><b>Correct Answer Points </b>: When ever any answer is accepted by question's author, author of that answer will get these points.</p>
+                    <p><b>Max Items per Page </b>: These many items will be shown on any post listing page max.</p>
+                    <p><b>Max Visible Page Count </b>: Application will display these many page numbers at once.</p>
+                    <p><b>Max Visible Comments </b>: By default these many comments (max) will be shown.</p>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{render 'footer'}}
+</script>

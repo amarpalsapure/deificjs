@@ -51,5 +51,5 @@ exports.edit = function (req, res) {
 
     state.title = 'User';
 
-    res.render('edit-user', state);
+    res.render('user-edit', state);
 };

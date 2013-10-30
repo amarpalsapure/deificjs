@@ -273,6 +273,11 @@ div.grippie { background: #eeeeee url(/images/grippie.png) no-repeat scroll cent
 .reset-password .form-group {margin-bottom: 0px;}
 .reset-password .col-sm-2, .reset-password .col-lg-2 { text-align: right; padding-top:8px; color: #bbb; }
 
+.config-label { text-align: right; line-height: 26px; color: #888; }
+.config-value input { width: 100%; padding: 3px 5px;}
+.help-desc { font-size: 0.9em; line-height: 16px; }
+.help-desc p { margin-bottom: 8px; }
+
 @media screen and (max-width: 1200px) {
     .btn.btn-flat.btn-skyblue { width: 100%; margin-top: 10px; }
     .question-page .col-entity-details { padding-left: 6.4%; margin-left: -5%; width: 96.4%; }
@@ -345,6 +350,10 @@ div.grippie { background: #eeeeee url(/images/grippie.png) no-repeat scroll cent
     .login-nav a { min-width: 220px; }
     .reset-password .col-sm-2, .reset-password .col-lg-2 { text-align: left; padding-top:4px; padding-bottom: 2px; }
     .reset-password h4 { margin-bottom: 0px; }
+
+    .config-label { text-align: left; }
+    .config-value input { padding: 3px 5px; margin-bottom: 5px; }
+    .configurations .pbm { padding-bottom: 0px; }
 }
 
 /* Mobile */

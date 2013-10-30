@@ -1,11 +1,11 @@
 exports.init = function (req) {
-    var config = require('../shared/configuration').load();
+    var config = process.config;
 
     var state = {
-        environment: process.config.environment,
+        environment: config.environment,
         debug: false,
-        brand: process.config.brand,
-        title: process.config.brand,
+        brand: config.brand,
+        title: config.brand,
         hidelogin: '',
         hidelogout: 'hide',
         isauth: false,
@@ -35,13 +35,13 @@ exports.init = function (req) {
     if (process.config.fbappid != '') isfbenabled = true;
     if (process.config.twitter_consumer_key != '') istwitterenbalbed = true;
     state.context += "window.init.config = { " +
-					 	"maxpagecount: " + parseInt(process.config.maxpagecount) + "," +
-					 	"env: '" + process.config.env + "'," +
-					 	"brand: '" + process.config.brand + "'," +
-					 	"fbappid: '" + process.config.fbappid + "'," +
+					 	"maxpagecount: " + parseInt(config.maxpagecount) + "," +
+					 	"env: '" + config.env + "'," +
+					 	"brand: '" + config.brand + "'," +
+					 	"fbappid: '" + config.fbappid + "'," +
                         "fbenable: " + isfbenabled + ", " +
                         "twitterenable: " + istwitterenbalbed + ", " +
-					 	"allowsignup: " + process.config.allowsignup +
+					 	"allowsignup: " + config.allowsignup +
 					 "};" +
 					 "window.host = '" + config.host + "'";
     if (req.param('debug')) {
@@ -49,7 +49,7 @@ exports.init = function (req) {
         else if (req.param('debug') === 'off') req.session.debug = false;
     }
     //resource version (js and css)
-    state.rv = process.config.rv;
+    state.rv = config.rv;
     state.debug = req.session.debug;
     return state;
 };

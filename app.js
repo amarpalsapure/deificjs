@@ -17,6 +17,7 @@ var questionRoute = require('./server/site/routes/question');
 var searchRoute = require('./server/site/routes/search');
 var tagRoute = require('./server/site/routes/tag');
 var feedbackRoute = require('./server/site/routes/feedback');
+var adminRoutes = require('./server/site/routes/admin');
 
 // api
 var questionApi = require('./server/service/question.js');
@@ -27,9 +28,10 @@ var tagApi = require('./server/service/tag.js');
 var searchApi = require('./server/service/search.js');
 var callbackHandlerApi = require('./server/service/callbackHandlers.js');
 var feedbackApi = require('./server/service/feedback.js');
+var configurationApi = require('./server/service/configuration.js');
 
 // load the config
-process.config = require('./server/shared/configuration').load();
+process.config = require('./server/shared/configuration').load(__dirname);
 
 passport.serializeUser(function (user, done) {
     done(null, user);
@@ -168,10 +170,20 @@ app.post('/service/callback/entitycreate', cacheControl.noCacheRequest, callback
 // ################ feedback #######################
 app.post('/service/feedback', feedbackApi.send);
 
+// ################ configurations ##################
+// get all configurations
+app.get('/service/configurations', cacheControl.noCacheRequest, configurationApi.findAll);
+
+//save configurations
+app.post('/service/configurations', cacheControl.noCacheRequest, configurationApi.save);
+
 
 // *************************************************
 // ***************** site route ********************
 // *************************************************
+
+// application setup route
+app.get('/admin/setup', adminRoutes.index);
 
 
 // ################ question #######################
