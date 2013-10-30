@@ -40,6 +40,7 @@ exports.initialize = function (rootPath) {
     var globalCSSFiles = [
         path.join(rootPath, 'server/site/public/stylesheets/bootstrap.css'),
         path.join(rootPath, 'server/site/public/stylesheets/bootstrap-theme.css'),
+        path.join(rootPath, 'server/site/public/stylesheets/bootstrap-switch.css'),
         path.join(rootPath, 'server/site/public/stylesheets/prettify.css'),
         path.join(rootPath, 'server/site/public/stylesheets/select2.css'),
         path.join(rootPath, 'server/site/public/stylesheets/font-awesome.css'),
@@ -111,6 +112,7 @@ exports.initialize = function (rootPath) {
     combiner.init();
 
     var questionFiles = [
+        path.join(rootPath, 'server/site/public/javascripts/infra/bootstrap-switch.js'),
         path.join(rootPath, 'server/site/public/javascripts/router/questionRouter.js'),
         path.join(rootPath, 'server/site/public/javascripts/infra/prettify.js'),
         path.join(rootPath, 'server/site/public/javascripts/controllers/baseController.js'),

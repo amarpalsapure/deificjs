@@ -79,6 +79,7 @@ input { border: solid 1px #ddd;}
 .width-100p { width: 100%; }
 .width-90p	{ width: 90%; }
 .width-10p	{ width: 10%; }
+.position-fixed { position: fixed; }
 .position-absolute { position: absolute;}
 .position-relative { position: relative;}
 .input-large { padding: 3px 5px; line-height: 1.6em; height: 34px; }

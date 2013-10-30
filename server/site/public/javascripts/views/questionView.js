@@ -109,51 +109,56 @@
 			    return tag.name;
 			};
 
-			if($('#tagSearch').length > 0) {
-				//select2 for tag search
-				$('#tagSearch').select2({
-		            placeholder: { title: 'Search for tag' },
-		            id: function(tag){ return tag.__id; },
-		            minimumInputLength: 1,
-		            ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
-		                url: '/service/tags',
-		                data: function (term, page) {
-		                    return {
-		                        q: term, // search term
-		                        ps: 5
-		                    };
-		                },
-		                results: function (data, page) { // parse the results into the format expected by Select2.
-		                    //remove the items which are already selected
-		                    var results = [];
-		                    var isSelected = false;
-		                    for (var i = 0; i < data.tags.length; i++) {
-		                    	isSelected = false;
-								$('#selectedTags ul li div').each(function(j, ele) { 
-									if(data.tags[i].name == $(ele).html()) isSelected = true;
-								});
-								if(isSelected) continue;
-		                    	results.push(data.tags[i]);
-		                    };
-		                    return { results: results };
-		                }
-		            },
-		            formatResult: tagFormatResult,
-		            formatSelection: tagFormatSelection
-		        });
+			if ($('#tagSearch').length > 0) {
+			    //select2 for tag search
+			    $('#tagSearch').select2({
+			        placeholder: { title: 'Search for tag' },
+			        id: function (tag) { return tag.__id; },
+			        minimumInputLength: 1,
+			        ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
+			            url: '/service/tags',
+			            data: function (term, page) {
+			                return {
+			                    q: term, // search term
+			                    ps: 5
+			                };
+			            },
+			            results: function (data, page) { // parse the results into the format expected by Select2.
+			                //remove the items which are already selected
+			                var results = [];
+			                var isSelected = false;
+			                for (var i = 0; i < data.tags.length; i++) {
+			                    isSelected = false;
+			                    $('#selectedTags ul li div').each(function (j, ele) {
+			                        if (data.tags[i].name == $(ele).html()) isSelected = true;
+			                    });
+			                    if (isSelected) continue;
+			                    results.push(data.tags[i]);
+			                };
+			                return { results: results };
+			            }
+			        },
+			        formatResult: tagFormatResult,
+			        formatSelection: tagFormatSelection
+			    });
 
-				$(window).on('deificloaded', function(){
-					$('.question-new-page #wmd-input').keyup(function() {
-				        //Enable submit button
-						that.__checkQuestionFormIsComplete();
-				    });
-				});
+			    $(window).on('deificloaded', function () {
+			        $('.question-new-page #wmd-input').keyup(function () {
+			            //Enable submit button
+			            that.__checkQuestionFormIsComplete();
+			        });
+			    });
 
-				$('#txtTitle').keyup(function() {
-					//Enable submit button
-					that.__checkQuestionFormIsComplete();
-				});
-			}			
+			    $('#txtTitle').keyup(function () {
+			        //Enable submit button
+			        that.__checkQuestionFormIsComplete();
+			    });
+			}
+
+		    //subscribe to question (only on question detail page)
+			if ($('.question-page').length === 1)
+			    $('#chkSubscribe').bootstrapSwitch();
+			
 		},
 		
 		newQuestionAddTag: function() {
