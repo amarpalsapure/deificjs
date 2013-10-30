@@ -9,6 +9,7 @@ var TwitterStrategy = require('passport-twitter').Strategy;
 var http = require('http');
 var path = require('path');
 var cacheControl = require('./server/node_module_ext/cache-control');
+var appSetup = require('./server/node_module_ext/app-setup');
 
 // routes
 var routes = require('./server/site/routes');
@@ -185,63 +186,62 @@ app.post('/service/configurations', cacheControl.noCacheRequest, configurationAp
 // application setup route
 app.get('/admin/setup', adminRoutes.index);
 
-
 // ################ question #######################
 // index page
-app.get('/', routes.index);
+app.get('/', appSetup.init, routes.index);
 
 //ask a question
-app.get('/questions/ask', questionRoute.ask);
+app.get('/questions/ask', appSetup.init, questionRoute.ask);
 
 // all questions page
-app.get('/questions', questionRoute.all);
+app.get('/questions', appSetup.init, questionRoute.all);
 
 // question list page by tag
-app.get('/questions/tagged/:tag', questionRoute.tagged);
+app.get('/questions/tagged/:tag', appSetup.init, questionRoute.tagged);
 
 // question page without title in url
-app.get('/questions/:id', questionRoute.index);
+app.get('/questions/:id', appSetup.init, questionRoute.index);
 
 // question page with title in url
-app.get('/questions/:id/:title', questionRoute.index);
+app.get('/questions/:id/:title', appSetup.init, questionRoute.index);
 
 // short url for question
-app.get('/q/:qid', questionRoute.miniindex);
+app.get('/q/:qid', appSetup.init, questionRoute.miniindex);
 
 //short url for answer
-app.get('/a/:qid/:aid', questionRoute.miniindex);
+app.get('/a/:qid/:aid', appSetup.init, questionRoute.miniindex);
 
 
 // ################ user #######################
 //all users
-app.get('/users', userRoute.index);
+app.get('/users', appSetup.init, userRoute.index);
 
 // user login page
-app.get('/users/login', userRoute.login);
+app.get('/users/login', appSetup.init, userRoute.login);
 
 // user edit page
-app.get('/users/edit/:id', userRoute.edit);
+app.get('/users/edit/:id', appSetup.init, userRoute.edit);
 
 // get user by id withour name in url
-app.get('/users/:id', userRoute.findById);
+app.get('/users/:id', appSetup.init, userRoute.findById);
 
 // get user by id with name in url
-app.get('/users/:id/:title', userRoute.findById);
+app.get('/users/:id/:title', appSetup.init, userRoute.findById);
 
 
 // ################ search #######################
-app.get('/search', searchRoute.search);
+app.get('/search', appSetup.init, searchRoute.search);
 
 // ################ tags #######################
 // all tags page
-app.get('/tags', tagRoute.index);
+app.get('/tags', appSetup.init, tagRoute.index);
 // add new tag
-app.get('/tags/add', tagRoute.add);
+app.get('/tags/add', appSetup.init, tagRoute.add);
 // it renders the same page as all questions for a given tag
-app.get('/tags/:tag', questionRoute.tagged);
+app.get('/tags/:tag', appSetup.init, questionRoute.tagged);
 
 // ################ feedback #######################
-app.get('/feedback', feedbackRoute.index);
+app.get('/feedback', appSetup.init, feedbackRoute.index);
 
 // GET /auth/twitter
 // Use passport.authenticate() as route middleware to authenticate the

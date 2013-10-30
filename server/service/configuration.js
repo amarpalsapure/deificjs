@@ -2,14 +2,6 @@
 exports.save = function(req, res) {
 	var payload = req.body.configurations;
 
-    //get the state of app
-	var app = require('../shared/app.init');
-	var state = app.init(req);
-
-	//intialize SDK
-	var sdk = require('./appacitive.init');
-	var Appacitive = sdk.init(state.token, state.debug);
-
 	//get the transformer
 	var transformer = require('./infra/transformer');
 
@@ -17,6 +9,22 @@ exports.save = function(req, res) {
 
     //saves the config in local store and updates it in memory
 	var saveConfig = function () {
+	    var privateKeys = process.config.private;
+	    //set defaults
+	    for (var key in process.config) {
+	        if (payload[key] || privateKeys.indexOf(key) != -1) continue;
+	        switch (key) {
+	            case 'env': payload[key] = 'sandbox'; break;
+	            case 'host': payload[key] = 'http://localhost:3000'; break;
+	            case 'allowsignup': payload[key] = 'true'; break;
+	            case 'upvotepts': payload[key] = '10'; break;
+	            case 'downvotepts': payload[key] = '5'; break;
+	            case 'answerpts': payload[key] = '20'; break;
+	            case 'pagesize': payload[key] = '10'; break;
+	            case 'maxpagecount': payload[key] = '5'; break;
+	            case 'comments': payload[key] = '5'; break;
+	        }
+	    }
 	    //persist in local storage
 	    var configAPI = require('../shared/configuration');
 	    var success = configAPI.save(payload);
@@ -24,9 +32,9 @@ exports.save = function(req, res) {
 	    if (success === false) return res.status(500).json(transformer.toError('config_save'));
 
 	    //update process configuration
-	    var privateKeys = process.config.private;
 	    for (var key in process.config) {
 	        if (privateKeys.indexOf(key) != -1) continue;
+            if(payload[key])
 	        process.config[key] = payload[key];
 	    }
 	    return res.status(204).json({});

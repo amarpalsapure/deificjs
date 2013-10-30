@@ -75,7 +75,7 @@
             that.get('controller').saveConfiguration(newConfig, function () {
                 $('#btnSubmit').button('reset');
                 setTimeout(function () {
-                    window.location.reload();
+                    window.location = window.host;
                 }, 1000);
 		    }, function (message) {
 		        //do the error handling
