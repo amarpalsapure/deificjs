@@ -13,7 +13,8 @@ exports.init = function (req) {
         fullname: '',
         authtype: '',
         context: 'window.init = {};',
-        token: ''
+        token: '',
+        isSA: false
     };
     if (req && req.signedCookies && req.signedCookies.u) {
         state.hidelogin = 'hide';
