@@ -461,7 +461,8 @@ var _toError = function(origin, status) {
 		user_pwd_reset: 'Failed to reset password.',
 		user_update: 'Failed to update profile.',
 		invalid_input: 'Invalid input',
-        tag_save: 'Failed to save the tag',
+		tag_save: 'Failed to save the tag',
+        config_save: 'Failed to save the config',
 	};
 	var message = errorMap[origin];
 	if(!message) message = errorMap['default'];
@@ -484,7 +485,8 @@ var _toSessionExpiredError = function(res, status) {
 	//if status is not provided, create one
 	if(!status) status = {
 		code: '19036',
-		message: 'Session expired'
+		message: 'Session expired',
+	    referenceid: 'NA'
 	}
 
 	status.error = 'Your session has expired, please <a href="/users/login?returnurl=PATHNAME">login</a> again. Thanks.';
