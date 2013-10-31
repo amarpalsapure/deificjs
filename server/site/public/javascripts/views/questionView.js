@@ -4,6 +4,7 @@
 		question: {},
 		hidevotecount: true,
 		isTogglingBookmark: false,
+        isTogglingSubscribe: false,
 
 		didInsertElement: function(){
 			//hide the answer containers
@@ -156,8 +157,13 @@
 			}
 
 		    //subscribe to question (only on question detail page)
-			if ($('.question-page').length === 1)
+			if ($('.question-page').length === 1) {
+			    if (model.get('issubscribed') === true) $('#chkSubscribe input').attr('checked', 'checked');
 			    $('#chkSubscribe').bootstrapSwitch();
+			    $('#chkSubscribe').on('switch-change', function (e, data) {
+			        that.toggleSubscription();
+			    });
+			}
 			
 		},
 		
@@ -273,10 +279,6 @@
 	     	$('#btnSubmitQuestion').removeAttr('disabled');
 		},
 
-		notimplemented: function() {
-			alert('not implemented');
-		},
-
 		toggleBookmark: function() {
 			var that = this;
 
@@ -288,16 +290,31 @@
 				return;
 			}
 
-			if(that.isTogglingBookmark === true) return;
-			that.isTogglingBookmark = true;
+			if(that.get('isTogglingBookmark') === true) return;
+			that.set('isTogglingBookmark', true);
 
-			this.controller.toggleBookmark(function() {
-				that.isTogglingBookmark = false;
+			that.controller.toggleBookmark(function () {
+			    that.set('isTogglingBookmark', false);
 			}, function(error) {
-				that.isTogglingBookmark = false;
+			    that.set('isTogglingBookmark', false);
 				var alert = '<div class="alert alert-block alert-danger pull-left"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred. </div>';
 				$('#question-' + model.get('id') + ' .action-toggle-bookmark-error').html(alert).alert();
 			});
+		},
+
+		toggleSubscription: function () {
+		    var that = this;
+
+		    if (that.get('isTogglingSubscribe') === true) return;
+		    that.set('isTogglingSubscribe', true);
+
+		    that.controller.toggleSubscription(function () {
+		        that.set('isTogglingSubscribe', false);
+		    }, function (error) {
+		        that.set('isTogglingSubscribe', false);
+		        var alert = '<div class="alert alert-block alert-danger position-absolute"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> An error occurred. </div>';
+		        $('.subscribeError').html(alert).alert();
+		    });
 		}
 	});
 }).call(this);

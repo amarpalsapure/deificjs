@@ -21,6 +21,8 @@
 		isowner: DS.attr('boolean'),
 		isbookmarked: DS.attr('boolean'),
 		bookmarkconnid: DS.attr('string'),
+		issubscribed: DS.attr('boolean'),
+		subscribeconnid: DS.attr('string'),
 
 		//relationship property
 		answers: DS.hasMany('answer'),

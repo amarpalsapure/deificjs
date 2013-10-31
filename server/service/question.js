@@ -420,14 +420,38 @@ exports.update = function(req, res) {
 			onsuccess();
 		}, onfailure);
 	};
-
-	var question_bookmark_Delete = function(onsuccess, onfailure) {
-		var relation = new Appacitive.Connection({ relation: 'question_bookmark', __id: question.bookmarkconnid });
-		relation.del(function() {
-			question.bookmarkconnid = '';
-			onsuccess();
-		}, onfailure);
+	var question_bookmark_Delete = function (onsuccess, onfailure) {
+	    var relation = new Appacitive.Connection({ relation: 'question_bookmark', __id: question.bookmarkconnid });
+	    relation.del(function () {
+	        question.bookmarkconnid = '';
+	        onsuccess();
+	    }, onfailure);
 	};
+    //create 'question_subscribe' relation between question and user
+	var question_subscribe_Create = function (onsuccess, onfailure) {
+	    var relation = new Appacitive.ConnectionCollection({ relation: 'question_subscribe' });
+	    var connection = relation.createNewConnection({
+	        endpoints: [{
+	            articleid: question.id,
+	            label: 'question'
+	        }, {
+	            articleid: state.userid,
+	            label: 'user'
+	        }]
+	    });
+	    connection.save(function () {
+	        question.subscribeconnid = connection.id();
+	        onsuccess();
+	    }, onfailure);
+	};
+	var question_subscribe_Delete = function (onsuccess, onfailure) {
+	    var relation = new Appacitive.Connection({ relation: 'question_subscribe', __id: question.subscribeconnid });
+	    relation.del(function () {
+	        question.subscribeconnid = '';
+	        onsuccess();
+	    }, onfailure);
+	};
+	
 
     //get the user and sum the entityupcount, entitydowncount and answercount and finally add the factor
     //and update the user
@@ -558,6 +582,24 @@ exports.update = function(req, res) {
 				});
 			}
 			break;
+	    case 'toggle:subscribe':
+	        //if question isbookmarked then create connection between user and question
+	        if (question.issubscribed === true) {
+	            question_subscribe_Create(function () {
+	                question.issubscribed = true;
+	                save();
+	            }, function (status) {
+	                return res.status(502).json(transformer.toError('entity_subscribe', status));
+	            });
+	        } else {
+	            question_subscribe_Delete(function () {
+	                question.issubscribed = false;
+	                save();
+	            }, function (status) {
+	                return res.status(502).json(transformer.toError('entity_subscribe_undo', status));
+	            });
+	        }
+	        break;
 		default:
 			return res.status(400).json(transformer.toError('entity_invalid_action'));
 	}

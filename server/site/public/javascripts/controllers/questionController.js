@@ -106,6 +106,19 @@
 				model.set('isbookmarked', !model.get('isbookmarked'));
 				onError(Deific.localDataSource.handleError(error, 'Deific.QuestionController-toggleBookmark'));
 			});
+		},
+
+		toggleSubscription: function (onSuccess, onError) {
+		    var model = this.get('model');
+		    model.set('issubscribed', !model.get('issubscribed'));
+		    model.set('action', 'toggle:subscribe');
+		    model.save().then(function (savedObj) {
+		        onSuccess(savedObj);
+		    }, function (error) {
+		        //rollback state
+		        model.set('issubscribed', !model.get('issubscribed'));
+		        onError(Deific.localDataSource.handleError(error, 'Deific.QuestionController-toggleSubscription'));
+		    });
 		}
 	});
 }).call(this);
