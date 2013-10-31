@@ -383,7 +383,22 @@ exports.save = function(req, res) {
 			connection.save(onsuccess, onfailure);
 		}
 
-		//update question, and set the issearchable flag to true
+	    //creates 'question_subscribe' relation between question and author
+		var question_subscribe_Create = function (onsuccess, onfailure) {
+		    var relation = new Appacitive.ConnectionCollection({ relation: 'question_subscribe' });
+		    var connection = relation.createNewConnection({
+		        endpoints: [{
+		            articleid: answer.question,
+		            label: 'question'
+		        }, {
+		            articleid: state.userid,
+		            label: 'user'
+		        }]
+		    });
+		    connection.save(onsuccess, onfailure);
+		}
+
+		//update answer, and set the issearchable flag to true
 		//so that it appears in all searches
 		var updateAnswer = function() {
 			//set issearchable
@@ -403,7 +418,11 @@ exports.save = function(req, res) {
 		//create answer and connect to user
 		answer_user_Create(function(){
 			//connect question and answer
-			question_answer_Create(function() {
+		    question_answer_Create(function () {
+
+		        //subscribe user to question
+		        question_subscribe_Create();
+
 				//update answer, so that it can be searched
 				updateAnswer();
 			}, function(status) {

@@ -7,6 +7,10 @@
 exports.entitycreate = function (req, res) {
     var payload = req.body;
 
+    var sendResponse = function () {
+        return res.json({});
+    }
+
     if (!payload || payload.__article.type === 'question') return sendResponse();
 
     //get the state of app
@@ -29,10 +33,6 @@ exports.entitycreate = function (req, res) {
     };
     var questionAuthor = {};
     var answerAuthor = {};
-
-    var sendResponse = function () {
-        return res.json({});
-    }
 
     //get the author of entity
     var getAuthor = function (onSuccess, onError) {

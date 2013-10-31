@@ -651,10 +651,22 @@ exports.save = function(req, res) {
 			      label: 'user'
 			  }]
 			});
-			connection.save(function(){
-				question_user_conn_id = connection.id();
-				onsuccess();
-			}, onfailure);
+			connection.save(onsuccess, onfailure);
+		}
+
+	    //creates 'question_subscribe' relation between question and author
+		var question_subscribe_Create = function (onsuccess, onfailure) {
+		    var relation = new Appacitive.ConnectionCollection({ relation: 'question_subscribe' });
+		    var connection = relation.createNewConnection({
+		        endpoints: [{
+		            articleid: aQuestion.id(),
+		            label: 'question'
+		        }, {
+		            articleid: state.userid,
+		            label: 'user'
+		        }]
+		    });
+		    connection.save(onsuccess, onfailure);
 		}
 
 		//creates 'question_tag' relation between user and question 
@@ -691,7 +703,13 @@ exports.save = function(req, res) {
 			});
 		};
 
-		question_user_Create(function(){
+        //create a connection between question and user
+		question_user_Create(function () {
+
+            //subscribe user to question
+		    question_subscribe_Create();
+
+            //connect question to tags
 			var counter = question.tags.length;
 			var merge = function() {
 				if(--counter != 0) return;
