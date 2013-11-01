@@ -36,6 +36,7 @@ exports.init = function (req) {
     var isfbenabled = false, istwitterenbalbed = false;
     if (process.config.fbappid != '') isfbenabled = true;
     if (process.config.twitter_consumer_key != '') istwitterenbalbed = true;
+    if (!config.allowsignup) config.allowsignup = true;
     state.context += "window.init.config = { " +
 					 	"maxpagecount: " + parseInt(config.maxpagecount) + "," +
 					 	"env: '" + config.env + "'," +
