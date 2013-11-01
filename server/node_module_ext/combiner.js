@@ -59,6 +59,15 @@ exports.initialize = function (rootPath) {
     ];
     combiner.combine(indexFiles, path.join(rootPath, 'server/site/public/_min/js/index.combined.js'), true, true);
     combiner.init();
+    
+    var admin_indexFiles = [
+        path.join(rootPath, 'server/site/public/javascripts/router/admin/indexRouter.js'),
+        path.join(rootPath, 'server/site/public/javascripts/controllers/admin/configurationController.js'),
+        path.join(rootPath, 'server/site/public/javascripts/models/admin/configuration.js'),
+        path.join(rootPath, 'server/site/public/javascripts/views/admin/configurationView.js')
+    ];
+    combiner.combine(admin_indexFiles, path.join(rootPath, 'server/site/public/_min/js/admin-index.combined.js'), true, true);
+    combiner.init();
 
     var editUserFiles = [
         path.join(rootPath, 'server/site/public/javascripts/router/edit-userRouter.js'),
