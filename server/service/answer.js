@@ -346,7 +346,8 @@ exports.save = function(req, res) {
 
 	//creates the answer and connects it with current logged in user
 	//and then connects with question
-	var createAnswer = function() {
+	var createAnswer = function () {
+	    var question_subscribe_conn_id = answer.subscribeconnid;
 		//perform a basic transform
 		var aAnswer = transformer.toAppacitiveAnswer(Appacitive, answer);
 		aAnswer.set('text', answer.text);
@@ -385,6 +386,14 @@ exports.save = function(req, res) {
 
 	    //creates 'question_subscribe' relation between question and author
 		var question_subscribe_Create = function (onsuccess, onfailure) {
+
+		    //if user is already subscribed to the question then return success directly
+		    if (answer.issubscribed === true) {
+		        if (onsuccess) onsuccess();
+		        return;
+		    }
+            
+            //create the relation
 		    var relation = new Appacitive.ConnectionCollection({ relation: 'question_subscribe' });
 		    var connection = relation.createNewConnection({
 		        endpoints: [{
@@ -395,7 +404,10 @@ exports.save = function(req, res) {
 		            label: 'user'
 		        }]
 		    });
-		    connection.save(onsuccess, onfailure);
+		    connection.save(function () {
+		        question_subscribe_conn_id = connection.id();
+		        onsuccess();
+		    }, onsuccess);
 		}
 
 		//update answer, and set the issearchable flag to true
@@ -409,6 +421,12 @@ exports.save = function(req, res) {
 				response.answer.author = state.userid;
 				response.answer.question = answer.question;
 				response.answer.isowner = true;
+
+				if (question_subscribe_conn_id) {
+				    response.answer.issubscribed = true;
+				    response.answer.subscribeconnid = question_subscribe_conn_id;
+				}
+
 				return res.json(response);
 			}, function(status) {
 				return rollbackAnswer(aAnswer, status);
@@ -421,10 +439,10 @@ exports.save = function(req, res) {
 		    question_answer_Create(function () {
 
 		        //subscribe user to question
-		        question_subscribe_Create();
-
-				//update answer, so that it can be searched
-				updateAnswer();
+		        question_subscribe_Create(function () {
+		            //update answer, so that it can be searched
+		            updateAnswer();
+		        });
 			}, function(status) {
 				//rollback answer
 				return rollbackAnswer(aAnswer, status);

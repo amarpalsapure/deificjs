@@ -15,6 +15,8 @@
 		action: DS.attr('string'),
 		isowner: DS.attr('boolean'),
 		ownsparent: DS.attr('boolean'),
+		issubscribed: DS.attr('boolean'),
+		subscribeconnid: DS.attr('string'),
 
 		//relation ship properties
 		question: DS.belongsTo('question'),

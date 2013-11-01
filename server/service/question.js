@@ -478,6 +478,8 @@ exports.update = function(req, res) {
 			response.question.voteconnid = question.voteconnid;
 			response.question.isbookmarked = question.isbookmarked;
 			response.question.bookmarkconnid = question.bookmarkconnid;
+			response.question.issubscribed = question.issubscribed;
+			response.question.subscribeconnid = question.subscribeconnid;
 			return res.json(response);
 		}, function(status) {
 			return res.status(502).json(transformer.toError('questoin_save', status));
