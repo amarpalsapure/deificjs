@@ -91,10 +91,8 @@ input { border: solid 1px #ddd;}
 .alert-sm { padding: 8px; }
 .alert-error { border: solid 1px #b94a48; }
 .display-inline { display: inline;}
-.alert-dismiss-container .close {
-	padding-left: 12px;
-	margin-right: -6px;
-}
+.alert-dismiss-container .close { padding-left: 12px; margin-right: -6px; }
+.ellipsis { white-space: nowrap; overflow: hidden; -ms-text-overflow: ellipsis; -o-text-overflow: ellipsis; text-overflow: ellipsis; cursor: default; }
 .arrow-left {
 	width: 0; 
 	height: 0; 

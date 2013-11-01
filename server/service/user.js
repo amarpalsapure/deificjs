@@ -204,6 +204,23 @@ var _findByIdWithEntities = function(req, res) {
 	    }, onError);
 	};
 
+    //get the subscribed items for the given user
+	var getSubscribeItems = function (userId, pagenumber, onSuccess, onError) {
+	    var userArticle = new Appacitive.Article({ __id: userId, schema: 'user' });
+	    userArticle.fetchConnectedArticles({
+	        relation: 'question_subscribe',
+	        label: 'question',
+	        pageSize: process.config.pagesize,
+	        pageNumber: pagenumber,
+	        orderBy: '__utcdatecreated',
+	        isAscending: false,
+	        returnEdge: false,
+	        fields: ['__id,__attributes,title,shorttext,totalvotecount,isanswered,viewcount,score,type,__utcdatecreated,$answercount,$bookmarkcount,isupvote'],
+	    }, function (obj, pi) {
+	        onSuccess(userArticle.children['question_subscribe'], pi);
+	    }, onError);
+	};
+
     //depending upon the type, get the entities of the given user
 	var getConnectedItems = function(userId, pagenumber, type, onSuccess, onError) {
 		switch(type.toLowerCase()) {
@@ -215,6 +232,9 @@ var _findByIdWithEntities = function(req, res) {
 				break;
 		    case 'favorites':
 		        getFavoriteItems(userId, pagenumber, onSuccess, onError);
+		        break;
+		    case 'subscription':
+		        getSubscribeItems(userId, pagenumber, onSuccess, onError);
 		        break;
 			default: //questions
 				getConnectedEntities(userId, 'entity_user', 'question', pagenumber, onSuccess, onError);

@@ -412,6 +412,11 @@ div.grippie { background: #eeeeee url(/images/grippie.png) no-repeat scroll cent
     .user-profile-page .pic-column { width: auto; }
     .user-profile-page .user-details { text-align: center; }
         .user-profile-page .user-details p { text-align: justify; }
+    .right-nav-tabs a { padding: 6px 8px !important; }
+    .user-profile-page .right-nav-tabs { margin-right: -15px; margin-left:-5px; }
+    .user-profile-page .right-nav-tabs a { width: auto; padding: 6px 12px 6px 12px !important }
+    .user-profile-page .isowner a { width: 38px; padding: 6px 5px 6px 5px !important; }
+    .user-profile-page .right-nav-tabs li.active a { width: auto; padding: 6px 8px !important; }
 }
 
 @media (max-width: 400px) /* Mobile */ {

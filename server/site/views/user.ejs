@@ -74,11 +74,12 @@
                 <h3 id="title" class="mtn mbn font140"></h3>
               </div>
               <div class="col-xs-12 col-sm-9 col-lg-9">
-                <ul class="nav nav-tabs right-nav-tabs" data-default='questions'>
-                  <li><a id='aquestions' href='?tab=questions'>Questions</a></li>
-                  <li><a id='aanswers' href='?tab=answers'>Answers</a></li>
-                  <li><a id='afavorites' href='?tab=favorites'>Favorites</a></li>
-                  <li><a id='avotes' href='?tab=votes'>Votes</a></li>
+                <ul {{bindAttr class=":nav :nav-tabs :right-nav-tabs view.isowner:isowner"}} data-default='questions'>
+                  <li><a id='aquestions' class="ellipsis" title="Questions" href='?tab=questions'>Questions</a></li>
+                  <li><a id='aanswers' class="ellipsis" title="Answers" href='?tab=answers'>Answers</a></li>
+                  <li><a id='afavorites' class="ellipsis" title="Favorites" href='?tab=favorites'>Favorites</a></li>
+                  <li><a id='avotes' class="ellipsis" title="Votes" href='?tab=votes'>Votes</a></li>
+                  <li><a id='asubscription' class="ellipsis" title="Subscriptions" href='?tab=subscription'>Subscriptions</a></li>
                 </ul>
               </div>
             </div>
