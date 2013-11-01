@@ -5,6 +5,7 @@
     <script type='text/javascript' src='/_min/js/question.combined.js?v=<%= rv %>'></script>
 <% } %>
 <%if (environment === 'development') { %>
+    <% script('/javascripts/infra/bootstrap-switch.js') -%>
     <% script('/javascripts/router/questionRouter.js') -%>
 
     <% script('/javascripts/infra/prettify.js') -%>
@@ -122,15 +123,38 @@
             </div>
           </div>
         </div>
-        <div class='col-xs-12 col-sm-12 col-lg-3 z-index-0'>
-          <div class='sideSection'>
-            <div class='row'>
+        <div class='col-xs-12 col-sm-12 col-lg-3 z-index-0 sideSection-container slideSideSection'>
+            <div class='sideSection'>
+                <div class='row'>
+                    {{#if isLoggedIn}}
+                        <div class="col-xs-12 col-sm-12 col-lg-7">
+                            <i class="icon-rss-sign pull-left"></i> SUBSCRIBE TO THE QUESTION
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-lg-5 subscribe-switch">
+                            <div id="chkSubscribe" class="make-switch switch-small" data-on="info" data-on-label="Yes" data-off-label="No">
+                                {{view Ember.Checkbox valueBinding='issubscribed'}}
+                            </div>
+                            {{#if view.isTogglingSubscribe}}
+                            <div class='progress progress-striped active mtm'>
+						        <div class='progress-bar'  role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width: 100%'>
+						        </div>
+					        </div>
+                            {{/if}}
+                        </div>
+                        <div class='alert-dismiss-container subscribeError'>
+                        </div>
+                    {{else}}
+                        <div class="col-xs-12 col-sm-12 col-lg-12">
+                            <i class="icon-rss-sign pull-left"></i> <a {{bindAttr href='loginurl'}} title='Login to Subscribe'>SUBSCRIBE TO THE QUESTION</a>
+                        </div>      
+                    {{/if}}
+                </div>
             </div>
-          </div>
         </div>
       </div>
     </div>
   </div>
+  
   <div id='divDeleteModal' class='modal fade' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'> 
     <div class='modal-dialog'>  
       <div class='modal-content'> 

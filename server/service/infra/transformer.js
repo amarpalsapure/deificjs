@@ -138,7 +138,8 @@ var _toQuestion = function(question, state) {
 	//get the answer count
 	response.question.answercount = 0;
 	if(question.aggregate('answercount')){
-		response.question.answercount = question.aggregate('answercount').all;
+	    response.question.answercount = question.aggregate('answercount').all;
+	    if (response.question.answercount === '') response.question.answercount = '0';
 		//delete the proerty from the JSON as it is not required by client
 		delete response.question.$answercount;
 	}
@@ -204,6 +205,15 @@ var _toQuestion = function(question, state) {
 	} else {
 		response.question['isbookmarked'] = false;
 		response.question['bookmarkconnid'] = '';
+	}
+
+    //question is subscribed or not
+	if (question.children.subscribe && question.children.subscribe.length > 0) {
+	    response.question['issubscribed'] = true;
+	    response.question['subscribeconnid'] = question.children.subscribe[0].connection.id();;
+	} else {
+	    response.question['issubscribed'] = false;
+	    response.question['subscribeconnid'] = '';
 	}
 	return response;
 };
@@ -441,6 +451,8 @@ var _toError = function(origin, status) {
 		entity_vote_down_undo: 'Failed to undo register downvote',
 		entity_bookmark: 'Failed to bookmark the question',
 		entity_bookmark_undo: 'Failed to undo bookmark the question',
+		entity_subscribe: 'Failed to subscribe the question',
+		entity_subscribe_undo: 'Failed to unsubscribe the question',
 		entity_invalid_action: 'Invalid action provided',
 		access_denied: 'You are not authorized for this action.',
 		user_signup_validate: 'Name, Email and Password are required.',

@@ -106,7 +106,7 @@ if ('development' == app.get('env')) {
 
 // ################# question api ####################
 // get all question
-app.get('/service/questions', cacheControl.timeCacheRequest, questionApi.findQuestion);
+app.get('/service/questions', cacheControl.noCacheRequest, questionApi.findQuestion);
 // save question
 app.post('/service/questions', cacheControl.noCacheRequest, questionApi.save);
 // update question

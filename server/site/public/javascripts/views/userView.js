@@ -11,9 +11,15 @@
             var that = this;
             var model = that.controller.get('model');
 
+            //check if it's current user profile page or not
+            // if not remove unrequired tabs
             if (!Deific.AccountController.user
                 || model.get('id') != Deific.AccountController.user.userid) {
+                //remove votes tab
                 $('#avotes').remove();
+                //remove subscription tab
+                $('#asubscription').remove();
+
                 this.set('isowner', false);
             }
 
@@ -48,11 +54,15 @@
                         break;
                     case 'favorites':
                         $('#noactivity').html('no favorite question');
-                        $('#title').html(count + count > 1 ? ' Favoirte Questions' : ' Favoirte Question');
+                        $('#title').html(count + (count > 1 ? ' Favoirte Questions' : ' Favoirte Question'));
                         break;
                     case 'votes':
                         $('#noactivity').html('not voted any question or answer.');
-                        $('#title').html(count + count > 1 ? ' Votes' : ' Vote');
+                        $('#title').html(count + (count > 1 ? ' Votes' : ' Vote'));
+                        break;
+                    case 'subscription':
+                        $('#noactivity').html('not subscribed to any question.');
+                        $('#title').html(count + (count > 1 ? ' Subscriptions' : ' Subscription'));
                         break;
                     default:
                         $('#noactivity').html('not asked any question');
@@ -62,7 +72,7 @@
                 //show the voting details view if selected tab is `votes`
                 if (tab === 'votes') this.set('showVoteContainer', true);
             } else {
-                //check the length of answer
+                //check the length of profile description
                 //must be more than 20 characters
                 $(window).on('deificloaded', function () {
                     $('.profile-description #wmd-input').keyup(function () {

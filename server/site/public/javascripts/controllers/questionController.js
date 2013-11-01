@@ -13,6 +13,11 @@
 				answer.set('author', user);
 				answer.set('question', questionModel);
 				answer.set('title', questionModel.get('title'));
+
+			    //set the question subscription
+				answer.set('issubscribed', questionModel.get('issubscribed'));
+				answer.set('subscribeconnid', questionModel.get('subscribeconnid'));
+
 				answer.set('action', 'do:answer');
 
 				// Save the new model
@@ -20,6 +25,13 @@
 					var model = that.get('model');
 					savedObj.set('author', user);
 					savedObj.set('question', model);
+
+				    //set subscription info to question model
+					if (savedObj.get('subscribeconnid')) {
+					    model.set('issubscribed', true);
+					    model.set('subscribeconnid', savedObj.get('subscribeconnid'));
+					}
+
 					savedObj.set('isowner', true);
 					model.get('answersMeta').pushObject({
 						__id: savedObj.get('id'),
@@ -48,7 +60,7 @@
 						}
 					}
 
-					onSuccess(savedObj);
+					onSuccess(savedObj, model);
 				}, function(error){
 					onError(Deific.localDataSource.handleError(error, 'Deific.QuestionController-saveAnswer'));
 				});
@@ -106,6 +118,19 @@
 				model.set('isbookmarked', !model.get('isbookmarked'));
 				onError(Deific.localDataSource.handleError(error, 'Deific.QuestionController-toggleBookmark'));
 			});
+		},
+
+		toggleSubscription: function (onSuccess, onError) {
+		    var model = this.get('model');
+		    model.set('issubscribed', !model.get('issubscribed'));
+		    model.set('action', 'toggle:subscribe');
+		    model.save().then(function (savedObj) {
+		        onSuccess(savedObj);
+		    }, function (error) {
+		        //rollback state
+		        model.set('issubscribed', !model.get('issubscribed'));
+		        onError(Deific.localDataSource.handleError(error, 'Deific.QuestionController-toggleSubscription'));
+		    });
 		}
 	});
 }).call(this);
