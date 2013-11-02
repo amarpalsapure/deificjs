@@ -48,6 +48,9 @@
                 <div class="col-xs-12 col-sm-12 col-lg-12 ptm pbm pll prl tag-excerpt">
                   {{tag.excerpt}}
                 </div>
+                <div class="col-xs-12 col-sm-12 col-lg-12 pbm pll prl font9">
+                    <a {{bindAttr href="tag.infoUrl"}} class="mrm">learn more</a> <a {{bindAttr href="tag.editUrl"}}>improve tag info</a>
+                </div>
               </div>  
             </div>
             {{/if}}

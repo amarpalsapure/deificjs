@@ -1,0 +1,165 @@
+<% layout('__layout') -%>
+
+<%if (environment === 'production') { %>
+    <script type='text/javascript' src='/_min/js/global.combined.js?v=<%=rv%>'></script>
+    <script type='text/javascript' src='/_min/js/tags.combined.js?v=<%= rv %>'></script>
+<% } %>
+<%if (environment === 'development') { %>
+    <% script('/javascripts/router/tagwikiRouter.js') -%>
+
+    <% script('/javascripts/models/tagwiki.js') -%>
+
+    <% script('/javascripts/controllers/tagwikiController.js') -%>
+
+    <% script('/javascripts/views/tagwikiView.js') -%>
+<% } %>
+
+<script type="text/x-handlebars", data-template-name="tagwiki">
+  {{outlet headerBar}} 
+
+  <div class='container'>
+    <div class='content'>
+      <div class='row tag-page'>
+        <div class='col-xs-12 col-sm-12 col-lg-9 z-index-1'>
+          <div class='mainSection'>
+            <div class='row contentTitle'>
+                <div class='col-xs-12 col-sm-12 col-lg-12'>
+                <h1><a {{bindAttr href="infoUrl"}}{{name}}</a></h1><a {{bindAttr href="editUrl"}} class="mlm text-no-underline verticle-super" title="Improve tag wiki"><i class="icon-pencil"></i></a>
+                </div>
+            </div>
+            <div class='tag-details mtm'>
+                <div class='row border-all-dashed'>
+                    <div class="col-xs-12 col-sm-12 col-lg-12 ptm pbm pll prl tag-excerpt">
+            	        {{excerpt}}
+                    </div>
+                </div>
+                <div class='row'>
+	                <div class='col-xs-12 col-sm-12 col-lg-12'>
+                        {{markdown description}}
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class='col-xs-12 col-sm-12 col-lg-3 z-index-0 sideSection-container slideSideSection'>
+            <div class='sideSection'>
+                <div class='row'>
+                    <div class='col-xs-12 col-sm-12 col-lg-12'>
+                        <h1 class="mtn">{{abbreviateNumber questioncount}}</h1>
+                    </div>
+                    <div class='col-xs-12 col-sm-12 col-lg-12'>
+                        {{pluralize questioncount s='question'}} tagged
+                    </div>
+                    <div class='col-xs-12 col-sm-12 col-lg-12 ptm pbm'>
+                        {{render tag this}}
+                    </div>
+                </div>
+                <div class='row'>
+                    <div class='col-xs-12 col-sm-12 col-lg-12 ptl'>
+                        <h4 class="mbn font140">Stats</h4>
+                    </div>
+                </div>
+                <div class='row'>
+                    <div class='col-xs-12 col-sm-12 col-lg-12'>
+                        <div class="row">
+                            <div class='col-xs-3 col-sm-3 col-lg-3 pts pbs'>
+                                viewed
+                            </div>
+                            <div class='col-xs-9 col-sm-9 col-lg-9 pts pbs pls'>
+                                <span class="tag-info">{{abbreviateNumber viewcount}} {{pluralize viewcount s='time'}}</span>
+                            </div>
+                        </div>
+                        {{#if active}}
+                        <div class="row">
+                            <div class='col-xs-3 col-sm-3 col-lg-3 pbs'>
+                                active
+                            </div>
+                            <div class='col-xs-9 col-sm-9 col-lg-9 pbs pls'>
+                                <span class="tag-info">{{calendar active}}</span>
+                            </div>
+                        </div>
+                        {{/if}}
+                        <div class="row">
+                            <div class='col-xs-3 col-sm-3 col-lg-3 pbs'>
+                                created
+                            </div>
+                            <div class='col-xs-9 col-sm-9 col-lg-9 pbs pls'>
+                                <span class="tag-info">{{sincetime __utcdatecreated}}</span> by
+                                <div class='user-profile'>
+				                    <div class='divPic'>
+				                        <a class='user-img' {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}>
+				                            <img {{bindAttr src='author.smallimgurl'}} {{bindAttr title='author.fullname'}}/>
+				                        </a>
+				                    </div>
+				                    <div class='divUserDetails plxs'>
+				                        <div class='divUser'>
+				                            <a {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}>
+				                                <span class='name'>{{author.fullname}}</span>
+				                            </a>
+				                        </div>
+				                        <div class='divPts'>{{abbreviateNumber author.reputation}}</div>
+				                    </div>
+				                </div>
+                            </div>
+                        </div>
+                        
+                        {{#if editor}}
+                        <div class="row">
+                            <div class='col-xs-3 col-sm-3 col-lg-3 pbs'>
+                                edited
+                            </div>
+                            <div class='col-xs-9 col-sm-9 col-lg-9 pbs pls'>
+                                <span class="tag-info">{{editcount}} {{pluralize editcount s='time'}}</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class='col-xs-3 col-sm-3 col-lg-3 pbs'>
+                                latest
+                            </div>
+                            <div class='col-xs-9 col-sm-9 col-lg-9 pbs pls'>
+                                <span class="tag-info">{{sincetime edited}}</span> by
+                                <div class='user-profile'>
+				                    <div class='divPic'>
+				                        <a class='user-img' {{bindAttr href='editor.url'}} {{bindAttr title='editor.fullname'}}>
+				                            <img {{bindAttr src='editor.smallimgurl'}} {{bindAttr title='editor.fullname'}}/>
+				                        </a>
+				                    </div>
+				                    <div class='divUserDetails plxs'>
+				                        <div class='divUser'>
+				                            <a {{bindAttr href='author.url'}} {{bindAttr title='editor.fullname'}}>
+				                                <span class='name'>{{editor.fullname}}</span>
+				                            </a>
+				                        </div>
+				                        <div class='divPts'>{{abbreviateNumber editor.reputation}}</div>
+				                    </div>
+				                </div>
+                            </div>
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+                <div class='row'>
+                    <div class='col-xs-12 col-sm-12 col-lg-12 ptl'>
+                        <h4 class="mbn ptl font140">Highest Voted Questions</h4>
+                    </div>
+                </div>
+                <div class='row'>
+                    {{#each question in questions}}
+                        <div class='col-xs-12 col-sm-12 col-lg-12 ptm'>
+                            <a class="votes" {{bindAttr href='question.murl'}} title="Votes (upvotes - downvotes)">{{question.totalvotecount}}</a>
+                            <a {{bindAttr href='question.url'}} {{bindAttr title='question.title'}}>{{question.title}}</a>
+                        </div>
+                    {{else}}
+                    <div class='col-xs-12 col-sm-12 col-lg-12 pts'>
+                        <span class="muted">No tagged question found</span>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{render 'footer'}} 
+</script>
