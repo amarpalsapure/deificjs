@@ -299,6 +299,9 @@ div.grippie { background: #eeeeee url(/images/grippie.png) no-repeat scroll cent
 .tag-page .sideSection .votes { padding: 1px 8px; background-color: #ddd; font-size: 0.9em; color: #222; margin-right: 3px; }
 .tag-page .contentTitle h1 a { color: #333333; }
 
+.tagwiki-edit-page .label { font-size: 1em; font-weight: normal; padding: .35em .65em .4em; }
+.tagwiki-edit-page .contentTitle span { margin-top: 9px; margin-left: 5px; }
+
 @media screen and (max-width: 1200px) {
     body { overflow-x: hidden; }
     .sideSection-container { position: absolute; z-index: 2; top: 225px; max-width: 275px; padding-right: 0px; right: 0px; }

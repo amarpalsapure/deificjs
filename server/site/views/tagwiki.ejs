@@ -2,7 +2,7 @@
 
 <%if (environment === 'production') { %>
     <script type='text/javascript' src='/_min/js/global.combined.js?v=<%=rv%>'></script>
-    <script type='text/javascript' src='/_min/js/tags.combined.js?v=<%= rv %>'></script>
+    <script type='text/javascript' src='/_min/js/tagwiki.combined.js?v=<%= rv %>'></script>
 <% } %>
 <%if (environment === 'development') { %>
     <% script('/javascripts/router/tagwikiRouter.js') -%>

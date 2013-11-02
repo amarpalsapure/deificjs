@@ -59,7 +59,7 @@ exports.initialize = function (rootPath) {
     ];
     combiner.combine(indexFiles, path.join(rootPath, 'server/site/public/_min/js/index.combined.js'), true, true);
     combiner.init();
-    
+
     var admin_indexFiles = [
         path.join(rootPath, 'server/site/public/javascripts/router/admin/indexRouter.js'),
         path.join(rootPath, 'server/site/public/javascripts/controllers/admin/configurationController.js'),
@@ -179,6 +179,15 @@ exports.initialize = function (rootPath) {
         path.join(rootPath, 'server/site/public/javascripts/views/pagingView.js')
     ];
     combiner.combine(tagsFiles, path.join(rootPath, 'server/site/public/_min/js/tags.combined.js'), true, true);
+    combiner.init();
+
+    var tagwikiFiles = [
+        path.join(rootPath, 'server/site/public/javascripts/router/tagwikiRouter.js'),
+        path.join(rootPath, 'server/site/public/javascripts/models/tagwiki.js'),
+        path.join(rootPath, 'server/site/public/javascripts/controllers/tagwikiController.js'),
+        path.join(rootPath, 'server/site/public/javascripts/views/tagwikiView.js'),
+    ];
+    combiner.combine(tagwikiFiles, path.join(rootPath, 'server/site/public/_min/js/tagwiki.combined.js'), true, true);
     combiner.init();
 
     var userFiles = [

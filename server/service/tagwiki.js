@@ -64,7 +64,7 @@ exports.findByName = function (req, res) {
 					Appacitive.Filter.Property('issearchable').equalTo(true),
 					Appacitive.Filter.Property('type').equalTo('question'),
 					Appacitive.Filter.taggedWithOneOrMore([name]));
-		
+
         var questionQuery = new Appacitive.Queries.FindAllQuery({
             schema: 'entity',
             filter: filter,
@@ -96,5 +96,55 @@ exports.findByName = function (req, res) {
         merge();
     }, function (error) {
         merge();
+    });
+};
+
+exports.update = function (req, res) {
+    //get the state of app
+    var app = require('../shared/app.init');
+    var state = app.init(req);
+
+    //initialize appacitive sdk
+    var sdk = require('./appacitive.init');
+    var Appacitive = sdk.init(state.token, state.debug);
+
+    //get the transformer
+    var transformer = require('./infra/transformer');
+
+    //from the state of app
+    //check if user is logged in or not
+    if (!state.userid) return res.status(401).json(transformer.toSessionExpiredError(res));
+
+    //validate inputs
+    if (!req.body.tagwiki || !req.param('id')
+        || !req.body.tagwiki.excerpt || req.body.tagwiki.excerpt === ''
+        || !req.body.tagwiki.description || req.body.tagwiki.description === '') return res.status(400).json(transformer.toError('invalid_input'));
+
+    req.body.tagwiki.__id = req.param('id');
+    //update tag
+    var updateTag = function (onSuccess, onError) {
+        var tag = new Appacitive.Article({
+            __id: req.body.tagwiki.__id,
+            schema: 'tag',
+            excerpt: req.body.tagwiki.excerpt,
+            description: req.body.tagwiki.description
+        });
+
+        tag.save(function () {
+            tag.set('editedby', state.userid);
+            tag.increment('editcount');
+            tag.set('edited', tag.get('__utclastupdateddate'));
+            tag.save();
+            onSuccess();
+        }, onError);
+    };
+
+    //update tag
+    updateTag(function () {
+        return res.json(  {
+            tagwiki: req.body.tagwiki
+        });
+    }, function (status) {
+        return res.status(502).json(transformer.toError('tag_save', status));
     });
 };

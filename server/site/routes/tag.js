@@ -52,7 +52,7 @@ exports.edit = function (req, res) {
     var context = require('../../shared/context');
     //set the context
     context.set(state.token, function (user) {
-        res.render('tag-edit', state);
+        res.render('tagwiki-edit', state);
     }, function (err) {
         //delete the cookie, and redirect user to login page
         res.clearCookie('u');

@@ -163,6 +163,8 @@ app.get('/service/tags/:id', cacheControl.timeCacheRequest, tagApi.findById);
 app.post('/service/tags/add', cacheControl.noCacheRequest, tagApi.save);
 // find tag by name
 app.get('/service/tagwikis', cacheControl.timeCacheRequest, tagwikiApi.findByName);
+// update tagwiki
+app.put('/service/tagwikis/:id', cacheControl.noCacheRequest, tagwikiApi.update);
 
 // ################# search api ####################
 // free text search
