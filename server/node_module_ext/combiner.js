@@ -190,6 +190,16 @@ exports.initialize = function (rootPath) {
     combiner.combine(tagwikiFiles, path.join(rootPath, 'server/site/public/_min/js/tagwiki.combined.js'), true, true);
     combiner.init();
 
+    var tagwikiEditFiles = [
+        path.join(rootPath, 'server/site/public/javascripts/router/tagwikiRouter.js'),
+        path.join(rootPath, 'server/site/public/javascripts/infra/prettify.js'),
+        path.join(rootPath, 'server/site/public/javascripts/models/tagwiki.js'),
+        path.join(rootPath, 'server/site/public/javascripts/controllers/tagwikiController.js'),
+        path.join(rootPath, 'server/site/public/javascripts/views/tagwikiView.js'),
+    ];
+    combiner.combine(tagwikiFiles, path.join(rootPath, 'server/site/public/_min/js/tagwiki-edit.combined.js'), true, true);
+    combiner.init();
+
     var userFiles = [
         path.join(rootPath, 'server/site/public/javascripts/router/userRouter.js'),
         path.join(rootPath, 'server/site/public/javascripts/models/user.js'),
