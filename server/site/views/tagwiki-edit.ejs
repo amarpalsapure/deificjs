@@ -1,0 +1,99 @@
+<% layout('__layout') -%>
+
+<%if (environment === 'production') { %>
+    <script type='text/javascript' src='/_min/js/global.combined.js?v=<%=rv%>'></script>
+    <script type='text/javascript' src='/_min/js/tagwiki-edit.combined.js?v=<%= rv %>'></script>
+<% } %>
+<%if (environment === 'development') { %>
+    <% script('/javascripts/router/tagwikiRouter.js') -%>
+    <% script('/javascripts/infra/prettify.js') -%>
+
+    <% script('/javascripts/models/tagwiki.js') -%>
+
+    <% script('/javascripts/controllers/tagwikiController.js') -%>
+
+    <% script('/javascripts/views/tagwikiView.js') -%>
+<% } %>
+
+<script type='text/x-handlebars', data-template-name='tagwiki'>
+{{outlet headerBar}} 
+
+<div class='container'>
+  <div class='content'>
+      <div class='row tagwiki-edit-page'>
+      <div class='col-xs-12 col-sm-12 col-lg-9 z-index-1'>
+        <div class='mainSection'>
+            <form id='frmTagwiki' class='form-horizontal' role='form'>
+            <div class='row contentTitle'>
+              <div class='col-xs-12 col-sm-12 col-lg-12'>
+                <h1 class='mrs pull-left'>Editing tag wiki for </h1> <span class='pull-left'>{{render tag this}}</span>
+              </div>
+            </div>
+            <div class='form-group mbs mtm'>
+                <div class='col-lg-12'>
+                    <h4 class='mbs mts'>Excerpt</h4>
+                </div>
+                <div class='col-lg-12'>
+                    {{view Ember.TextArea id='txtExcerpt' valueBinding='excerpt' type='text' class='form-control input-large no-radius'}}
+                    <span class="muted font9">enter at least 20 characters</span>
+                </div>
+            </div>
+            <div class='form-group mbm'>
+              <div class='col-lg-12 '>
+                <div id='wmd-button-bar'>
+                </div>
+              </div>
+            </div>
+            <div class='form-group mbm'>
+              <div class='col-lg-12'>
+                {{view Ember.TextArea class='resizable width-100p' id='wmd-input' name='wmd-input' placeholder='You can use Markdown language to write tag description.' valueBinding='description'}}
+              </div>
+            </div>
+            <div class='form-group mts'>
+              <div class='col-lg-12'>
+                <small class='muted'>Watch the preview of tag description here.</small>
+                <div id='wmd-preview'></div>
+              </div>
+            </div>
+            <div class='form-group hide'>
+              <div class='col-xs-12 col-sm-12 col-lg-10 col-lg-offset-1'>
+                <div id='wmd-output'>
+                </div>
+              </div>
+            </div>
+            <div class='form-group ptxxl mtl'>
+              <div class='col-lg-12'>
+                  <button id='btnSaveTagwiki' disabled='disabled' class='btn btn-large btn-primary mrm' data-loading-text='Saving Tag Wiki' href='javascript:void(0)' {{action 'saveTagwiki' target=view}}>Save Tag Wiki</button>
+              </div>
+              <div class='col-lg-12'>
+                  <div class='alert-dismiss-container tagError'>
+                  </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class='col-xs-12 col-sm-12 col-lg-3 z-index-0 sideSection-container slideSideSection'>
+        <div class='sideSection'>
+          <div class='row'>
+              <div class="col-lg-12">
+                  <h4>What are Tag Wikis?</h4>
+                   <p>The tag wiki <b>excerpt</b> is a brief plain text introduction to the topic that the tag represents. It is shown at the top of tag question lists, and as a tooltip wherever the tag appears. </p>
+                   <p>The <b>full tag wiki</b> is a detailed introduction to the topic, suitable as a destination for those curious about it:</p>
+                   <ul class="pan mll">
+                        <li>what questions should have this tag?</li>
+                        <li>some basic definitions</li>
+                        <li>brief introduction to the subject</li>
+                        <li>important links for learning more</li>
+                        <li>one reasonably sized page</li>
+                   </ul>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{render 'footer'}} 
+</script>

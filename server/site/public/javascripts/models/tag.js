@@ -22,6 +22,14 @@
 			return text;
 		}.property('excerpt'),
 
+		infoUrl: function() {
+		    return '/tags/' + this.get('name') + '/info';
+		}.property(name),
+
+		editUrl: function() {
+		    return '/tags/' + this.get('name') + '/edit';
+		}.property(name),
+
 		question: DS.belongsTo('question')
 	});
 }).call(this);

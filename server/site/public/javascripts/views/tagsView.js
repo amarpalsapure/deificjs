@@ -1,8 +1,8 @@
-(function() {
-	Deific.TagsView =  Ember.View.extend({
+(function () {
+    Deific.TagsView = Ember.View.extend({
         showTagContainer: true,
 
-        didInsertElement: function() {
+        didInsertElement: function () {
             //remove loader
             $('#rootProgress').remove();
 
@@ -10,43 +10,45 @@
             $('.nav-tags').addClass('active');
 
             //enable the the active link
-            var sort = $.fn.parseParam('tab', $('.right-nav-tabs').data('default')).toLowerCase();
-            $('.right-nav-tabs #' + 'a' + sort).parent().addClass('active');
+            if ($('.right-nav-tabs').length != 0) {
+                var sort = $.fn.parseParam('tab', $('.right-nav-tabs').data('default')).toLowerCase();
+                $('.right-nav-tabs #' + 'a' + sort).parent().addClass('active');
+            }
         },
 
-    	submitTextField: Ember.TextField.extend({
-			insertNewline: function() {
-		        return this.get('parentView').search();
-	   		}
-		}),
+        submitTextField: Ember.TextField.extend({
+            insertNewline: function () {
+                return this.get('parentView').search();
+            }
+        }),
 
-    	search: function() {
+        search: function () {
             var that = this;
 
             //get the search query
-    		var query = this.get('searchtext').trim();
+            var query = this.get('searchtext').trim();
 
             //sort results
-    		var sort = $.fn.parseParam('tab', $('.right-nav-tabs').data('default')).toLowerCase();
+            var sort = $.fn.parseParam('tab', $('.right-nav-tabs').data('default')).toLowerCase();
 
             //page number
             var page = $.fn.parseParam('page', '1');
-            if(query != '') page = 1;
+            if (query != '') page = 1;
 
             $('#btnTagSearch').button('loading');
 
-            var resetView = function() {
+            var resetView = function () {
                 //reset the button
                 $('#btnTagSearch').button('reset');
                 //hide the pager
                 that.set('showTagContainer', query === '');
             }
 
-            this.controller.search(query, page, sort, function(tags) {
+            this.controller.search(query, page, sort, function (tags) {
                 resetView();
-            }, function(message) {
+            }, function (message) {
                 resetView();
             });
-    	}
-	});
+        }
+    });
 }).call(this);

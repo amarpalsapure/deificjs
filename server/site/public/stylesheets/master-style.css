@@ -29,6 +29,7 @@ input { border: solid 1px #ddd;}
 .clear {clear:both;}
 .ptn, .pvn, .pan { padding-top: 0px; }
 .paxs { padding: 3px;}
+.plxs {padding-left: 3px;}
 .ptni, .pvni, .pani { padding-top: 0px !important; }
 .pts, .pvs, .pas { padding-top: 5px; }
 .ptm, .pvm, .pam { padding-top: 10px; }
@@ -91,6 +92,7 @@ input { border: solid 1px #ddd;}
 .alert-sm { padding: 8px; }
 .alert-error { border: solid 1px #b94a48; }
 .display-inline { display: inline;}
+.display-block { display: block; }
 .alert-dismiss-container .close { padding-left: 12px; margin-right: -6px; }
 .ellipsis { white-space: nowrap; overflow: hidden; -ms-text-overflow: ellipsis; -o-text-overflow: ellipsis; text-overflow: ellipsis; cursor: default; }
 .arrow-left {

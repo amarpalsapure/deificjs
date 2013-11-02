@@ -13,6 +13,7 @@
 		voteconnid: DS.attr('string'),
 		upvotecount: DS.attr('number', { defaultValue: 0 }),
 		downvotecount: DS.attr('number', { defaultValue: 0 }),
+		totalvotecount: DS.attr('number', { defaultValue: 0 }),
 		viewcount: DS.attr('number', { defaultValue: 0 }),
 		bookmarkcount: DS.attr('number', { defaultValue: 0 }),
 		isanswered: DS.attr('boolean'),

@@ -26,6 +26,7 @@ var answerApi = require('./server/service/answer.js');
 var userApi = require('./server/service/user.js');
 var commentApi = require('./server/service/comment.js');
 var tagApi = require('./server/service/tag.js');
+var tagwikiApi = require('./server/service/tagwiki.js');
 var searchApi = require('./server/service/search.js');
 var callbackHandlerApi = require('./server/service/callbackHandlers.js');
 var feedbackApi = require('./server/service/feedback.js');
@@ -84,6 +85,7 @@ app.use(require('prerender-node'));
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
+app.use(express.favicon());
 app.use(express.cookieParser('9b7c1f44590b46e509db'));
 app.use(express.session());
 app.use(app.router);
@@ -154,11 +156,15 @@ app.delete('/service/comments/:id', cacheControl.noCacheRequest, commentApi.del)
 
 // ################# tag api ####################
 // find tag
-app.get('/service/tags', cacheControl.timeCacheRequest, tagApi.findAll)
+app.get('/service/tags', cacheControl.timeCacheRequest, tagApi.findAll);
 // find tag by id
 app.get('/service/tags/:id', cacheControl.timeCacheRequest, tagApi.findById);
 // save tag
 app.post('/service/tags/add', cacheControl.noCacheRequest, tagApi.save);
+// find tag by name
+app.get('/service/tagwikis', cacheControl.timeCacheRequest, tagwikiApi.findByName);
+// update tagwiki
+app.put('/service/tagwikis/:id', cacheControl.noCacheRequest, tagwikiApi.update);
 
 // ################# search api ####################
 // free text search
@@ -236,9 +242,13 @@ app.get('/search', appSetup.init, searchRoute.search);
 // all tags page
 app.get('/tags', appSetup.init, tagRoute.index);
 // add new tag
-app.get('/tags/add', appSetup.init, tagRoute.add);
+app.get('/add-tag-wiki', appSetup.init, tagRoute.add);
 // it renders the same page as all questions for a given tag
 app.get('/tags/:tag', appSetup.init, questionRoute.tagged);
+// tag info page
+app.get('/tags/:tag/info', appSetup.init, tagRoute.info);
+// tag edit page
+app.get('/tags/:tag/edit', appSetup.init, tagRoute.edit);
 
 // ################ feedback #######################
 app.get('/feedback', appSetup.init, feedbackRoute.index);

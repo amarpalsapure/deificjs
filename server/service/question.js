@@ -720,7 +720,12 @@ exports.save = function(req, res) {
 				updateQuestion();
 			};
 			for (var i = 0; i < question.tags.length; i++) {
-				question_tag_Create(question.tags[i], merge, merge);
+			    question_tag_Create(question.tags[i], merge, merge);
+
+                //update tag's active date as new question create date
+			    var tag = new Appacitive.Article({ __id: question.tags[i], schema: 'tag' });
+			    tag.set('active', aQuestion.get('__utcdatecreated'));
+			    tag.save();
 			};
 		}, function(status) {
 			//rollback the question
