@@ -1,8 +1,14 @@
 <% layout('__layout') -%>
 
-<% script('/javascripts/router/loginRouter.js') -%>
-<% script('/javascripts/controllers/loginController.js') -%>
-<% script('/javascripts/views/loginView.js') -%>
+<%if (environment === 'production') { %>
+    <script type='text/javascript' src='/_min/js/global.combined.js?v=<%=rv%>'></script>
+    <script type='text/javascript' src='/_min/js/login.combined.js?v=<%= rv %>'></script>
+<% } %>
+<%if (environment === 'development') { %>
+    <% script('/javascripts/router/loginRouter.js') -%>
+    <% script('/javascripts/controllers/loginController.js') -%>
+    <% script('/javascripts/views/loginView.js') -%>
+<% } %>
 
 
 <script type='text/x-handlebars', data-template-name='login'>
