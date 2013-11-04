@@ -101,3 +101,23 @@ exports.ask = function(req, res) {
 	    res.redirect('/users/login?returnurl=/questions/ask&s=1');
 	});
 };
+
+exports.edit = function (req, res) {
+    //initialize the app
+    var app = require('../../shared/app.init');
+    var state = app.init(req);
+
+    //set the title of the page
+    state.title = 'Editing question';
+
+    //initialize the context
+    var context = require('../../shared/context');
+    //set the context
+    context.set(state.token, function (user) {
+        res.render('question-edit', state);
+    }, function (err) {
+        //delete the cookie, and redirect user to login page
+        res.clearCookie('u');
+        res.redirect('/users/login?returnurl=/questions/ask&s=1');
+    });
+};

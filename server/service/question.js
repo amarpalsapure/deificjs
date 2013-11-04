@@ -55,21 +55,25 @@ var _findById = function(req, res) {
 		//increment the view count locally
 		if(isNewVisit) response.question['viewcount'] = parseInt(response.question['viewcount'], 10) + 1;
 		
-		//if the correct answer exists, then it will appear first in any sort
-		if(response.question.correctanswer) {
-			var newAnswerMeta = [];
-			response.question.correctanswer.__utcdatecreated = transformer.toISODateFormat(response.question.correctanswer.__utcdatecreated);
-			newAnswerMeta.push(response.question.correctanswer);
-			//remove the correct answer from answersMeta if it's there 
-			//else remove the last item, depending upon the page size
-			for (var i = 0; i < answersMeta.length; i++) {
-				if(answersMeta[i].__id == response.question.correctanswer.__id) continue;
-				newAnswerMeta.push(answersMeta[i]);
-			};
-			delete response.question.correctanswer;
-			answersMeta = newAnswerMeta;
+
+        //if request came from edit page don't add answer to question
+		if (!req.param('edit')) {
+		    //if the correct answer exists, then it will appear first in any sort
+		    if (response.question.correctanswer) {
+		        var newAnswerMeta = [];
+		        response.question.correctanswer.__utcdatecreated = transformer.toISODateFormat(response.question.correctanswer.__utcdatecreated);
+		        newAnswerMeta.push(response.question.correctanswer);
+		        //remove the correct answer from answersMeta if it's there 
+		        //else remove the last item, depending upon the page size
+		        for (var i = 0; i < answersMeta.length; i++) {
+		            if (answersMeta[i].__id == response.question.correctanswer.__id) continue;
+		            newAnswerMeta.push(answersMeta[i]);
+		        };
+		        delete response.question.correctanswer;
+		        answersMeta = newAnswerMeta;
+		    }
+		    response.question['answersMeta'] = answersMeta;
 		}
-		response.question['answersMeta'] = answersMeta;
 
 		//As we are doing a search call from client side
 		//ember expects an array of of question and not a single question
@@ -111,42 +115,44 @@ var _findById = function(req, res) {
 	});	
 
 	//PARALLEL CALL 2 
-	//Get the answers
-	var orderBy = '__utcdatecreated',
-		isAscending = false;
-	var sort = req.query.sort;
-	sort = (!sort) ? 'active' : sort.toLowerCase();
-	switch(sort) {
-		case 'active':
-			orderBy: '__utclastupdateddate';
-			break;
-		case 'votes':
-			orderBy = 'totalvotecount';
-			break;
-		case 'oldest':
-			isAscending = true;
-			break;
-	}
+    //Get the answers
+	if (!req.param('edit')) {
+	    var orderBy = '__utcdatecreated',
+            isAscending = false;
+	    var sort = req.query.sort;
+	    sort = (!sort) ? 'active' : sort.toLowerCase();
+	    switch (sort) {
+	        case 'active':
+	            orderBy: '__utclastupdateddate';
+	            break;
+	        case 'votes':
+	            orderBy = 'totalvotecount';
+	            break;
+	        case 'oldest':
+	            isAscending = true;
+	            break;
+	    }
 
-	var question = new Appacitive.Article({ __id : qId, schema : 'entity' });
-	question.fetchConnectedArticles({ 
-	    relation: 'question_answer',
-	    label: 'answer',
-	    orderBy: orderBy,
-	    isAscending: isAscending,
-	    pageSize: process.config.pagesize,
-	    fields: ['__id,__utcdatecreated']
-	}, function(obj, pi) {
-	    question.children['question_answer'].forEach(function(answer){
-	    	answersMeta.push({
-	    		__id: answer.id(),
-	    		__utcdatecreated: transformer.toISODateFormat(answer.get('__utcdatecreated'))
-	    	})
+	    var question = new Appacitive.Article({ __id: qId, schema: 'entity' });
+	    question.fetchConnectedArticles({
+	        relation: 'question_answer',
+	        label: 'answer',
+	        orderBy: orderBy,
+	        isAscending: isAscending,
+	        pageSize: process.config.pagesize,
+	        fields: ['__id,__utcdatecreated']
+	    }, function (obj, pi) {
+	        question.children['question_answer'].forEach(function (answer) {
+	            answersMeta.push({
+	                __id: answer.id(),
+	                __utcdatecreated: transformer.toISODateFormat(answer.get('__utcdatecreated'))
+	            })
+	        });
+	        merge();
+	    }, function (err, obj) {
+	        merge();
 	    });
-	    merge();
-	}, function (err, obj) {
-		merge();
-	});
+	} else merge();
 };
 
 //Step 1: Get the question ids by tag name

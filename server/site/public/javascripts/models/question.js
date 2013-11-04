@@ -69,6 +69,10 @@
 
 		rootElement: function() {
 			return $('#question' + '-' + this.get('id'));
+		}.property('id'),
+
+		editUrl: function () {
+		    return '/questions/' + this.get('id') + '/edit';
 		}.property('id')
 	});
 }).call(this);

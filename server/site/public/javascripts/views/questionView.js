@@ -1,116 +1,142 @@
 (function () {
     Deific.QuestionView = Deific.BaseView.extend({
 
-        question: {},
         hidevotecount: true,
         isTogglingBookmark: false,
         isTogglingSubscribe: false,
 
         didInsertElement: function () {
-            //hide the answer containers
-            $('.answer-section .question').addClass('hide');
-
             var that = this;
             //remove loader
             $('#rootProgress').remove();
 
-            //pretify the code
-            var asyncPrettyPrint = function () {
-                setTimeout(function () {
-                    var codeBlocks = Array.prototype.slice.call(document.getElementsByTagName('pre'));
-                    codeBlocks.forEach(function (codeBlock) {
-                        if ($(codeBlock).children('code').length == 0) return;
-                        $(codeBlock).addClass('prettyprint');
-                    });
-                    prettyPrint();
-                }, 10);
-            };
-
             //get the model
             var model = this.controller.get('model');
-            if (model && model.get('title')) {
-                //set the page title
-                var title = model.get('title') + ' - ' + window.init.config.brand;
-                var tags = model.get('tags');
-                if (tags && tags.get('length') > 0) {
-                    tags = tags.toArray();
-                    var lTitle = title.toLowerCase();
-                    for (var i = 0; i < tags.get('length') ; i++) {
-                        if (lTitle.indexOf(tags[i].get('name').toLowerCase()) != -1) continue;
-                        title = tags[i].get('name') + ' - ' + title;
-                        break;
+            if (model) {
+                //Question Page
+                if ($('.question-page').length === 1) {
+                    //hide the answer containers
+                    $('.answer-section .question').addClass('hide');
+
+                    //pretify the code
+                    var asyncPrettyPrint = function () {
+                        setTimeout(function () {
+                            var codeBlocks = Array.prototype.slice.call(document.getElementsByTagName('pre'));
+                            codeBlocks.forEach(function (codeBlock) {
+                                if ($(codeBlock).children('code').length == 0) return;
+                                $(codeBlock).addClass('prettyprint');
+                            });
+                            prettyPrint();
+                        }, 10);
                     };
-                }
-                $(document).attr('title', title);
 
-                //if there are no answers, remore the answer section
-                if (model.get('answersMeta').get('length') == 0) {
-                    $('.answer-section').addClass('hide');
-                }
+                    //set the page title
+                    if (model.get('title')) {
+                        var title = model.get('title') + ' - ' + window.init.config.brand;
+                        var tags = model.get('tags');
+                        if (tags && tags.get('length') > 0) {
+                            tags = tags.toArray();
+                            var lTitle = title.toLowerCase();
+                            for (var i = 0; i < tags.get('length') ; i++) {
+                                if (lTitle.indexOf(tags[i].get('name').toLowerCase()) != -1) continue;
+                                title = tags[i].get('name') + ' - ' + title;
+                                break;
+                            };
+                        }
+                        $(document).attr('title', title);
+                    }
 
-                //question data is loaded and will be render immediately,
-                //running asyncPrettyPrint for any code in question
-                model.addObserver('text', this, function () {
-                    asyncPrettyPrint();
-                });
+                    //if there are no answers, remore the answer section
+                    if (model.get('answersMeta').get('length') == 0) {
+                        $('.answer-section').addClass('hide');
+                    }
 
-                //remove show more if there are no hidden comments
-                setTimeout(function () {
-                    var hiddenComments = model.get('comments').filter(function (comment) {
-                        return comment.get('ishidden');
+                    //question data is loaded and will be render immediately,
+                    //running asyncPrettyPrint for any code in question
+                    model.addObserver('text', this, function () {
+                        asyncPrettyPrint();
                     });
-                    if (hiddenComments && hiddenComments.get('length') > 0) return;
-                    var $ele = $('#question-' + model.get('id'));
-                    $ele.find('.showMore').parent().remove();
-                }, 50);
-            }
 
-            //highlight the sort order for the answer
-            var sort = $.fn.parseParam('sort', 'active').toLowerCase();
-            $('.right-nav-tabs #' + 'a' + sort).parent().addClass('active');
+                    //remove show more if there are no hidden comments
+                    setTimeout(function () {
+                        var hiddenComments = model.get('comments').filter(function (comment) {
+                            return comment.get('ishidden');
+                        });
+                        if (hiddenComments && hiddenComments.get('length') > 0) return;
+                        var $ele = $('#question-' + model.get('id'));
+                        $ele.find('.showMore').parent().remove();
+                    }, 50);
 
-            asyncPrettyPrint();
+                    //highlight the sort order for the answer
+                    var sort = $.fn.parseParam('sort', 'active').toLowerCase();
+                    $('.right-nav-tabs #' + 'a' + sort).parent().addClass('active');
 
-            //check the length of answer
-            //must be more than 20 characters
-            $(window).on('deificloaded', function () {
-                $('.question-page #wmd-input').keyup(function () {
-                    if ($.trim($('#wmd-input').val()).length > 20) $('#btnSubmitAnswer').removeAttr('disabled');
-                    else $('#btnSubmitAnswer').attr('disabled', 'disabled');
-                });
-            });
+                    asyncPrettyPrint();
 
-            //initialize the markdown editor
-            //by raising the event, event listener is in markdown-editor.js
-            setTimeout(function () {
-                $(window).trigger('deificloaded');
-            }, 100);
+                    //subscribe to question (only on question detail page)
+                    if (model.get('issubscribed') === true) $('#chkSubscribe input').attr('checked', 'checked');
+                    $('#chkSubscribe').bootstrapSwitch();
+                    $('#chkSubscribe').on('switch-change', function (e, data) {
+                        if (that.get('isTogglingSubscribe') === true) return;
+                        that.toggleSubscription();
+                    });
 
-            function tagFormatResult(tag) {
-                //add tags to local store, so that api called is not made, when find is done on them
-                var store = that.controller.get('store');
-                store.push('tag', {
-                    id: tag.__id,
-                    name: tag.name,
-                    excerpt: tag.excerpt
-                });
+                    //check the length of answer
+                    //must be more than 20 characters
+                    $(window).on('deificloaded', function () {
+                        $('#wmd-input').keyup(function () {
+                            if ($.trim($('#wmd-input').val()).length > 20) $('#btnSubmitAnswer').removeAttr('disabled');
+                            else $('#btnSubmitAnswer').attr('disabled', 'disabled');
+                        });
+                    });
 
-                //return the html
-                var markup = "<table class='tag-result'><tr>";
-                markup += "<td class='tag-info'><div class='tag-name font-bold'>" + tag.name + "</div>";
-                markup += "<div class='tag-qcount mls font9'>x " + tag.questioncount + "</div>"
-                if (tag.excerpt) {
-                    markup += "<div class='pas font8'>" + tag.excerpt + "</div>";
+                } //e.o.f. question page
+
+                //on question edit page pre populate the selected tags
+                if ($('.question-edit-page').length === 1) {
+                    //bind the controls
+                    setTimeout(function () {
+                        $('#txtTitle').val(model.get('title'));
+                        $('#wmd-input').val(model.get('text'));
+                    }, 150);
+
+                    //set the tags
+                    var tags = model.get('tags');
+                    if (tags) {
+                        tags.forEach(function (tag) {
+                            that.__addTag(tag.get('id'), tag.get('name'));
+                        });
+                    }
                 }
-                markup += "</td></tr></table>"
-                return markup;
-            };
 
-            function tagFormatSelection(tag) {
-                return tag.name;
-            };
+            } //e.o.f. model
 
-            if ($('#tagSearch').length > 0) {
+
+            if ($('.question-new-page').length === 1 || $('.question-edit-page').length === 1) {
+                //helper functions
+                var tagFormatResult = function (tag) {
+                    //add tags to local store, so that api called is not made, when find is done on them
+                    var store = that.controller.get('store');
+                    store.push('tag', {
+                        id: tag.__id,
+                        name: tag.name,
+                        excerpt: tag.excerpt
+                    });
+
+                    //return the html
+                    var markup = "<table class='tag-result'><tr>";
+                    markup += "<td class='tag-info'><div class='tag-name font-bold'>" + tag.name + "</div>";
+                    markup += "<div class='tag-qcount mls font9'>x " + tag.questioncount + "</div>"
+                    if (tag.excerpt) {
+                        markup += "<div class='pas font8'>" + tag.excerpt + "</div>";
+                    }
+                    markup += "</td></tr></table>"
+                    return markup;
+                };
+                var tagFormatSelection = function (tag) {
+                    return tag.name;
+                };
+
                 //select2 for tag search
                 $('#tagSearch').select2({
                     placeholder: { title: 'Search for tag' },
@@ -144,7 +170,7 @@
                 });
 
                 $(window).on('deificloaded', function () {
-                    $('.question-new-page #wmd-input').keyup(function () {
+                    $('#wmd-input').keyup(function () {
                         //Enable submit button
                         that.__checkQuestionFormIsComplete();
                     });
@@ -154,29 +180,30 @@
                     //Enable submit button
                     that.__checkQuestionFormIsComplete();
                 });
-            }
 
-            //subscribe to question (only on question detail page)
-            if ($('.question-page').length === 1) {
-                if (model.get('issubscribed') === true) $('#chkSubscribe input').attr('checked', 'checked');
-                $('#chkSubscribe').bootstrapSwitch();
-                $('#chkSubscribe').on('switch-change', function (e, data) {
-                    if (that.get('isTogglingSubscribe') === true) return;
-                    that.toggleSubscription();
-                });
-            }
+            } //e.o.f new question page
 
+            //common for all pages
+            //initialize the markdown editor
+            //by raising the event, event listener is in markdown-editor.js
+            setTimeout(function () {
+                $(window).trigger('deificloaded');
+            }, 100);
         },
 
         newQuestionAddTag: function () {
-            var that = this;
-
             if ($('#tagSearch').val().trim() == "") return;
 
-            var template = "<li class='select2-search-choice'> <div id='" + $('#tagSearch').val() + "'>" + $('.select2-chosen').html() + "</div> <a href='#' onclick='return false;' class='select2-search-choice-close' tabindex='-1'></a> </li>";
+            this.__addTag($('#tagSearch').val(), $('.select2-chosen').html());
 
             //clear the select2
             $('#tagSearch').select2('val', '');
+        },
+
+        __addTag: function (tagId, tagName) {
+            var that = this;
+
+            var template = "<li class='select2-search-choice'> <div id='" + tagId + "'>" + tagName + "</div> <a href='#' onclick='return false;' class='select2-search-choice-close' tabindex='-1'></a> </li>";
 
             //hide the placeholder
             if ($('#selectedTags ul li').length == 0) {
@@ -203,9 +230,9 @@
             this.__checkQuestionFormIsComplete();
         },
 
-        saveQuestion: function () {
-            var title = this.get('question').title.trim();
-            var text = this.get('question').text.trim();
+        saveQuestion: function (action) {
+            var title = $.trim($("#txtTitle").val());
+            var text = $("#wmd-input").val();
 
             var tagIds = [];
             $('#selectedTags ul li div').each(function (i, ele) {
@@ -215,19 +242,23 @@
             //change the button state to loading (Bootstrap)
             $('#btnSubmitQuestion').button('loading');
 
-            this.get('controller').saveQuestion(title, text, tagIds, function (savedObj) {
+            var onSuccess = function (savedObj) {
                 //redirect user to the question page
                 window.location = savedObj.get('url');
-            }, function (message) {
+            };
+
+            var onError = function (message) {
                 //do the error handling
                 //errors can be session expired or bad gateway
                 //reset button state to loading (Bootstrap)
                 message = message || 'An error occurred during saving answer.';
-                var alert = '<div class="alert alert-block alert-danger font9"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' + message + '</div>';
+                var alert = '<div class="alert alert-block alert-danger pull-left font9"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' + message + '</div>';
                 $('.questionError').html(alert).alert();
 
                 $('#btnSubmitQuestion').button('reset');
-            });
+            };
+
+            this.get('controller').saveQuestion(title, text, tagIds, onSuccess, onError);
         },
 
         saveAnswer: function () {

@@ -209,6 +209,9 @@ app.get('/questions/tagged/:tag', appSetup.init, questionRoute.tagged);
 app.get('/questions/:id', appSetup.init, questionRoute.index);
 
 // question page with title in url
+app.get('/questions/:id/edit', appSetup.init, questionRoute.edit);
+
+// question page with title in url
 app.get('/questions/:id/:title', appSetup.init, questionRoute.index);
 
 // short url for question
