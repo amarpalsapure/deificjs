@@ -2939,10 +2939,10 @@ Depends on  NOTHING
 			if (!_snapshot.__tags) return article.__tags;
 
 			var _tags = [];
-			article.__tags.every(function(a) {
-				if (_snapshot.__tags.indexOf(a) == -1)
-					_tags.push(a);
-			});
+			for (var i = 0; i < article.__tags.length; i++) {
+			    if (_snapshot.__tags.indexOf(article.__tags[i]) === -1)
+			        _tags.push(article.__tags[i]);
+			}
 			return _tags;
 		};
 
