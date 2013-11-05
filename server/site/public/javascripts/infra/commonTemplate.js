@@ -331,8 +331,8 @@
 													    </a>	\
 													    <ul class='dropdown-menu'>	\
 													    	{{#if isowner}}	\
-													      		<li class='hide'>	\
-													      			<a href='javascript:void(0)' {{action notimplemented target=view}}>	\
+													      		<li>	\
+													      			<a {{bindAttr href='editUrl'}}>	\
 													      				<i class='icon-edit mrm'></i><span class='font9'>Edit</span>	\
 												      				</a>	\
 											      				</li>	\

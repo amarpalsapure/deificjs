@@ -2,10 +2,10 @@
 
 <%if (environment === 'production') { %>
     <script type='text/javascript' src='/_min/js/global.combined.js?v=<%=rv%>'></script>
-    <script type='text/javascript' src='/_min/js/newQuestion.combined.js?v=<%= rv %>'></script>
+    <script type='text/javascript' src='/_min/js/editQuestion.combined.js?v=<%= rv %>'></script>
 <% } %>
 <%if (environment === 'development') { %>
-    <% script('/javascripts/router/new-questionRouter.js') -%>
+    <% script('/javascripts/router/edit-questionRouter.js') -%>
     <% script('/javascripts/infra/prettify.js') -%>
     <% script('/javascripts/infra/select2.min.js') -%>
     <% script('/javascripts/controllers/baseController.js') -%>
@@ -16,10 +16,9 @@
 
 <script type='text/x-handlebars', data-template-name='question'>
 {{outlet headerBar}} 
-
 <div class='container'>
   <div class='content'>
-    <div class='row question-new-page'>
+    <div class='row question-edit-page'>
       <div class='col-xs-12 col-sm-12 col-lg-9 z-index-1'>
         <div class='mainSection'>
           <form id='frmNewQuestion' class='form-horizontal' role='form'>
@@ -83,7 +82,8 @@
             </div>
             <div class='form-group ptm mtl'>
               <div class='col-lg-12'>
-                  <button id='btnSubmitQuestion' disabled='disabled' class='btn btn-large btn-primary mrm' data-loading-text='Submitting Your Question' href='javascript:void(0)' {{action 'saveQuestion' target=view}}>Submit Your Question</button>
+                  <button id='btnSubmitQuestion' disabled='disabled' class='btn btn-large btn-primary mrs' data-loading-text='Saving Question' {{action 'saveQuestion' target=view}}>Save Question</button>
+                  <a {{bindAttr href='url'}} class="btn btn-link">Cancel</a>
                   <div class='alert-dismiss-container questionError mtm'>
                   </div>
                 </div>

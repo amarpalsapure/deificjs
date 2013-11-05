@@ -93,10 +93,13 @@
 				
 				model.set('__tags', tagsArray.join(','));
 
-				//add tags to model
+			    //add tags to model
+				model.get('tags').clear();
 				model.get('tags').pushObjects(tags);
 
-				//get the author from store
+				model.set('action', 'do:save');
+
+			    //get the author from store
 				that.get('store').find('user', Deific.AccountController.user.userid).then(function(user) {
 					//set author of question
 					model.set('author', user);
