@@ -496,6 +496,7 @@ exports.update = function (req, res) {
         newTags = question.__tags.split(',');
         aQuestion.fetchConnectedArticles({
             relation: 'question_tag',
+            returnEdge: true,
             fields: ['name']
         }, function () {
             //check for old connections
