@@ -324,11 +324,6 @@ var _toAnswer = function (answer, state) {
         response.users.push(author);
     }
 
-    //answer question
-    if (answer.children.question && answer.children.question.length > 0) {
-        response.answer.question = answer.children.question[0]['__id'];
-    }
-
     //answer is voted or not
     if (answer.children.vote && answer.children.vote.length > 0) {
         response.answer['voteconnid'] = answer.children.vote[0].connection.id();

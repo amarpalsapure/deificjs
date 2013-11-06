@@ -119,6 +119,18 @@ exports.initialize = function (rootPath) {
     combiner.combine(editQuestionFiles, path.join(rootPath, 'server/site/public/_min/js/editQuestion.combined.js'), true, true);
     combiner.init();
 
+    var editAnswerFiles = [
+        path.join(rootPath, 'server/site/public/javascripts/router/edit-answerRouter.js'),
+        path.join(rootPath, 'server/site/public/javascripts/infra/prettify.js'),
+        path.join(rootPath, 'server/site/public/javascripts/infra/select2.min.js'),
+        path.join(rootPath, 'server/site/public/javascripts/controllers/baseController.js'),
+        path.join(rootPath, 'server/site/public/javascripts/controllers/answerController.js'),
+        path.join(rootPath, 'server/site/public/javascripts/views/baseView.js'),
+        path.join(rootPath, 'server/site/public/javascripts/views/answerView.js')
+    ];
+    combiner.combine(editAnswerFiles, path.join(rootPath, 'server/site/public/_min/js/editAnswer.combined.js'), true, true);
+    combiner.init();
+
     var taggedQuestionFiles = [
         path.join(rootPath, 'server/site/public/javascripts/router/taggedRouter.js'),
         path.join(rootPath, 'server/site/public/javascripts/models/paging.js'),

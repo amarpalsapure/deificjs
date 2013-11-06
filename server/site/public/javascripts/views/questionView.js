@@ -230,7 +230,7 @@
             this.__checkQuestionFormIsComplete();
         },
 
-        saveQuestion: function (action) {
+        saveQuestion: function () {
             var title = $.trim($("#txtTitle").val());
             var text = $("#wmd-input").val();
 

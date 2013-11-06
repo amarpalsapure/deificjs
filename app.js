@@ -15,6 +15,7 @@ var appSetup = require('./server/node_module_ext/app-setup');
 var routes = require('./server/site/routes');
 var userRoute = require('./server/site/routes/user');
 var questionRoute = require('./server/site/routes/question');
+var answerRoute = require('./server/site/routes/answer');
 var searchRoute = require('./server/site/routes/search');
 var tagRoute = require('./server/site/routes/tag');
 var feedbackRoute = require('./server/site/routes/feedback');
@@ -220,6 +221,9 @@ app.get('/q/:qid', appSetup.init, questionRoute.miniindex);
 //short url for answer
 app.get('/a/:qid/:aid', appSetup.init, questionRoute.miniindex);
 
+// ################ answer #####################
+//answer edit
+app.get('/answers/:id/edit', appSetup.init, answerRoute.edit);
 
 // ################ user #######################
 //all users

@@ -1,5 +1,28 @@
 (function(){
-	Deific.AnswerController = Deific.BaseController.extend({
+    Deific.AnswerController = Deific.BaseController.extend({
+
+        saveAnswer: function(text, onSuccess, onError) {
+            var that = this;
+            var model = this.get('model');
+
+            //set the text
+            model.set('text', text);
+
+            model.set('action', 'do:save');
+
+            //get the author from store
+            that.get('store').find('user', Deific.AccountController.user.userid).then(function (user) {
+                //set author of question
+                model.set('author', user);
+                
+                var murl = model.get('murl');
+                model.save().then(function (savedObj) {
+                    onSuccess(murl);
+                }, function (error) {
+                    onError(Deific.localDataSource.handleError(error, 'Deific.AnswerController-saveAnswer'));
+                });
+            });
+        },
 
 		//toggles the state of answer as accepted / unaccepted
 		toggleAnswer: function(isAccepted, onSuccess, onError) {

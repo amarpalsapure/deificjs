@@ -2,7 +2,6 @@
 	Deific.Answer = DS.Model.extend({
 		__utcdatecreated: DS.attr('date'),
 		__createdby: DS.attr('string'),
-		murl: DS.attr('string'),
 		
 		title: DS.attr('string'), //question title, will be used when new answer is created
 		text: DS.attr('string'),
@@ -44,7 +43,6 @@
 			if(this.get('voted') == -1) return 'btn btn-warning btn-sm';
 			else return 'btn btn-danger btn-sm';
 		}.property('voted'),
-
 		
 		getfulldate: function(){
 			return moment(this.get('__utcdatecreated')).format("DDMMMYYYY");
@@ -79,6 +77,10 @@
 
 		rootElement: function() {
 			return $('#answer' + '-' + this.get('id'));
+		}.property('id'),
+
+		editUrl: function () {
+		    return '/answers/' + this.get('id') + '/edit';
 		}.property('id')
 	});
 }).call(this);

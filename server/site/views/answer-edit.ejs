@@ -1,0 +1,75 @@
+<% layout('__layout') -%>
+
+<%if (environment === 'production') { %>
+    <script type='text/javascript' src='/_min/js/global.combined.js?v=<%=rv%>'></script>
+    <script type='text/javascript' src='/_min/js/editAnswer.combined.js?v=<%= rv %>'></script>
+<% } %>
+<%if (environment === 'development') { %>
+    <% script('/javascripts/router/edit-answerRouter.js') -%>
+    <% script('/javascripts/infra/prettify.js') -%>
+    <% script('/javascripts/infra/select2.min.js') -%>
+    <% script('/javascripts/controllers/baseController.js') -%>
+    <% script('/javascripts/controllers/answerController.js') -%>
+    <% script('/javascripts/views/baseView.js') -%>
+    <% script('/javascripts/views/answerView.js') -%>
+<% } %>
+
+<script type='text/x-handlebars', data-template-name='answer'>
+{{outlet headerBar}} 
+<div class='container'>
+  <div class='content'>
+    <div class='row answer-edit-page'>
+      <div class='col-xs-12 col-sm-12 col-lg-9 z-index-1'>
+        <div class='mainSection'>
+            <div class='row contentTitle'>
+                <div class='col-xs-12 col-sm-12 col-lg-12'>
+                    <h1 class='mtm'>Editing answer</h1>
+                </div>
+            </div>
+          <form id='frmNewAnswer' class='form-horizontal' role='form'>
+            <div class='form-group mbm'>
+              <div class='col-lg-12 '>
+                <div id='wmd-button-bar'>
+                </div>
+              </div>
+            </div>
+            <div class='form-group mbm'>
+              <div class='col-lg-12'>
+                {{view Ember.TextArea class='resizable' id='wmd-input' name='wmd-input' placeholder='You can use Markdown language to write your question. Click on help for more information.'}}
+              </div>
+            </div>
+            <div class='form-group mts'>
+              <div class='col-lg-12'>
+                <small class='muted'>Watch the preview of your question here.</small>
+                <div id='wmd-preview'></div>
+              </div>
+            </div>
+            <div class='form-group hide'>
+              <div class='col-xs-12 col-sm-12 col-lg-10 col-lg-offset-1'>
+                <div id='wmd-output'>
+                </div>
+              </div>
+            </div>
+            <div class='form-group ptm mtl'>
+              <div class='col-lg-12'>
+                  <button id='btnSubmitAnswer' disabled='disabled' class='btn btn-large btn-primary mrs' data-loading-text='Saving Answer' {{action 'saveAnswer' target=view}}>Save Answer</button>
+                  <a {{bindAttr href='murl'}} class="btn btn-link">Cancel</a>
+                  <div class='alert-dismiss-container answerError mtm'>
+                  </div>
+                </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class='col-xs-12 col-sm-12 col-lg-3 z-index-0 sideSection-container slideSideSection'>
+        <div class='sideSection'>
+          <div class='row'>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{render 'footer'}} 
+</script>
