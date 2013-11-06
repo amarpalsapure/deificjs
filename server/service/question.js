@@ -31,6 +31,17 @@ var _findById = function (req, res) {
         __utcdatecreated: ''
     }
 
+    //get the state of app
+    var app = require('../shared/app.init');
+    var state = app.init(req);
+
+    //initialize the SDK
+    var sdk = require('./appacitive.init');
+    var Appacitive = sdk.init(state.token, state.debug);
+
+    //get the transformer
+    var transformer = require('./infra/transformer');
+
     // +    vote => +1
     // -    vote => -1
     // not voted =>  0
@@ -84,17 +95,6 @@ var _findById = function (req, res) {
         return res.json(response);
     };
 
-    //get the state of app
-    var app = require('../shared/app.init');
-    var state = app.init(req);
-
-    //initialize the SDK
-    var sdk = require('./appacitive.init');
-    var Appacitive = sdk.init(state.token, state.debug);
-
-    //get the transformer
-    var transformer = require('./infra/transformer');
-
     //PARALLEL CALL 1 
     //Get the question details
     var graphQueryName = 'question';
@@ -104,6 +104,12 @@ var _findById = function (req, res) {
     query.fetch(function (questions) {
         var question = questions[0]
         response = transformer.toQuestion(question, state);
+
+        //if question is fetched for editing, check the ownership
+        if (req.param('edit') && response.question.author != state.userid) {
+            questionExists = false;
+            return res.status(401).json(transformer.toError('access_denied'));
+        }
         merge();
 
         //update the view count, fire and forget save call
@@ -496,7 +502,6 @@ exports.update = function (req, res) {
         newTags = question.__tags.split(',');
         aQuestion.fetchConnectedArticles({
             relation: 'question_tag',
-            returnEdge: true,
             fields: ['name']
         }, function () {
             //check for old connections
@@ -680,7 +685,10 @@ exports.update = function (req, res) {
                 updateTags(function () {
                     //in case edits by other user is supported in future
                     aQuestion.set('editedby', state.userid);
-                    aQuestion.set('editcount', parseInt(aQuestion.get('editcount')) + 1);
+                    var editCount = aQuestion.get('editcount');
+                    if (!editCount || isNaN(editCount)) editCount = 0;
+                    else editCount = parseInt(editCount, 10);
+                    aQuestion.set('editcount', editCount + 1);
                     save();
                 });
             }, function (status) {

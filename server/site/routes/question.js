@@ -90,6 +90,8 @@ exports.ask = function(req, res) {
 	//set the title of the page
 	state.title = 'Ask a Question';
 
+	if (!state.token) return res.redirect('/users/login?returnurl=' + req.path);
+
 	//initialize the context
 	var context = require('../../shared/context');
 	//set the context
@@ -98,7 +100,7 @@ exports.ask = function(req, res) {
 	}, function(err) {
 		//delete the cookie, and redirect user to login page
 		res.clearCookie('u');
-	    res.redirect('/users/login?returnurl=/questions/ask&s=1');
+		res.redirect('/users/login?returnurl=' + req.path + '&s=1');
 	});
 };
 
@@ -110,6 +112,8 @@ exports.edit = function (req, res) {
     //set the title of the page
     state.title = 'Editing question';
 
+    if (!state.token) return res.redirect('/users/login?returnurl=' + req.path);
+
     //initialize the context
     var context = require('../../shared/context');
     //set the context
@@ -118,6 +122,6 @@ exports.edit = function (req, res) {
     }, function (err) {
         //delete the cookie, and redirect user to login page
         res.clearCookie('u');
-        res.redirect('/users/login?returnurl=/questions/ask&s=1');
+        res.redirect('/users/login?returnurl=' + req.path + '&s=1');
     });
 };

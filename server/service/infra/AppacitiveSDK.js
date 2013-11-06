@@ -4,7 +4,7 @@
  * MIT license  : http://www.apache.org/licenses/LICENSE-2.0.html
  * Project      : https://github.com/chiragsanghvi/JavascriptSDK
  * Contact      : support@appacitive.com | csanghvi@appacitive.com
- * Build time 	: Tue Nov  5 11:00:47 IST 2013
+ * Build time 	: Tue Nov  5 20:35:51 IST 2013
  */
 "use strict";
 
@@ -2410,7 +2410,7 @@ Depends on  NOTHING
 		this.prev = options.prev;
 		
 		this.returnEdge = true;
-		if ((options.returnEdge !== undefined || options.returnEdge !== null) && !options.returnEdge && !this.prev) this.returnEdge = false;
+		if (options.returnEdge !== undefined && options.returnEdge !== null && !options.returnEdge && !this.prev) this.returnEdge = false;
 		
 		this.label = '';
 		var self = this;
@@ -3440,7 +3440,7 @@ Depends on  NOTHING
 				} else {
 					data = data || {};
 					data.status =  data.status || {};
-					data.status = _getOutpuStatus(data);
+					data.status = _getOutpuStatus(data.status);
 					if (typeof onError == 'function') onError(data.status, that);
 				}
 			};
