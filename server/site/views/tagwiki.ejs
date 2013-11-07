@@ -145,9 +145,15 @@
                 </div>
                 <div class='row'>
                     {{#each question in questions}}
-                        <div class='col-xs-12 col-sm-12 col-lg-12 ptm'>
-                            <a class="votes" {{bindAttr href='question.murl'}} title="Votes (upvotes - downvotes)">{{question.totalvotecount}}</a>
-                            <a {{bindAttr href='question.url'}} {{bindAttr title='question.title'}}>{{question.title}}</a>
+                        <div class='col-xs-12 col-sm-12 col-lg-12 ptm pbxs'>
+                            <div class='row'>
+                                <div class='col-xs-1 col-sm-1 col-lg-2 prn'>
+                                    <a class="votes" {{bindAttr href='question.murl'}} title="Votes (upvotes - downvotes)">{{question.totalvotecount}}</a>
+                                </div>
+                                <div class='col-xs-11 col-sm-11 col-lg-10 pln'>
+                                    <a {{bindAttr href='question.url'}} {{bindAttr title='question.title'}}>{{question.title}}</a>
+                                </div>
+                            </div>
                         </div>
                     {{else}}
                     <div class='col-xs-12 col-sm-12 col-lg-12 pts'>
