@@ -141,8 +141,11 @@ h1 { font-size: 1.8em; }
 .time-container { float: left; height: 50px; box-shadow: 1px 1px 4px #ddd; margin-left: -5px; background-color: #fff; border: solid 1px #ddd; }
 .time-date, .time-details { display: inline-block; padding: 4px 8px; float: left; }
 .tag-container div { display: inline; }
+.popover .display-block { display: block !important; }
+    .popover .display-block a, .popover .display-block a:hover { color: #10a0e5; }
+.popover a:hover { text-decoration: underline; }
 .tag-container .popover-title { background-color: #999999; }
-.tag-container .popover-content { color: #444; display: block; line-height: 18px; font-size: 1.1em; font-weight: normal; }
+.tag-container .popover-content { color: #444; display: block; line-height: 18px; font-size: 1.1em; font-weight: normal; padding: 9px 14px 6px; }
 .time-date, .time-month, .time-day { color: #777; }
 .time-date { height: 50px; font-size: 26px; font-weight: 700; line-height: 42px; }
 .time-month, .time-day { display: block; height: 20px; }

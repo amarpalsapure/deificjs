@@ -34,9 +34,9 @@
 	  	//Tag Template
 	  	var _tagTemplate = 
 	  	"<span class='label label-default mrm'> \
-    		<a data-toggle='popover' 	\
-    			{{bindAttr data-content='excerpt'}} 	\
-    			{{bindAttr data-original-title='name'}} 	\
+    		<a data-toggle='popover' data-html='true'	\
+    			{{bindAttr data-content='hoverContent'}} 	\
+    			{{bindAttr data-original-title='title'}} 	\
     			{{bindAttr href='selfurl'}}>	\
     				{{name}}	\
 			</a>	\
