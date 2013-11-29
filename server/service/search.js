@@ -22,7 +22,7 @@ exports.search = function(req, res) {
 	//First get the question according to the query
 	//then get the question details by making a graph query call
 	var orderBy = '__utcdatecreated',
-		filter = "*issearchable==true and (*title like '*" + query + "*' or *text like '*" + query + "*')",
+		filter = "*issearchable==true and (*title match '*" + query + "*' or *text match '*" + query + "*')",
 		pagenumber = req.param('page');
 
 	if(!pagenumber) pagenumber = 1;
