@@ -276,7 +276,7 @@ div.grippie { background: #eeeeee url(/images/grippie.png) no-repeat scroll cent
     .user-profile-page .since-time .muted { color: #bbb; text-transform: lowercase; }
 .user-profile-page .entity-title, .user-profile-page .entity-details { width: 60%; }
 .user-profile-page .entity-details { margin-top: -2px; }
-.user-profile-page .entity-vote { padding-top: 6px; padding-bottom: 6px; margin-right: -10px; font-size: 13px; width: 80px; }
+.user-profile-page .entity-vote { padding-top: 6px; padding-bottom: 6px; margin-right: -10px; font-size: 13px; width: 100px; }
 .user-profile-page .entity-vote-mobile { display: none; }
 .success { color: green; }
 .failure { color: #E00000; }

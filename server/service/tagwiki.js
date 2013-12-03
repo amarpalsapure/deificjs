@@ -90,10 +90,12 @@ exports.findByName = function (req, res) {
     //get the tagged questions
     getTaggedQuestions(req.param('name'), function (taggedQuestions) {
         if (!taggedQuestions || taggedQuestions.length === 0) merge();
-        taggedQuestions.forEach(function (taggedQuestion) {
-            questions.push(taggedQuestion);
-        });
-        merge();
+        else {
+            taggedQuestions.forEach(function (taggedQuestion) {
+                questions.push(taggedQuestion);
+            });
+            merge();
+        }
     }, function (error) {
         merge();
     });

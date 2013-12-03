@@ -11,6 +11,7 @@
 		answersMeta: DS.attr('array'),
 		answercount: DS.attr('number', { defaultValue: 0 }),
 		voteconnid: DS.attr('string'),
+		phi: DS.attr('string'),
 		upvotecount: DS.attr('number', { defaultValue: 0 }),
 		downvotecount: DS.attr('number', { defaultValue: 0 }),
 		totalvotecount: DS.attr('number', { defaultValue: 0 }),

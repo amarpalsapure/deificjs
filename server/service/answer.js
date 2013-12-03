@@ -64,25 +64,34 @@ exports.update = function (req, res) {
 
     //creates 'entity_vote' relation between user and answer 
     var answer_vote_Create = function (isupvote, onsuccess, onfailure) {
-        var relation = new Appacitive.ConnectionCollection({ relation: 'entity_vote' });
-        var connection = relation.createNewConnection({
-            endpoints: [{
-                articleid: answer.id,
-                label: 'entity'
-            }, {
-                articleid: state.userid,
-                label: 'user'
-            }],
-            isupvote: isupvote,
-            type: 'answer'
-        });
-        connection.save(function () {
-            answer.voteconnid = connection.id();
-            onsuccess();
-        }, onfailure);
+        var point_history = new Appacitive.Article({ schema: 'point_history' });
+        point_history.set('entity_id', answer.id);
+        point_history.set('author_id', answer.author);
+        point_history.set('entity_type', 'answer');
+        point_history.set('pointaction', isupvote ? 'upvote' : 'downvote');
+        point_history.save(function () {
+            var relation = new Appacitive.ConnectionCollection({ relation: 'entity_vote' });
+            var connection = relation.createNewConnection({
+                endpoints: [{
+                    articleid: answer.id,
+                    label: 'entity'
+                }, {
+                    articleid: state.userid,
+                    label: 'user'
+                }],
+                isupvote: isupvote,
+                entitytype: 'answer',
+                point_history_id: point_history.id()
+            });
+            connection.save(function () {
+                answer.voteconnid = connection.id();
+                answer.phi = point_history.id();
+                onsuccess();
+            }, onfailure);
 
-        //update the author of answer
-        update_author(answer.author, isupvote ? process.config.upvotepts : -1 * process.config.downvotepts);
+            //update the author of answer
+            update_author(answer.author, isupvote ? process.config.upvotepts : -1 * process.config.downvotepts);
+        }, onfailure);
     };
 
     //updates 'entity_vote' relation between user and answer 
@@ -90,6 +99,10 @@ exports.update = function (req, res) {
         var relation = new Appacitive.Connection({ relation: 'entity_vote', __id: answer.voteconnid });
         relation.set('isupvote', isupvote);
         relation.save(onsuccess, onfailure);
+
+        var point_history = new Appacitive.Article({ schema: 'point_history', __id: answer.phi });
+        point_history.set('pointaction', isupvote ? 'upvote' : 'downvote');
+        point_history.save();
 
         //update the author of answer
         var pts = process.config.upvotepts + process.config.downvotepts;
@@ -103,6 +116,10 @@ exports.update = function (req, res) {
             answer.voteconnid = '';
             onsuccess();
         }, onfailure);
+
+        //delete vote history
+        var point_history = new Appacitive.Article({ schema: 'point_history', __id: answer.phi });
+        point_history.del();
 
         //update the author of answer
         update_author(answer.author, factor);
@@ -119,6 +136,15 @@ exports.update = function (req, res) {
         }, function (r) {
             if (r && r.children && r.children['correct_answer'] && r.children['correct_answer'].length > 0) {
                 oldAcceptedAnswer = r.children['correct_answer'][0];
+
+                //delete vote history
+                var point_history = new Appacitive.Article({ schema: 'point_history', __id: oldAcceptedAnswer.connection.get('point_history_id') });
+                point_history.del();
+
+                var answerArticle = new Appacitive.Article({ schema: 'entity', __id: answer.id });
+                answerArticle.set('isanswered', false);
+                answerArticle.save();
+
                 //delete the connection
                 var relation = new Appacitive.Connection({ relation: 'correct_answer', __id: oldAcceptedAnswer.connection.id() });
                 relation.del(onsuccess, onfailure);
@@ -131,18 +157,30 @@ exports.update = function (req, res) {
 
     //create a connection of 'correct_answer'
     var correct_answer_Create = function (answerId, onsuccess, onfailure) {
-        var relation = new Appacitive.ConnectionCollection({ relation: 'correct_answer' });
-        var connection = relation.createNewConnection({
-            endpoints: [{
-                articleid: answer.question,
-                label: 'question'
-            }, {
-                articleid: answerId,
-                label: 'answer'
-            }]
-        });
-        connection.save(onsuccess, onfailure);
+        var point_history = new Appacitive.Article({ schema: 'point_history' });
+        point_history.set('entity_id', answer.id);
+        point_history.set('author_id', answer.author);
+        point_history.set('entity_type', 'answer');
+        point_history.set('pointaction', 'acceptedanswer');
+        point_history.save(function () {
+            var relation = new Appacitive.ConnectionCollection({ relation: 'correct_answer' });
+            var connection = relation.createNewConnection({
+                endpoints: [{
+                    articleid: answer.question,
+                    label: 'question'
+                }, {
+                    articleid: answerId,
+                    label: 'answer'
+                }],
+                answer_author: answer.author,
+                point_history_id: point_history.id()
+            });
+            connection.save(onsuccess, onfailure);
+        }, onfailure);
 
+        var answerArticle = new Appacitive.Article({ schema: 'entity', __id: answer.id });
+        answerArticle.set('isanswered', true);
+        answerArticle.save();
         //update the author of answer
         update_author(answer.author, process.config.answerpts);
     };
@@ -177,6 +215,7 @@ exports.update = function (req, res) {
             response.answer.tags = answer.tags;
             response.answer.voted = answer.voted;
             response.answer.voteconnid = answer.voteconnid;
+            response.answer.phi = answer.phi;
             return res.json(response);
         }, function (status) {
             return res.status(424).json(req.body.answer);

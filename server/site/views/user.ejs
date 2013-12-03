@@ -78,6 +78,7 @@
                   <li><a id='aquestions' class="ellipsis" title="Questions" href='?tab=questions'>Questions</a></li>
                   <li><a id='aanswers' class="ellipsis" title="Answers" href='?tab=answers'>Answers</a></li>
                   <li><a id='afavorites' class="ellipsis" title="Favorites" href='?tab=favorites'>Favorites</a></li>
+                  <li><a id='apoints' class="ellipsis" title="Points" href='?tab=points'>Points</a></li>
                   <li><a id='avotes' class="ellipsis" title="Votes" href='?tab=votes'>Votes</a></li>
                   <li><a id='asubscription' class="ellipsis" title="Subscriptions" href='?tab=subscription'>Subscriptions</a></li>
                 </ul>
@@ -99,6 +100,14 @@
                     </div>
                   </div>
                   {{/if}}
+                  {{#if view.showPointContainer}}
+                  <div class='entity-vote pull-left pls'>
+                      <div class='col-xs-12 col-sm-12 col-lg-12'>
+                          {{#if entity.ispositive}}<span class='success' style="display: block; width: 52px; text-align: center; ">+{{entity.points}}</span>{{else}}<span class='failure'>-{{entity.points}}</span>{{/if}}
+                          <span class='muted font9'>{{sincetimeonly entity.votedon}}</span>
+                      </div>
+                  </div>
+                  {{/if}}
                   <div class='entity-title pull-left pls'>
                     <div class='col-xs-12 col-sm-12 col-lg-12'>
                       <a {{bindAttr title='entity.text'}} {{bindAttr href='entity.url'}} class='font120'>
@@ -115,6 +124,17 @@
                         you <span class='failure'>downvoted</span> the {{entity.type}} {{sincetime entity.votedon}}
                       {{/if}}
                     </div>
+                  </div>
+                  {{/if}}
+                  {{#if view.showPointContainer}}
+                  <div class='entity-vote-mobile pull-left pls'>
+                      <div class='col-xs-12 col-sm-12 col-lg-12'>
+                          {{#if entity.ispositive}}
+                          you <span class='success'>{{entity.points}}</span> the {{entity.type}} {{sincetime entity.votedon}}
+                          {{else}}
+                          you <span class='failure'>{{entity.points}}</span> the {{entity.type}} {{sincetime entity.votedon}}
+                          {{/if}}
+                      </div>
                   </div>
                   {{/if}}
                   <div class='entity-details pull-left pls'>

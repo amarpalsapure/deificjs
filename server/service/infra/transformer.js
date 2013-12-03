@@ -198,6 +198,7 @@ var _toQuestion = function (question, state) {
     //question is voted or not
     if (question.children.vote && question.children.vote.length > 0) {
         response.question['voteconnid'] = question.children.vote[0].connection.id();
+        response.question['phi'] = question.children.vote[0].connection.get('point_history_id');
         response.question['voted'] = question.children.vote[0].connection.get('isupvote', 'boolean') ? 1 : -1;
     } else {
         response.question['voted'] = 0;
@@ -327,6 +328,7 @@ var _toAnswer = function (answer, state) {
     //answer is voted or not
     if (answer.children.vote && answer.children.vote.length > 0) {
         response.answer['voteconnid'] = answer.children.vote[0].connection.id();
+        response.answer['phi'] = answer.children.vote[0].connection.get('point_history_id');
         response.answer['voted'] = answer.children.vote[0].connection.get('isupvote', 'boolean') ? 1 : -1;
     } else {
         response.answer['voted'] = 0;
@@ -384,6 +386,26 @@ var _toEntities = function (entities, paginginfo) {
                 jEntity.text = jEntity.text.substring(0, Math.min(jEntity.text.length, jEntity.text.lastIndexOf(' ')));
             }
         } else if (!jEntity.text && jEntity.shorttext) jEntity.text = jEntity.shorttext;
+
+
+        if (entity.get('pointaction')) {
+            switch (entity.get('pointaction')) {
+                case 'upvote':
+                    jEntity.ispositive = true;
+                    jEntity.points = process.config.upvotepts;
+                    break;
+                case 'downvote':
+                    jEntity.ispositive = false;
+                    jEntity.points = process.config.downvotepts;
+                    break;
+                case 'acceptedanswer':
+                    jEntity.ispositive = true;
+                    jEntity.points = process.config.answerpts;
+                    break;
+            }
+            jEntity.votedon = _toISODateFormat(entity.get('__utcdatecreated'));
+            jEntity.__id = jEntity.__id + '_' + parseInt(Math.random() * 1000000, 10);
+        }
 
         //delete unrequired properties, so that payload is less
         delete jEntity.__schematype;

@@ -371,25 +371,34 @@ exports.update = function (req, res) {
 
     //creates 'entity_vote' relation between user and entity 
     var question_vote_Create = function (isupvote, onsuccess, onfailure) {
-        var relation = new Appacitive.ConnectionCollection({ relation: 'entity_vote' });
-        var connection = relation.createNewConnection({
-            endpoints: [{
-                articleid: question.id,
-                label: 'entity'
-            }, {
-                articleid: state.userid,
-                label: 'user'
-            }],
-            isupvote: isupvote,
-            type: 'question'
-        });
-        connection.save(function () {
-            question.voteconnid = connection.id();
-            onsuccess();
-        }, onfailure);
+        var point_history = new Appacitive.Article({ schema: 'point_history' });
+        point_history.set('entity_id', question.id);
+        point_history.set('author_id', question.author);
+        point_history.set('entity_type', 'question');
+        point_history.set('pointaction', isupvote ? 'upvote' : 'downvote');
+        point_history.save(function () {
+            var relation = new Appacitive.ConnectionCollection({ relation: 'entity_vote' });
+            var connection = relation.createNewConnection({
+                endpoints: [{
+                    articleid: question.id,
+                    label: 'entity'
+                }, {
+                    articleid: state.userid,
+                    label: 'user'
+                }],
+                isupvote: isupvote,
+                entitytype: 'question',
+                point_history_id: point_history.id()
+            });
+            connection.save(function () {
+                question.voteconnid = connection.id();
+                question.phi = point_history.id();
+                onsuccess();
+            }, onfailure);
 
-        //update the author of question
-        update_author(question.author, isupvote ? process.config.upvotepts : -1 * process.config.downvotepts);
+            //update the author of question
+            update_author(question.author, isupvote ? process.config.upvotepts : -1 * process.config.downvotepts);
+        }, onfailure);
     };
 
     //updates 'entity_vote' relation between user and entity 
@@ -397,6 +406,10 @@ exports.update = function (req, res) {
         var relation = new Appacitive.Connection({ relation: 'entity_vote', __id: question.voteconnid });
         relation.set('isupvote', isupvote);
         relation.save(onsuccess, onfailure);
+
+        var point_history = new Appacitive.Article({ schema: 'point_history', __id: question.phi });
+        point_history.set('pointaction', isupvote ? 'upvote' : 'downvote');
+        point_history.save();
 
         //update the author of question
         var pts = process.config.upvotepts + process.config.downvotepts;
@@ -410,6 +423,10 @@ exports.update = function (req, res) {
             question.voteconnid = '';
             onsuccess();
         }, onfailure);
+
+        //delete vote history
+        var point_history = new Appacitive.Article({ schema: 'point_history', __id: question.phi });
+        point_history.del();
 
         //update the author of question
         update_author(question.author, factor);
@@ -544,6 +561,7 @@ exports.update = function (req, res) {
             response.question.tags = question.tags;
             response.question.voted = question.voted;
             response.question.voteconnid = question.voteconnid;
+            response.question.phi = question.phi;
             response.question.isbookmarked = question.isbookmarked;
             response.question.bookmarkconnid = question.bookmarkconnid;
             response.question.issubscribed = question.issubscribed;

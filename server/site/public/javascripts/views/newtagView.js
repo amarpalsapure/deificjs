@@ -51,10 +51,7 @@
         },
 
         addmore: function () {
-            $('#divSuccess').addClass('hide');
-            $('#frmNewTag').removeClass('hide');
-            $('#wmd-preview').empty();
-            this.set('tag', {});
+            window.location.reload();
         }
 
 	});

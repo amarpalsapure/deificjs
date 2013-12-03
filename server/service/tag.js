@@ -1,4 +1,4 @@
-exports.findAll = function (req, res)  {
+exports.findAll = function (req, res) {
     var response = {
         tags: []
     };
@@ -36,8 +36,8 @@ exports.findAll = function (req, res)  {
             break;
     }
 
-    var tagQuery = req.param('q');
-    if (tagQuery) filter = Appacitive.Filter.Property('name').like(tagQuery);
+    var tagQuery = encodeURIComponent(req.param('q'));
+    if (req.param('q') && tagQuery) filter = Appacitive.Filter.Property('name').like(tagQuery);
 
     var query = new Appacitive.Queries.FindAllQuery({
         schema: 'tag',

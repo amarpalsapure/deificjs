@@ -8,6 +8,7 @@
 		murl: DS.attr('string'),
 		iscorrectanswer: DS.attr('boolean'),
 		voteconnid: DS.attr('string'),
+		phi: DS.attr('string'),
 		upvotecount: DS.attr('number', { defaultValue: 0 }),
 		downvotecount: DS.attr('number', { defaultValue: 0 }),
 		voted: DS.attr('number'),

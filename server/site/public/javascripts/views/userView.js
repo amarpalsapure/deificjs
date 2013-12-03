@@ -1,7 +1,7 @@
-(function() {
-	Deific.UserView =  Ember.View.extend({
-        showTagContainer: true,
+(function () {
+    Deific.UserView = Ember.View.extend({
         showVoteContainer: false,
+        showPointContainer: false,
         isowner: true,
 
         reset: {},
@@ -30,7 +30,7 @@
             $('.nav-users').addClass('active');
 
             //set the title of the page
-            var title =  $(document).attr('title');
+            var title = $(document).attr('title');
             title = title.replace('User', model.get('fullname'));
             $(document).attr('title', title);
 
@@ -64,6 +64,11 @@
                         $('#noactivity').html('not subscribed to any question.');
                         $('#title').html(count + (count > 1 ? ' Subscriptions' : ' Subscription'));
                         break;
+                    case 'points':
+                        var pts = model.get('reputation', 'number');
+                        $('#noactivity').html('not earned any points.');
+                        $('#title').html(pts + (pts > 1 ? ' Points' : ' Point'));
+                        break;
                     default:
                         $('#noactivity').html('not asked any question');
                         $('#title').html(count + (count > 1 ? ' Questions' : ' Question'));
@@ -71,6 +76,7 @@
 
                 //show the voting details view if selected tab is `votes`
                 if (tab === 'votes') this.set('showVoteContainer', true);
+                if (tab === 'points') this.set('showPointContainer', true);
             } else {
                 //check the length of profile description
                 //must be more than 20 characters
@@ -107,7 +113,7 @@
             if ($('#oldpwd').val().length < 2
 			 || $('#newpwd').val().length < 2
 			 || $('#confirmpwd').val().length < 2
-             || ($('#newpwd').val()!= $('#confirmpwd').val())) {
+             || ($('#newpwd').val() != $('#confirmpwd').val())) {
                 $('#btnReset').attr('disabled', 'disabled');
                 return;
             }
@@ -161,5 +167,5 @@
                 resetView();
             });
         }
-	});
+    });
 }).call(this);
