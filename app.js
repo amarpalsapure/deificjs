@@ -86,7 +86,6 @@ app.use(require('prerender-node'));
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
-app.use(express.favicon());
 app.use(express.cookieParser('9b7c1f44590b46e509db'));
 app.use(express.session());
 app.use(app.router);

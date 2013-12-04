@@ -1,0 +1,26 @@
+﻿.logo { margin-left: 16px; float: left; background: url("/images/tavisca-logo.gif") no-repeat scroll 0 0 #FFFFFF; width: 360px; height: 43px; }
+.navbar-default { background-color: #ffffff; -webkit-box-shadow: 0 2px 3px rgba(100, 100, 100, 0.25); box-shadow: 0 2px 3px rgba(100, 100, 100, 0.25); top: 0; z-index: 1000; width: 100%; padding: 5px 0 2px; }
+#ulHeader a, .border-right { border-right: solid 1px #aaa; }
+.brand { display: none; }
+.powered { margin-top: 7px; margin-right: 5px; font-size: 0.9em; color: #fff; }
+.appacitive { font-size: 1.2em !important; color: #FF9002 !important; padding-left: 0 !important; }
+.feedback { position: fixed; bottom: 0px; left: 46%; background-color: #666; z-index: 10000; padding: 4px 14px 3px; border-top-left-radius: 4px; border-top-right-radius: 4px; }
+    .feedback, .feedback:hover { color: #fff; font-size: 0.9em; font-family: 'Trebuchet MS'; }
+.mob-feedback { display: none !important; }
+.right-nav-tabs { margin-bottom: -7px; float: right; }
+    .right-nav-tabs a { border-radius: 0px !important; padding: 8px 18px !important; text-transform: lowercase; margin-top: 4px !important; }
+.contentTitle h1 { margin-top: 9px; }
+.question-page .answer-section .contentTitle h1 { margin-top: 10px; }
+.footer, .footer .navbar-default { background-color: #555; }
+
+/*Bootstrap*/
+.navbar-nav > li > a { padding-top: 0; padding-bottom: 1px; margin-top: 6px; }
+
+@media (max-width: 990px) /* Mobile */ {
+    .right-nav-tabs a { padding: 8px 10px !important; }
+}
+
+@media (max-width: 767px) /* Mobile */ {
+    .contentTitle div:first-child { padding-bottom: 6px; margin-bottom: 2px !important; border-bottom: dashed 1px #ddd; }
+    .right-nav-tabs { margin-top: 4px; float: left; }
+}

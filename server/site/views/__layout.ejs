@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
   <head>
     <!-- Meta, title, CSS, favicons, etc. -->
     <meta charset="utf-8">
     <title><%= title %> - <%= brand %></title>
-
+    <link rel="shortcut icon" href="http://www.tavisca.com/live/Uploads/Sites/Tavisca/Themes/tavisca/favicon.ico?v=OWCktKJeMU2q41xqDBaf2w">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
     <%if (environment === 'production') { %>
@@ -23,6 +23,7 @@
 
     <link type='text/css' rel='stylesheet' href='/stylesheets/master-style.css' />
     <link type='text/css' rel='stylesheet' href='/stylesheets/style.css' />
+    <link type='text/css' rel='stylesheet' href='/stylesheets/tavisca.css' />
 
     <% } %>
 
@@ -47,7 +48,7 @@
               <span class='icon-bar'></span>
               <span class='icon-bar'></span>
             </button>
-            <a class='navbar-brand' href='/'><%= brand %></a>
+              <a class='navbar-brand' href='/' title="<%= brand %>"><span class="brand"><%= brand %></span> <span class="logo"></span></a>
           </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -74,10 +75,10 @@
                 {{/if}}
               {{/if}}
             </ul>
-            <ul class='nav navbar-nav navbar-right'>
-              <li class='nav-questions'><a href='/questions' title='Search and View all Questions'>Questions</a></li>
-              <li class='nav-tags'><a href='/tags' title='Search and View all Tags'>Tags</a></li>
-              <li class='nav-users'><a href='/users' title='Search and View all Users'>Users</a></li>
+            <ul id='ulHeader' class='nav navbar-nav navbar-right'>
+                <li class='nav-questions'><a href='/questions' title='Search and View all Questions'>Questions</a></li>
+                <li class='nav-tags'><a href='/tags' title='Search and View all Tags'>Tags</a></li>
+                <li class='nav-users'><a href='/users' title='Search and View all Users'>Users</a></li>
             </ul>
           </div><!-- /.navbar-collapse -->
           <div class='logoutError'>
@@ -121,34 +122,34 @@
 
     <%- body -%>
 
-    <script type="text/x-handlebars" data-template-name="footer">
-      <div class='footer'>
-        <nav class='footer navbar-default' role='navigation'>
-          <!-- Brand and toggle get grouped for better mobile display -->
-        <div class='navbar-header'>
-          <button type='button' class='navbar-toggle' data-toggle='collapse' data-target='.navbar-ex2-collapse'>
-            <span class='sr-only'>Toggle navigation</span>
-            <span class='icon-bar'></span>
-            <span class='icon-bar'></span>
-            <span class='icon-bar'></span>
-          </button>
-        </div>
+      <script type="text/x-handlebars" data-template-name="footer">
+          <a href="/feedback" title="Help us to improve" class="feedback">feedback</a>
+          <div class='footer'>
+              <nav class='footer navbar-default' role='navigation'>
+                  <!-- Brand and toggle get grouped for better mobile display -->
+                  <div class='navbar-header'>
+                      <button type='button' class='navbar-toggle' data-toggle='collapse' data-target='.navbar-ex2-collapse'>
+                          <span class='sr-only'>Toggle navigation</span>
+                          <span class='icon-bar'></span>
+                          <span class='icon-bar'></span>
+                          <span class='icon-bar'></span>
+                      </button>
+                  </div>
 
-          <!-- Collect the nav links, forms, and other content for toggling -->
-          <div class='collapse navbar-collapse navbar-ex2-collapse'>
-            <ul class='nav navbar-nav navbar-left'>
-              <li><a href='#'>about</a></li>
-              <li><a href='#'>contact us</a></li>
-              <li><a href='#'>feedback</a></li>
-              <li><a href='#'>help</a></li>
-            </ul>
-          </div><!-- /.navbar-collapse -->
-        </nav>
-      </div>
-      <div class="position-fixed sideNavLeft">
-          <i class="icon-arrow-left"></i>
-      </div>
-    </script>
+                  <!-- Collect the nav links, forms, and other content for toggling -->
+                  <div class='collapse navbar-collapse navbar-ex2-collapse'>
+                      <ul class='nav navbar-nav navbar-left'>
+                          <li class="mob-feedback"><a href="/feedback" title="Help us to improve">feedback</a></li>
+                          <li><a href='http://daringfireball.net/projects/markdown/syntax' target="_blank">markdown help</a></li>
+                          <li><a href='#'>about</a></li>
+                      </ul>
+                      <ul class='nav navbar-nav navbar-right'>
+                          <li class='nav-questions'><span class='pull-left powered'>Powered by </span><a class="appacitive pull-left" href='http://www.appacitive.com/?rel=deepthought' title='appacitive'>appacitive</a></li>
+                      </ul>
+                  </div><!-- /.navbar-collapse -->
+              </nav>
+          </div>
+      </script>
 
     <%if (environment === 'production') { %>
       

@@ -2252,13 +2252,13 @@ Depends on  NOTHING
 				
 				this.results = this.results || [];
 
-				this.results.isLastPage = true;
-				this.results.count = pi.totalrecords;
+				this.results.isLastPage = false;
+				this.results.total = pi.totalrecords;
 				this.results.pageNumber = pi.pagenumber;
 				this.results.pageSize = pi.pagesize;
-				
-				if ((pi.pagenumber * pi.pagesize) <= pi.totalrecords) {
-					this.results.isLastPage = true;
+
+				if ((pi.pagenumber * pi.pagesize) >= pi.totalrecords) {
+				    this.results.isLastPage = true;
 				}
 			}
 		};

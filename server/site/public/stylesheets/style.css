@@ -258,7 +258,7 @@ div.grippie { background: #eeeeee url(/images/grippie.png) no-repeat scroll cent
 
 .tags-list .tag-details-container { min-height: 160px; }
 .tags-list .tag-details > div { display: inline; }
-.tags-list .tag-excerpt { color: #888; font-size: 0.8em; font-style: normal; }
+.tags-list .tag-excerpt { color: #888; font-size: 0.8em; font-style: normal; word-wrap: break-word; }
 .tags-list .txt-tag-search, .user-search-container .txt-user-search { min-width: 220px; padding: 5px 4px; font-size: 0.9em; }
 .tag-since { bottom: 2px; right: 5px; }
 .users-list .user-details-container { min-height: 70px; }

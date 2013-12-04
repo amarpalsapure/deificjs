@@ -42,25 +42,32 @@ exports.entitycreate = function (req, res) {
     
     //get all users to whom email needs to be sent
     var getUsers = function (onSuccess, onError) {
-        var questionUser = new Appacitive.Article({ __id: question.id, schema: 'entity' });
-        questionUser.fetchConnectedArticles({
+        var userEmails = [];
+        var query = Appacitive.Queries.ConnectedArticlesQuery({
+            articleId: question.id,
+            schema: 'entity',
             relation: 'question_subscribe',
             label: 'user',
             pageSize: 200,
+            returnEdge: false,
             fields: ["firstname", "lastname", "email"]
-        }, function (obj, pi) {
-            var userEmails = [];
-            questionUser.children['question_subscribe'].forEach(function (user) {
+        });
+
+
+        var successHandler = function (users) {
+            users.forEach(function (user) {
                 userEmails.push(user.get('email'));
             });
-            onSuccess(userEmails);
-        }, onError);
+            if (users.isLastPage) onSuccess(userEmails);
+            else query.fetchNext(successHandler, onError);
+        };
+        query.fetch(successHandler, onError);
     };
 
     //send email
     var getSubject = function() {
         var subject = "A: " + question.title ;
-        subject = "[" + process.config.brand + "] " + subject;
+        subject = "[DeepThought] " + subject;
 
         //limiting subject length to 78 char
         //http://stackoverflow.com/questions/1592291/what-is-the-email-subject-length-limit

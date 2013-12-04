@@ -45,7 +45,8 @@ exports.initialize = function (rootPath) {
         path.join(rootPath, 'server/site/public/stylesheets/select2.css'),
         path.join(rootPath, 'server/site/public/stylesheets/font-awesome.css'),
         path.join(rootPath, 'server/site/public/stylesheets/master-style.css'),
-        path.join(rootPath, 'server/site/public/stylesheets/style.css')
+        path.join(rootPath, 'server/site/public/stylesheets/style.css'),
+        path.join(rootPath, 'server/site/public/stylesheets/tavisca.css')
     ];
     combiner.combine(globalCSSFiles, path.join(rootPath, 'server/site/public/_min/css/global.combined.css'), true, true);
     combiner.init();
