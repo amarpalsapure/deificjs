@@ -1,4 +1,4 @@
-body { background-color: #eef0f3; }
+body { background-color: #eef0f3; overflow-x: hidden; }
 h1 { font-size: 1.8em; }
 .error-page h3 { line-height: 1.4em; }
 #rootProgress { position: fixed; top: 0px; z-index: 1; width: 100%; }
@@ -310,7 +310,7 @@ div.grippie { background: #eeeeee url(/images/grippie.png) no-repeat scroll cent
     .sideSection-container { position: absolute; z-index: 2; top: 225px; max-width: 275px; padding-right: 0px; right: 0px; }
     .content .sideSection { box-shadow: 1px 1px 10px #aaa; }
     .sideNavLeft { display: block; }
-    .slideSideSection { right: -275px; }
+    .slideSideSection { right: -275px; display: none; }
     .btn.btn-flat.btn-skyblue { width: 100%; margin-top: 10px; }
     .question-page .col-entity-details { padding-left: 6.4%; margin-left: -5%; width: 96.4%; }
     .vote-cast { margin-left: -6px; }
