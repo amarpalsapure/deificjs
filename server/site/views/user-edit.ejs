@@ -1,0 +1,136 @@
+<% layout('__layout') -%>
+
+<%if (environment === 'production') { %>
+    <script type='text/javascript' src='/_min/js/global.combined.js?v=<%=rv%>'></script>
+    <script type='text/javascript' src='/_min/js/editUser.combined.js?v=<%= rv %>'></script>
+<% } %>
+<%if (environment === 'development') { %>
+    <% script('/javascripts/router/edit-userRouter.js') -%>
+
+    <% script('/javascripts/infra/prettify.js') -%>
+    <% script('/javascripts/models/user.js') -%>
+
+    <% script('/javascripts/controllers/userController.js') -%>
+
+    <% script('/javascripts/views/userView.js') -%>
+<% } %>
+
+<script type="text/x-handlebars", data-template-name="user">
+  {{view Deific.HeaderView}} 
+
+  <div class='container'>
+    <div class='content'>
+      <div class='row user-profile-page'>
+        <div class='col-xs-12 col-sm-12 col-lg-12'>
+          <div class='mainSection'>
+            <div class='row contentTitle'>
+              <div class='col-xs-12 col-sm-12 col-lg-12'>
+                <h1 class='mtm'>{{fullname}} - Edit Profile</h1>
+              </div>
+            </div>
+            {{#if isappacitiveauth}}
+            <div class="reset-password ptm pbl">
+                <div class='row'>
+                    <div class="col-xs-12 col-sm-12 col-lg-12">
+                        <h4>Change Password</h4>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-xs-12 col-sm-2 col-lg-2">
+                        <span class="mrm">Current Password</span>
+                    </div>
+                    <div class="col-xs-12 col-sm-10 col-lg-10">
+                        {{view Ember.TextField valueBinding='view.reset.oldpassword' id='oldpwd' type='password' class='login-input form-control login-pwd'}}
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-xs-12 col-sm-2 col-lg-2">
+                        <span class="mrm">New Password</span>
+                    </div>
+                    <div class="col-xs-12 col-sm-10 col-lg-10">
+                        {{view Ember.TextField valueBinding='view.reset.newpassword' id='newpwd' type='password' class='login-input form-control login-pwd'}}
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-xs-12 col-sm-2 col-lg-2">
+                        <span class="mrm">Confirm Password</span>
+                    </div>
+                    <div class="col-xs-12 col-sm-10 col-lg-10">
+                        {{view Ember.TextField valueBinding='view.reset.confirmpassword' id='confirmpwd' type='password' class='login-input form-control login-pwd'}}
+                    </div>
+                </div>
+                <div class='form-group row reset-pwe-error hide'>
+                    <div class="col-xs-12 col-sm-2 col-lg-2"></div>
+                    <div class="col-xs-12 col-sm-10 col-lg-10 pts">
+                        <label class='control-label mbn'>{{view.reset.error}} </label>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-xs-12 col-sm-offset-2 col-sm-10 col-lg-offset-2 col-lg-10 ptm">
+                      <button id="btnReset" data-loading-text="Resetting Password" disabled='disabled' class="btn btn-primary" {{action "resetPassword" target="view"}}>Reset Password</button>
+                    </div>
+                </div>
+            </div>
+            {{/if}}
+            <div class="profile-description ptm">
+                <div class='row'>
+                    <div class="col-xs-12 col-sm-12 col-lg-12">
+                        <h4 class="man">About Me</h4>
+                    </div>
+                </div>
+                <div class='row'>
+                    <div class='col-xs-12 col-sm-12 col-lg-12'>
+                      <div id='wmd-button-bar' style="margin-top: 4px">
+                      </div>
+                    </div>
+                </div>
+                <div class='row'>
+                    <div class='col-xs-12 col-sm-12 col-lg-12'>
+                        {{view Ember.TextArea class='resizable' id='wmd-input' name='wmd-input' placeholder='You can use Markdown language to write your answer. Click on help for more information.' valueBinding='view.profile.about'}}
+                    </div>
+                </div>
+                <div class='row mts'>
+                    <div class='col-xs-12 col-sm-12 col-lg-12'>
+                        <small class='muted'>Watch the preview of your answer here.</small>
+                        <div id='wmd-preview'></div>
+                    </div>
+                </div>
+                <div class='row hide'>
+                    <div class='col-xs-12 col-sm-12 col-lg-12'>
+                        <div id='wmd-output'>
+                        </div>
+                    </div>
+                </div>
+                <div class='row mtm'>
+                    <div class='col-xs-12 col-sm-12 col-lg-12'>
+                        <button id='btnSubmit' disabled='disabled' class='btn btn-large btn-primary mrm' data-loading-text='Saving' {{action saveProfile target=view}}>Save</button>
+                        <div class='alert-dismiss-container profileError'>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+     <div id='divSuccessModal' class='modal fade' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'> 
+        <div class='modal-dialog'>  
+          <div class='modal-content'> 
+            <div class='modal-header'>  
+              <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button>  
+              <h4 class='modal-title'>Password changed successfully</h4> 
+            </div>  
+            <div class='modal-body'>
+                As your password is changed, for security reasons please login again with new credentials. Thanks.
+            </div>  
+            <div class='modal-footer'>  
+              <button type='button' class='btn btn-primary' data-dismiss='modal'>Login</button>  
+            </div>  
+          </div><!-- /.modal-content -->  
+        </div><!-- /.modal-dialog --> 
+      </div><!-- /.modal -->  
+    </div>
+  </div>
+
+  {{view Deific.FooterView}} 
+</script>

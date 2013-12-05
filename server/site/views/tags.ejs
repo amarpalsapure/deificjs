@@ -1,0 +1,84 @@
+<% layout('__layout') -%>
+
+<%if (environment === 'production') { %>
+    <script type='text/javascript' src='/_min/js/global.combined.js?v=<%=rv%>'></script>
+    <script type='text/javascript' src='/_min/js/tags.combined.js?v=<%= rv %>'></script>
+<% } %>
+<%if (environment === 'development') { %>
+    <% script('/javascripts/router/tagsRouter.js') -%>
+
+    <% script('/javascripts/models/tag.js') -%>
+    <% script('/javascripts/models/paging.js') -%>
+
+    <% script('/javascripts/controllers/tagsController.js') -%>
+    <% script('/javascripts/controllers/pagingController.js') -%>
+
+    <% script('/javascripts/views/tagsView.js') -%>
+    <% script('/javascripts/views/pagingView.js') -%>
+<% } %>
+
+<script type="text/x-handlebars", data-template-name="tags">
+  {{view Deific.HeaderView}} 
+
+  <div class='container'>
+    <div class='content'>
+      <div class='row tags-list-page'>
+        <div class='col-xs-12 col-sm-12 col-lg-12'>
+          <div class='mainSection'>
+            <div class='row contentTitle'>
+              <div class='col-xs-12 col-sm-7 col-lg-7'>
+                <h1 class='mtm'>Tags</h1><a href='/add-tag-wiki' class="mls text-no-underline verticle-super" title="Add new tag"><i class="icon-plus"></i></a>
+              </div>
+              <div class="col-xs-12 col-sm-5 col-lg-5">
+                <ul class="nav nav-tabs right-nav-tabs" data-default='popular'>
+                  <li><a id='apopular' href='/tags/?tab=popular'>Popular</a></li>
+                  <li><a id='alatest' href='/tags/?tab=latest'>Latest</a></li>
+                  <li><a id='aname' href='/tags/?tab=name'>Name</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class='tags-list mtm'>
+            	<div class='row'>
+            		<div class='col-xs-12 col-sm-12 col-lg-12'>
+            			<div class='tag-search-container'>
+            				{{view view.submitTextField valueBinding='view.searchtext' type='text' class='txt-tag-search mrm' placeholder='Search tag...'}} <button id='btnTagSearch' {{action search target=view}} data-loading-text='Searching' class='btn btn-primary btn-sm'>Search</button>
+            			</div>
+            		</div>
+            	</div>
+            	<div class='row'>
+	                {{#each tag in tags}}
+	                	<div class='col-xs-12 col-sm-4 col-lg-2'>
+	                		<div class='border-all-dashed pam mtm tag-details-container position-relative'>
+	                			<div class='tag-details'>
+	                				<div class='tag-container'>{{render 'tag' tag}}</div> <span class='muted font9'>x {{unbound tag.questioncount}}</span>
+	                			</div>
+	                			<div class='tag-excerpt mtm pbm'>
+	                				{{tag.minexcerpt}}
+	                			</div>
+	                			<div class='position-absolute tag-since'>
+	                				<span class='muted font8'>created {{sincetime tag.__utcdatecreated}}</span>
+	                			</div>
+	                		</div>
+	                	</div>
+	                {{else}}
+		                <div class='col-xs-12 col-sm-12 col-lg-12'>
+	    	                <h5 class='muted mtm'>No tag found.</h5>
+	        	        </div>
+	            	{{/each}}
+              	</div>
+            </div>
+            <div {{bindAttr class=':pager-container view.showTagContainer:show:hide'}}>
+              <div class='row'>
+                <div class='col-xs-12 col-sm-12 col-lg-12'>
+                  {{outlet pagerBar}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{view Deific.FooterView}} 
+</script>

@@ -1,0 +1,17 @@
+brand:=
+appId:=
+apikey:=
+env:=
+sa:=
+host:=http://localhost:3000
+allowsignup:=
+feedbackemail:=
+fbappid:=
+twitter_consumer_key:=
+twitter_consumer_secret:=
+upvotepts:=
+downvotepts:=
+answerpts:=
+pagesize:=
+maxpagecount:=
+comments:=

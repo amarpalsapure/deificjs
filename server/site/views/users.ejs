@@ -1,17 +1,92 @@
 <% layout('__layout') -%>
 
-<% script('/javascripts/questionrouter.js') -%>
-<% script('/javascripts/infra/prettify.js') -%>
-<% script('/javascripts/views/questionView.js') -%>
+<%if (environment === 'production') { %>
+     <script type='text/javascript' src='/_min/js/global.combined.js?v=<%=rv%>'></script>
+    <script type='text/javascript' src='/_min/js/users.combined.js?v=<%= rv %>'></script>
+<% } %>
+<%if (environment === 'development') { %>
+    <% script('/javascripts/router/usersRouter.js') -%>
 
-<script type="text/x-handlebars", data-template-name='tag'>
-  <span class='label label-default'><a {{bindAttr href='view.selfurl'}}>{{tag}}</a></span>
-</script>
+    <% script('/javascripts/models/paging.js') -%>
 
-<script type="text/x-handlebars", data-template-name="question">
+    <% script('/javascripts/controllers/usersController.js') -%>
+    <% script('/javascripts/controllers/pagingController.js') -%>
+
+    <% script('/javascripts/views/usersView.js') -%>
+    <% script('/javascripts/views/pagingView.js') -%>
+<% } %>
+
+<script type="text/x-handlebars", data-template-name="users">
   {{view Deific.HeaderView}} 
 
-  this is a user page
+  <div class='container'>
+    <div class='content'>
+      <div class='row users-list-page'>
+        <div class='col-xs-12 col-sm-12 col-lg-12'>
+          <div class='mainSection'>
+            <div class='row contentTitle'>
+              <div class='col-xs-12 col-sm-7 col-lg-7'>
+                <h1 class='mtm'>Users</h1>
+              </div>
+              <div class="col-xs-12 col-sm-5 col-lg-5">
+                <ul class="nav nav-tabs right-nav-tabs" data-default='points'>
+                  <li><a id='apoints' href='/users/?sort=points'>Points</a></li>
+                  <li><a id='alatest' href='/users/?sort=latest'>Joining Date</a></li>
+                  <li><a id='aname' href='/users/?sort=name'>Name</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class='users-list mtm'>
+            	<div class='row'>
+            		<div class='col-xs-12 col-sm-12 col-lg-12'>
+            			<div class='user-search-container'>
+            				{{view view.submitTextField valueBinding='view.searchtext' type='text' class='txt-user-search mrm' placeholder='Search user...'}} <button id='btnUserSearch' {{action search target=view}} data-loading-text='Searching' class='btn btn-primary btn-sm'>Search</button>
+            			</div>
+            		</div>
+            	</div>
+            	<div class='row'>
+	                {{#each user in users}}
+	                	<div class='col-xs-12 col-sm-4 col-lg-3'>
+	                		<div class='border-all-dashed pam mtm user-details-container position-relative'>
+	                			<div class='user-profile'>
+				            		<div class='user-img'>
+				                		<a {{bindAttr href='user.url'}} {{bindAttr title='user.fullname'}}>
+			                    			<img {{bindAttr src='user.smallimgurl'}}/>
+				                		</a>
+				            		</div>
+				            		<div class='user-details mlm'>
+					                	<div class='user-name'>
+					                    	<a {{bindAttr href='user.url'}} {{bindAttr title='user.fullname'}}>
+					                        	<span class='name'>{{user.fullname}}</span>
+					                    	</a>
+					                	</div>
+					                	<div class='user-points'>{{abbreviateNumber user.reputation}}</div>
+				            		</div>
+				        		</div>
+				        		<div class='position-absolute user-since'>
+	                				<span class='muted font8'>member for {{sincetimeonly user.__utcdatecreated}}</span>
+	                			</div>
+	                		</div>
+	                	</div>
+	                {{else}}
+		                <div class='col-xs-12 col-sm-12 col-lg-12'>
+	    	                <h5 class='muted mtm'>No user found.</h5>
+	        	        </div>
+	            	{{/each}}
+              	</div>
+            </div>
+            <div {{bindAttr class=':pager-container view.showTagContainer:show:hide'}}>
+              <div class='row'>
+                <div class='col-xs-12 col-sm-12 col-lg-12'>
+                  {{outlet pagerBar}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   {{view Deific.FooterView}} 
 </script>

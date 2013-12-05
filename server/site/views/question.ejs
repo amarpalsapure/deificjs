@@ -1,161 +1,24 @@
 <% layout('__layout') -%>
 
-<% script('/javascripts/router/questionRouter.js') -%>
-<% script('/javascripts/infra/prettify.js') -%>
-<% script('/javascripts/controllers/questionController.js') -%>
-<% script('/javascripts/views/questionView.js') -%>
-<% script('/javascripts/views/answerView.js') -%>
-<% script('/javascripts/views/commentView.js') -%>
-<% script('/javascripts/views/tagView.js') -%>
+<%if (environment === 'production') { %>
+    <script type='text/javascript' src='/_min/js/global.combined.js?v=<%=rv%>'></script>
+    <script type='text/javascript' src='/_min/js/question.combined.js?v=<%= rv %>'></script>
+<% } %>
+<%if (environment === 'development') { %>
+    <% script('/javascripts/infra/bootstrap-switch.js') -%>
+    <% script('/javascripts/router/questionRouter.js') -%>
 
-<script type='text/x-handlebars', data-template-name='tag'>
-  <span class='label label-default mrs'>
-    <a data-toggle='popover' {{bindAttr data-content='description'}} {{bindAttr data-original-title='name'}} {{bindAttr href='url'}}>{{name}}</a>
-  </span>
-</script>
+    <% script('/javascripts/infra/prettify.js') -%>
+    <% script('/javascripts/controllers/baseController.js') -%>
+    <% script('/javascripts/controllers/questionController.js') -%>
+    <% script('/javascripts/controllers/answerController.js') -%>
 
-<script type='text/x-handlebars', data-template-name='answer'>
-  <a {{bindAttr id='id'}}></a>
-  <div {{bindAttr id='loaderid'}} class='progress progress-striped active mtl mbl'>
-    <div class='progress-bar'  role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width: 100%'>
-    </div>
-  </div>
-  <div {{bindAttr id='entityid'}} class='answer hide'>
-    <div class='row ptni pbni'>
-      <div class='col-xs-12 col-sm-1 col-lg-1'>
-        <div class='row'>
-          <div class='col-xs-8 col-sm-12 col-lg-12 user-profile'>
-            <div class='divPic'><a class='user-img' {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}><img {{bindAttr src='author.smallimgurl'}}/></a></div>
-            <div class='divUserDetails'>
-              <div class='divUser'>
-                <a {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}>
-                  <span class='fname'>{{author.firstname}}</span><span class='lname'>{{author.lastname}}</span>
-                </a>
-              </div>
-              <div class='divPts' {{bindAttr title='author.reputation'}}>{{abbreviateNumber author.reputation}}</div>
-            </div>
-            <div class='divPosted'>
-              answered...
-            </div>
-          </div>
-          <div class='col-xs-5 col-sm-12 col-lg-12 vote-panel'>
-            {{#if isLoggedIn}}
-              <a {{action upvote}} {{bindAttr class='hasupvoted'}} href='javascript:void(0)'>
-                <i class='icon-large icon-thumbs-up'></i>
-              </a>
-              <div class='vote-cast'>
-                {{#if isVoteOpen}}
-                  <span class='vote-up-count'>{{upvotecount}}</span>
-                  <span class='vote-separator'>/</span>
-                  <span class='vote-down-count'>{{downvotecount}}</span>
-                {{else}}
-                  <a {{action votedetails}} href='javascript:void(0)' title='View up and down vote count'>
-                    <span class='vote-count'>{{votecount}}</span>
-                  </a>
-                {{/if}}                    
-              </div>
-              <a {{action downvote}} {{bindAttr class='hasdownvoted'}} href='javascript:void(0)'>
-                <i class='icon-large icon-thumbs-down'></i>
-              </a>
-            {{else}}
-              <a class='btn btn-success btn-sm' {{bindAttr href='loginselfurl'}} title='Login to up vote'>
-                <i class='icon-large icon-thumbs-up'></i>
-              </a>
-              <div class='vote-cast'>
-                <a {{bindAttr href='loginselfurl'}} title='Login to view up and down vote count'>
-                  <span class='vote-count'>{{votecount}}</span>
-                </a>
-              </div>
-              <a class='btn btn-danger btn-sm' {{bindAttr href='loginselfurl'}} title='Login to down vote'>
-                <i class='icon-large icon-thumbs-down'></i>
-              </a>
-            {{/if}}
-            <div class='alert-dismiss-container voteError'>
-            </div>
-            <div class='progress progress-striped active mtm voteProgress hide'>
-              <div class='progress-bar'  role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width: 100%'>
-              </div>
-            </div>
-            <div class='correct-answer'>
-              <!-- islogged in and has asked the question -->
-              {{#if isOwnerLoggedIn}}
-                {{#if iscorrectanswer}}                  
-                  <a href='javascript:void(0)' class='checked'></a>
-                {{else}}
-                  <a href='javascript:void(0)' class='unchecked'></a>
-                {{/if}}
-              {{else}}
-                {{#if iscorrectanswer}}
-                  <span class='checked'></span>
-                {{/if}}
-              {{/if}}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class='col-xs-12 col-sm-11 col-lg-11 entity-container'>
-        <div class='callout odd'>
-          <div class='arrow-container'>
-            <div class='arrow-left'></div>
-            <div class='arrow-up'></div>
-          </div>
-          <!-- Answer text goes here -->
-          <div class='row'>
-            <div class='col-xs-12 col-sm-12 col-lg-12'>
-              <div class='border-bottom-dashed answer-desc pbxl'>
-                {{markdown text}}
-              </div>
-            </div>
-          </div>
-          <div class='comment-container mbm'>
-            {{#each comment in comments}}
-              <div {{bindAttr class='comment.ishidden:hide :comment'}}>
-                <div class='row'>
-                  <div class='col-lg-12'>
-                      <span class='comment-text'>{{markdown comment.text}}</span> - 
-                      <a {{bindAttr href='comment.author.url'}} {{bindAttr title='comment.author.fullname'}} class='commentor'>
-                        {{comment.author.fullname}}
-                      </a> <span class='divTime'>{{sincetime comment.__utcdatecreated}}</span>
-                  </div>
-                </div>
-              </div>
-            {{/each}}
-            <div class='mts pts pbs mbm border-bottom-dashed'>
-              <a href='javascript:void(0)' title='Show more Comments' class='showMore hide' {{action showAllComment target=view}}>...</a>
-            </div>
-          </div>
-          <div class='row comment-add-container'>
-            <div class='progress progress-striped active mts hide commentProgress'>
-              <div class='progress-bar'  role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width: 100%'>
-              </div>
-            </div>
-            <div class='alert-dismiss-container comment-error commentError'>
-            </div>
-            {{#if isCommenting}}
-            <div class='col-xs-12 col-sm-12 col-lg-12 mbm'>
-              {{view Ember.TextArea placeholder='If you want more information or want to provide any suggestion, use comments.' valueBinding='newComment' action='createComment'}}
-            </div>
-            <div class='col-xs-12 col-sm-12 col-lg-12 text-right'>
-              <button class='btn btn-xs btn-primary mrs' href='javascript:void(0)' {{action 'createComment'}}>Post</button>
-              <a {{action 'commentAction'}} class='comment-cancel font9' href='javascript:void()'>Cancel</a>
-            </div>
-            {{else}}
-            <div class='col-lg-12 text-right'>
-              {{#if isLoggedIn}}
-                <a {{action 'commentAction'}} class='font9 commentAdd' href='javascript:void()'>
-                  Add a Comment
-                </a>
-              {{else}}
-                <a {{bindAttr href='loginselfurl'}}>Login to Comment</a>
-              {{/if}}
-            </div>
-            {{/if}}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</script>
+    <% script('/javascripts/views/baseView.js') -%>
+    <% script('/javascripts/views/questionView.js') -%>
+    <% script('/javascripts/views/answerView.js') -%>
+    <% script('/javascripts/views/commentView.js') -%>
+    <% script('/javascripts/views/tagView.js') -%>
+<% } %>
 
 <script type='text/x-handlebars', data-template-name='question'>
   {{outlet headerBar}} 
@@ -163,167 +26,15 @@
   <div class='container'>
     <div class='content'>
       <div class='row question-page'>
-        <div class='col-xs-12 col-sm-12 col-lg-9'>
+        <div class='col-xs-12 col-sm-12 col-lg-9 z-index-1'>
           <div class='mainSection'>
-            <div {{bindAttr id='entityid'}} class='question pts'>
+            <div class='question pts'>
               <div class='row time-row'>
                 <div class='col-xs-12 col-sm-12 col-lg-12'>
-                  <div class='time-container'>
-                    <div class='time-date'>
-                      {{getdate __utcdatecreated}}
-                    </div>
-                    <div class='time-details'>
-                      <div class='time-day'>
-                        {{getday __utcdatecreated}}
-                      </div>
-                      <div class='time-month'>
-                        {{getmonth __utcdatecreated}} {{getyear __utcdatecreated}}
-                      </div>
-                    </div>
-                  </div>
+                  {{render time this}}
                 </div>
               </div>
-              <div class='row'>
-                <!-- Question asked by goes here -->
-                <div class='col-xs-12 col-sm-1 col-lg-1'>
-                  <div class='row'>
-                    <div class='col-xs-7 col-sm-12 col-lg-12 user-profile'>
-                      <div class='divPic'><a class='user-img' {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}><img {{bindAttr src='author.smallimgurl'}}/></a></div>
-                      <div class='divUserDetails'>
-                        <div class='divUser'>
-                          <a {{bindAttr href='author.url'}} {{bindAttr title='author.fullname'}}>
-                            <span class='fname'>{{author.firstname}}</span><span class='lname'>{{author.lastname}}</span>
-                          </a>
-                          </div>
-                        <div class='divPts' {{bindAttr title='author.reputation'}}>{{abbreviateNumber author.reputation}}</div>
-                      </div>
-                      <div class='divPosted'>
-                        asked...
-                      </div>
-                    </div>
-                    <div class='col-xs-5 col-sm-12 col-lg-12 vote-panel'>
-                      {{#if isLoggedIn}}
-                        <a {{action upvote}} {{bindAttr class='hasupvoted'}} href='javascript:void(0)'>
-                          <i class='icon-large icon-thumbs-up'></i>
-                        </a>
-                        <div class='vote-cast'>
-                          {{#if isVoteOpen}}
-                            <span class='vote-up-count'>{{upvotecount}}</span>
-                            <span class='vote-separator'>/</span>
-                            <span class='vote-down-count'>{{downvotecount}}</span>
-                          {{else}}
-                            <a {{action votedetails}} href='javascript:void(0)' title='View up and down vote count'>
-                              <span class='vote-count'>{{votecount}}</span>
-                            </a>
-                          {{/if}}                    
-                        </div>
-                        <a {{action downvote}} {{bindAttr class='hasdownvoted'}} href='javascript:void(0)'>
-                          <i class='icon-large icon-thumbs-down'></i>
-                        </a>
-                      {{else}}
-                        <a class='btn btn-success btn-sm' {{bindAttr href='loginurl'}} title='Login to up vote'>
-                          <i class='icon-large icon-thumbs-up'></i>
-                        </a>
-                        <div class='vote-cast'>
-                          <a {{bindAttr href='loginurl'}} title='Login to view up and down vote count'>
-                            <span class='vote-count'>{{votecount}}</span>
-                          </a>
-                        </div>
-                        <a class='btn btn-danger btn-sm' {{bindAttr href='loginurl'}} title='Login to down vote'>
-                          <i class='icon-large icon-thumbs-down'></i>
-                        </a>
-                      {{/if}}
-                      <div class='alert-dismiss-container voteError'>
-                      </div>
-                      <div class='progress progress-striped active mtm voteProgress hide'>
-                        <div class='progress-bar'  role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width: 100%'>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class='col-xs-12 col-sm-11 col-lg-11 entity-container'>
-                  <!-- Question title goes here -->
-                  <div class='row'>
-                    <div class='col-xs-12 col-sm-12 col-lg-12'>
-                      <h4 class='question-title'>
-                        <a class='font120' {{bindAttr href='url'}}>{{ title }}</a>
-                      </h4>
-                    </div>
-                  </div>
-                  <!-- Question stats goes here -->
-                  <div class='row'>
-                    <div class='col-xs-12 col-sm-12 col-lg-12 question-details'>
-                      <span class='mrs'><span class='answer-count'>{{answercount}}</span> {{pluralize answercount s='answer'}} </span>
-                      <span class='mrs'>&#8226; <span class='view-count'>{{viewcount}}</span> {{pluralize viewcount s='view'}}</span>
-                    </div>
-                  </div>
-                  <!-- Question tags goes here -->
-                  <div class='row'>
-                    <div class='col-xs-12 col-sm-12 col-lg-12 question-tag'>
-                      <div class='border-bottom pbl tag-container'>
-                        {{#each tag in tags}}
-                          {{render 'tag' tag}}
-                        {{/each}}
-                      </div>
-                    </div>
-                  </div>
-                  <!-- Question description goes here -->
-                  <div class='row'>
-                    <div class='col-xs-12 col-sm-12 col-lg-12'>
-                      <div class='border-bottom-dashed question-desc pbxl'>
-                        {{markdown text}}
-                      </div>
-                    </div>
-                  </div>
-                  <!-- Question comments goes here -->
-                  <div class='comment-container mbm'>
-                    {{#each comment in comments}}
-                      <div {{bindAttr class='comment.ishidden:hide :comment'}}>
-                        <div class='row'>
-                          <div class='col-lg-12'>
-                              <span class='comment-text'>{{markdown comment.text}}</span> - 
-                              <a {{bindAttr href='comment.author.url'}} {{bindAttr title='comment.author.fullname'}} class='commentor'>
-                                {{comment.author.fullname}}
-                              </a> <span class='divTime'>{{sincetime comment.__utcdatecreated}}</span>
-                          </div>
-                        </div>
-                      </div>
-                    {{/each}}
-                    <div class='mts pts pbs mbm border-bottom-dashed'>
-                      <a href='javascript:void(0)' title='Show more Comments' class='showMore' {{action showAllComment target=view}}>...</a>
-                    </div>
-                  </div>
-                  <!-- Question add comment goes here -->
-                  <div class='row comment-add-container'>
-                      <div class='progress progress-striped active mts hide commentProgress'>
-                        <div class='progress-bar'  role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width: 100%'>
-                        </div>
-                      </div>
-                      <div class='alert-dismiss-container comment-error commentError'>
-                      </div>
-                      {{#if isCommenting}}
-                      <div class='col-xs-12 col-sm-12 col-lg-12 mbm'>
-                        {{view Ember.TextArea placeholder='If you want more information or want to provide any suggestion, use comments.' valueBinding='newComment' action='createComment'}}
-                      </div>
-                      <div class='col-xs-12 col-sm-12 col-lg-12 text-right'>
-                        <button class='btn btn-xs btn-primary mrs' href='javascript:void(0)' {{action 'createComment'}}>Post</button>
-                        <a {{action 'commentAction'}} class='comment-cancel font9' href='javascript:void()'>Cancel</a>
-                      </div>
-                      {{else}}
-                      <div class='col-lg-12 text-right'>
-                        {{#if isLoggedIn}}
-                          <a {{action 'commentAction'}} class='font9 commentAdd' href='javascript:void()'>
-                            Add a Comment
-                          </a>
-                        {{else}}
-                          <a {{bindAttr href='loginurl'}}>Login to Comment</a>
-                        {{/if}}
-                      </div>
-                      {{/if}}
-                  </div>
-                </div>
-              </div>
+              {{outlet questionDetails}}
             </div>
             <div class='bubble'>
             </div>
@@ -334,11 +45,11 @@
                     <h1>{{answercount}} Answers</h1>
                   </div>
                   <div class='col-xs-12 col-sm-5 col-lg-5'>
-                    <div class='sortGroup mtm btn-group' >
-                      <a id='aactive' href='?sort=active' class='btn btn-danger'>Active</a>
-                      <a id='avotes' href='?sort=votes' class='btn btn-danger'>Votes</a>
-                      <a id='aoldest' href='?sort=oldest' class='btn btn-danger'>Oldest</a>
-                    </div>
+                    <ul class="nav nav-tabs right-nav-tabs" data-default='active'>
+                      <li><a id='aactive' href='?sort=active'>Active</a></li>
+                      <li><a id='avotes' href='?sort=votes'>Votes</a></li>
+                      <li><a id='aoldest' href='?sort=oldest'>Oldest</a></li>
+                    </ul>
                   </div>
                 </div>
               </div>
@@ -347,23 +58,12 @@
                 {{#each group in groupedAnswers}}
                     <div class='row time-row'>
                       <div class='col-xs-12 col-sm-12 col-lg-12'>
-                        <div {{bindAttr name='getfulldate'}} class='time-container'>
-                          <div class='time-date'>
-                            {{getdate group.__utcdatecreated}}
-                          </div>
-                          <div class='time-details'>
-                            <div class='time-day'>
-                              {{getday group.__utcdatecreated}}
-                            </div>
-                            <div class='time-month'>
-                              {{getmonth group.__utcdatecreated}} {{getyear group.__utcdatecreated}}
-                            </div>
-                          </div>
-                        </div>
+                        {{render time group}}
                       </div>
                     </div>
                     <!-- Load answer here -->
                     {{#each answer in group.answers}}
+                      {{render 'answerloader' answer}}
                       {{render 'answer' answer}}
                     {{/each}}
                     <div class='row bubble-container pbxli'>
@@ -382,6 +82,7 @@
                   <h1>Your Answer</h1>
                 </div>
               </div>
+              {{#if isLoggedIn}}
               <div class='row'>
                 <div class='col-xs-12 col-sm-12 col-lg-10 col-lg-offset-1'>
                   <div id='wmd-button-bar'>
@@ -390,7 +91,7 @@
               </div>
               <div class='row'>
                 <div class='col-xs-12 col-sm-12 col-lg-10 col-lg-offset-1'>
-                  {{view Ember.TextArea class='resizable' id='wmd-input' name='wmd-input' placeholder='You can use Markdown language to write your answer. Click on help for more information.' valueBinding='newAnswer'}}
+                  {{view Ember.TextArea class='resizable' id='wmd-input' name='wmd-input' placeholder='You can use Markdown language to write your answer. Click on help for more information.' valueBinding='view.newAnswer'}}
                 </div>
               </div>
               <div class='row mts'>
@@ -407,23 +108,69 @@
               </div>
               <div class='row mtm'>
                 <div class='col-xs-12 col-sm-12 col-lg-10 col-lg-offset-1'>
-                  <button id='btnSubmitAnswer' disabled='disabled' class='btn btn-large btn-primary mrm' data-loading-text='Submitting Your Answer' href='javascript:void(0)' {{action 'createAnswer'}}>Submit Your Answer</button>
+                  <button id='btnSubmitAnswer' disabled='disabled' class='btn btn-large btn-primary mrm' data-loading-text='Submitting Your Answer' href='javascript:void(0)' {{action saveAnswer target=view}}>Submit Your Answer</button>
                   <div class='alert-dismiss-container answerError'>
                   </div>
                 </div>
               </div>
+              {{else}}
+              <div class='mtm'>
+                <a class='btn btn-sm font110' {{bindAttr href='loginurl'}} title='Login to answer'>
+                  Login to Answer this question
+                </a>
+              </div>
+              {{/if}}
             </div>
           </div>
         </div>
-        <div class='col-xs-12 col-sm-12 col-lg-3'>
-          <div class='sideSection'>
-            <div class='row'>
+        <div class='col-xs-12 col-sm-12 col-lg-3 z-index-0 sideSection-container slideSideSection'>
+            <div class='sideSection'>
+                <div class='row'>
+                    {{#if isLoggedIn}}
+                        <div class="col-xs-12 col-sm-12 col-lg-7">
+                            <i class="icon-rss-sign pull-left"></i> SUBSCRIBE TO THE QUESTION
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-lg-5 subscribe-switch">
+                            <div id="chkSubscribe" class="make-switch switch-small" data-on="info" data-on-label="Yes" data-off-label="No">
+                                {{view Ember.Checkbox valueBinding='issubscribed'}}
+                            </div>
+                            {{#if view.isTogglingSubscribe}}
+                            <div class='progress progress-striped active mtm'>
+						        <div class='progress-bar'  role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width: 100%'>
+						        </div>
+					        </div>
+                            {{/if}}
+                        </div>
+                        <div class='alert-dismiss-container subscribeError'>
+                        </div>
+                    {{else}}
+                        <div class="col-xs-12 col-sm-12 col-lg-12">
+                            <i class="icon-rss-sign pull-left"></i> <a {{bindAttr href='loginurl'}} title='Login to Subscribe'>SUBSCRIBE TO THE QUESTION</a>
+                        </div>      
+                    {{/if}}
+                </div>
             </div>
-          </div>
         </div>
       </div>
     </div>
   </div>
+  
+  <div id='divDeleteModal' class='modal fade' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'> 
+    <div class='modal-dialog'>  
+      <div class='modal-content'> 
+        <div class='modal-header'>  
+          <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button>  
+          <h4 class='modal-title'></h4> 
+        </div>  
+        <div class='modal-body'>  
+        </div>  
+        <div class='modal-footer'>  
+          <button type='button' class='btn btn-danger' data-loading-text='Deleting' data-toggle='button'>Delete</button>    
+          <button type='button' class='btn btn-default' data-dismiss='modal'>Cancel</button>  
+        </div>  
+      </div><!-- /.modal-content -->  
+    </div><!-- /.modal-dialog --> 
+  </div><!-- /.modal -->  
 
   {{render 'footer'}} 
 </script>

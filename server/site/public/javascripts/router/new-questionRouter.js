@@ -5,9 +5,7 @@ Deific.Router.map(function () {
 	this.resource('question', { path: '/' });
 });
 
-Deific.Router.reopen({ location: 'none' });
-
-Deific.QuestionRoute = Ember.Route.extend({
+Deific.QuestionRoute = Deific.BaseRoute.extend({
 	model: function(){ 
 		var store = this.get('store');
 		//TODO: push the current logged in user (if any) to store

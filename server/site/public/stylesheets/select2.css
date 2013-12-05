@@ -99,7 +99,7 @@ Version: 3.4.2 Timestamp: Mon Aug 12 15:04:12 PDT 2013
     text-decoration: none;
 
     border: 0;
-    background: url('../images/select2.png') right top no-repeat;
+    background: url('/images/select2.png') right top no-repeat;
     cursor: pointer;
     outline: 0;
 }

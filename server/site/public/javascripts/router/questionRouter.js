@@ -5,9 +5,7 @@ Deific.Router.map(function () {
 	this.resource('question', { path: '/' });
 });
 
-Deific.Router.reopen({ location: 'none' });
-
-Deific.QuestionRoute = Ember.Route.extend({
+Deific.QuestionRoute = Deific.BaseRoute.extend({
 	model: function(params){
 		//extract the id from url
 		var idMatch = window.location.pathname.match(/\d+\.?\d*/g);
@@ -38,6 +36,7 @@ Deific.QuestionRoute = Ember.Route.extend({
 				var answer = this.get('store').find('answer', answersMeta[i].__id);
 				answer.then(function(gAnswer){
 					gAnswer.set('question', model);
+					gAnswer.set('ownsparent', model.get('isowner'));
 					//if url has hash (in case of answer id), then reload the page
 					if(--loadedanswercount == 0 && window.location.hash != '') 
 						setTimeout(function(){
@@ -64,5 +63,6 @@ Deific.QuestionRoute = Ember.Route.extend({
 	renderTemplate: function() {
 		this.render('question');
 		this.render('header', {	into: 'question', outlet: 'headerBar', controller: 'header' });
+		this.render('entity', { into: 'question', outlet: 'questionDetails' });
 	}
 });

@@ -1,0 +1,81 @@
+<% layout('__layout') -%>
+
+<%if (environment === 'production') { %>
+    <script type='text/javascript' src='/_min/js/global.combined.js?v=<%=rv%>'></script>
+    <script type='text/javascript' src='/_min/js/questions.combined.js?v=<%= rv %>'></script>
+<% } %>
+<%if (environment === 'development') { %>
+    <% script('/javascripts/router/questionsRouter.js') -%>
+
+    <% script('/javascripts/models/paging.js') -%>
+
+    <% script('/javascripts/controllers/baseController.js') -%>
+    <% script('/javascripts/controllers/questionController.js') -%>
+    <% script('/javascripts/controllers/pagingController.js') -%>
+
+    <% script('/javascripts/views/questionsView.js') -%>
+    <% script('/javascripts/views/pagingView.js') -%>
+    <% script('/javascripts/views/tagView.js') -%>
+<% } %>
+
+<script type='text/x-handlebars', data-template-name='questions'>
+  {{outlet headerBar}}
+  
+  <div class='container'>
+    <div class='content'>
+      <div class='row questions-page'>
+        <div class='col-xs-12 col-sm-12 col-lg-9 z-index-1'>
+          <div class='mainSection'>
+            <div class='row contentTitle'>
+              <div class='col-xs-12 col-sm-7 col-lg-7'>
+                <h1 class='mtm'><span id='h1SearchCount'>0</span>&nbsp;Questions</h1>
+              </div>
+              <div class="col-xs-12 col-sm-5 col-lg-5">
+                <ul class="nav nav-tabs right-nav-tabs" data-default='votes'>
+                  <li><a id='alatest' href='/questions/?tab=latest'>Latest</a></li>
+                  <li><a id='avotes' href='/questions/?tab=votes'>Votes</a></li>
+                  <li><a id='aactive' href='/questions/?tab=active'>Active</a></li>
+                  <li><a id='aunresolved' href='/questions/?tab=unresolved'>Unresolved</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class='question-list'>
+              {{#each question in questions itemController="question"}}
+                {{render 'entity' question}}
+              {{else}}
+                <div class='row'>
+                  <div class='col-xs-12 col-sm-12 col-lg-12'>
+                    <h5 class='muted mtm'>Be first to add a question to this forum.</h5>
+                  </div>
+                </div>
+              {{/each}}
+            </div>
+            <div class='pager-container'>
+              <div class='row'>
+                <div class='col-xs-12 col-sm-12 col-lg-12'>
+                  {{outlet pagerBar}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class='col-xs-12 col-sm-12 col-lg-3 z-index-0 sideSection-container slideSideSection'>
+          <div class='sideSection'>
+            <div class='row contentTitle'>
+              <div class='col-xs-12 col-sm-12 col-lg-12'>
+                <h1 class='related-tags'>Related Tags</h1>
+              </div>
+            </div>
+            <div class='row'>
+              <div class='col-xs-12 col-sm-12 col-lg-12'>
+                {{outlet relatedTags}}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{render 'footer'}}
+</script>
