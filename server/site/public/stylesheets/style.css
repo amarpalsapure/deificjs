@@ -305,6 +305,17 @@ div.grippie { background: #eeeeee url(/images/grippie.png) no-repeat scroll cent
 .tagwiki-edit-page .label { font-size: 1em; font-weight: normal; padding: .35em .65em .4em; }
 .tagwiki-edit-page .contentTitle span { margin-top: 9px; margin-left: 5px; }
 
+.about-page { margin-right: 0px; }
+    .about-page .mainSection > div { max-width: 1020px; padding-top: 30px; padding-bottom: 50px; margin: auto; border-bottom: dashed 1px #aaa; }
+    .about-page .mainSection h1 { text-align: center; margin: auto; }
+    .about-page .welcome { text-align: center; font-size: 16px; }
+.question-answer { height: 730px; }
+.image-foreground { overflow: hidden; background-color: #fff; width: 100%; box-shadow: 5px 2px 5px #ccc; }
+.background-image { overflow: hidden; border: solid 1px #ccc; left: 150px; position: relative; }
+.up-vote-image { background: transparent url(/images/upvote.png) 7% 0 no-repeat; padding-left: 65px; padding-top: 2px; margin-top: 40px; }
+.answer-accepted-image { background: transparent url(/images/accepted.png) 0 0 no-repeat; padding-left: 65px; padding-top: 2px; margin-top: 35px; }
+.arrows { background: transparent url(/images/arrows.png) 95% 0% no-repeat; }
+
 @media screen and (max-width: 1200px) {
     body { overflow-x: hidden; }
     .sideSection-container { position: absolute; z-index: 2; top: 225px; max-width: 275px; padding-right: 0px; right: 0px; }

@@ -197,6 +197,9 @@ app.get('/admin/setup', adminRoutes.index);
 // index page
 app.get('/', appSetup.init, routes.index);
 
+// about page
+app.get('/about', appSetup.init, routes.about);
+
 //ask a question
 app.get('/questions/ask', appSetup.init, questionRoute.ask);
 

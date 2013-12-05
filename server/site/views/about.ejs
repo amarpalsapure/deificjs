@@ -1,0 +1,56 @@
+<% layout('__layout') -%>
+
+<%if (environment === 'production') { %>
+<script type='text/javascript' src='/_min/js/global.combined.js?v=<%=rv%>'></script>
+<script type='text/javascript' src='/_min/js/about.combined.js?v=<%= rv %>'></script>
+<% } %>
+<%if (environment === 'development') { %>
+    <% script('/javascripts/router/aboutRouter.js') -%>
+
+    <% script('/javascripts/views/aboutView.js') -%>
+<% } %>
+
+<script type="text/x-handlebars" , data-template-name="about">
+    {{view Deific.HeaderView}}
+
+    <div class='container'>
+        <div class='content'>
+            <div class='row about-page'>
+                <div class='col-xs-12 col-sm-12 col-lg-12'>
+                    <div class='mainSection'>
+                        <div class="welcome">
+                            <h1 class="pbl">Welcome to <%= brand %></h1>
+                            <img src="/images/logo.jpg" height="200" class="ptl pbxxl" />
+                            <p class="ptxxl"><%= brand %> is a question and answer site for professional and enthusiast. With your help, we're working together to build a library of detailed answers to every question.</p>
+
+                        </div>
+
+                        <div class="question-answer">
+                            <h1 class="pbxxl">Ask questions, get answers, no distractions</h1>
+
+                            <div class="col-lg-4">
+                                <p>This site is all about <strong>getting answers</strong>.</p>
+                                <p style="padding-bottom: 20px;">It's not a discussion forum. There's no chit-chat.</p>
+                                <div class="arrows">
+                                    <p class="text-center" style="padding-top: 60px">Questions...</p>
+                                    <p class="text-center" style="padding-top: 35px; padding-bottom: 60px;padding-right: 20px;">...and answers</p>
+                                </div>
+                                <p class="up-vote-image">Good answers are voted up and <strong>rise to the top</strong>.</p>
+                                <p class="muted" style="padding-left: 65px; margin-top: -5px;">The best answers show up first so that they are always easy to find.</p>
+                                <p class="answer-accepted-image">The person who asked can mark one answer as "accepted".</p>
+                                <p class="muted" style="padding-left: 65px; margin-top: -5px;">Accepting doesn't mean it's the best answer, it just means that it worked for the person who asked.</p>
+                            </div>
+                            <div class="col-lg-8 prn">
+                                <div class="image-foreground display-block">
+                                    <img class="background-image" src="/images/question.png" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{view Deific.FooterView}}
+</script>
