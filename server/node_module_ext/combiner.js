@@ -246,4 +246,11 @@ exports.initialize = function (rootPath) {
     ];
     combiner.combine(usersFiles, path.join(rootPath, 'server/site/public/_min/js/users.combined.js'), true, true);
     combiner.init();
+
+    var aboutFiles = [
+        path.join(rootPath, 'server/site/public/javascripts/router/aboutRouter.js'),
+        path.join(rootPath, 'server/site/public/javascripts/views/aboutView.js'),
+    ];
+    combiner.combine(aboutFiles, path.join(rootPath, 'server/site/public/_min/js/about.combined.js'), true, true);
+    combiner.init();
 };
