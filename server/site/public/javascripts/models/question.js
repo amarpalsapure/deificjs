@@ -50,9 +50,19 @@
 			else return 'btn btn-success btn-sm';
 		}.property('voted'),
 
+		hasupvotedTitle: function(){
+		    if (this.get('voted') == 1) return 'Click to up vote.\n(click again to undo)';
+		    else return 'Click to up vote.';
+		}.property('voted'),
+
 		hasdownvoted: function(){
 			if(this.get('voted') == -1) return 'btn btn-warning btn-sm';
 			else return 'btn btn-danger btn-sm';
+		}.property('voted'),
+
+		hasdownvotedTitle: function () {
+		    if (this.get('voted') == -1) return 'Click to down vote.\n(click again to undo)';
+		    else return 'Click to down vote.';
 		}.property('voted'),
 
 		isfavtag: function() {
@@ -74,6 +84,10 @@
 
 		editUrl: function () {
 		    return '/questions/' + this.get('id') + '/edit';
-		}.property('id')
+		}.property('id'),
+
+		isbookmarkedTitle: function () {
+		    return !this.get('isbookmarked') ? 'Click to bookmark this question.' : 'Click to bookmark this question. \n(click again to undo)'
+		}.property('isbookmarked')
 	});
 }).call(this);

@@ -74,7 +74,7 @@ if ('production' == app.get('env')) {
 }
 
 // all environments
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 8400);
 app.set('views', __dirname + '/server/site/views');
 app.set('view engine', 'ejs');
 app.engine('ejs', engine);

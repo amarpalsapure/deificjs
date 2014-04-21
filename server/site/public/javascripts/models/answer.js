@@ -35,14 +35,24 @@
 			return 'answer-loader-' + this.get('id');
 		}.property('id'),
 		
-		hasupvoted: function(){
-			if(this.get('voted') == 1) return 'btn btn-warning btn-sm';
-			else return 'btn btn-success btn-sm';
+		hasupvoted: function () {
+		    if (this.get('voted') == 1) return 'btn btn-warning btn-sm';
+		    else return 'btn btn-success btn-sm';
 		}.property('voted'),
 
-		hasdownvoted: function(){
-			if(this.get('voted') == -1) return 'btn btn-warning btn-sm';
-			else return 'btn btn-danger btn-sm';
+		hasupvotedTitle: function () {
+		    if (this.get('voted') == 1) return 'Click to up vote.\n(click again to undo)';
+		    else return 'Click to up vote.';
+		}.property('voted'),
+
+		hasdownvoted: function () {
+		    if (this.get('voted') == -1) return 'btn btn-warning btn-sm';
+		    else return 'btn btn-danger btn-sm';
+		}.property('voted'),
+
+		hasdownvotedTitle: function () {
+		    if (this.get('voted') == -1) return 'Click to down vote.\n(click again to undo)';
+		    else return 'Click to down vote.';
 		}.property('voted'),
 		
 		getfulldate: function(){

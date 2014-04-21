@@ -105,7 +105,7 @@
 			       	<div {{bindAttr class=':col-xs-5 :plni :col-sm-12 :col-lg-12 view.questionpage:show:hide'}}>	\
 			       		<div class='vote-panel'>	\
 				       		{{#if isLoggedIn}}	\
-								<a {{action registerVote true target=view}} {{bindAttr class='hasupvoted'}} href='javascript:void(0)'>	\
+								<a {{action registerVote true target=view}} {{bindAttr class='hasupvoted'}} href='javascript:void(0)' {{bindAttr title='hasupvotedTitle'}}>	\
 									<i class='icon-large icon-thumbs-up'></i>	\
 								</a>	\
 								<div class='vote-cast'>	\
@@ -119,7 +119,7 @@
 										</a>	\
 									{{/if}}	\
 								</div>	\
-								<a {{action registerVote false target=view}} {{bindAttr class='hasdownvoted'}} href='javascript:void(0)'>	\
+								<a {{action registerVote false target=view}} {{bindAttr class='hasdownvoted'}} href='javascript:void(0)' {{bindAttr title='hasdownvotedTitle'}}>	\
 									<i class='icon-large icon-thumbs-down'></i>	\
 								</a>	\
 							{{else}}	\
@@ -160,7 +160,7 @@
 					                    <div {{ bindAttr class='view.questionpage:question-bookmark:hide istypeanswer:hide'}}>	\
 					                    {{#if isLoggedIn}}	\
 					                        <a href='javascript:void(0)' {{action toggleBookmark target=view}}> \
-					                        	<i {{bindAttr class='isbookmarked:icon-star:icon-star-empty'}}></i>	\
+					                        	<i {{bindAttr class='isbookmarked:icon-star:icon-star-empty'}} {{bindAttr title='isbookmarkedTitle'}}></i>	\
 					                        </a>	\
 					                        <div class='alert-dismiss-container action-error position-absolute action-toggle-bookmark-error font9'>	\
 											</div>	\
