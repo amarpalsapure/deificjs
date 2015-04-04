@@ -1,7 +1,7 @@
 exports.index = function(req, res){
 	//initialize the app
   	var app = require('../../shared/app.init');
-	var state = app.init(req);
+	var state = app.init(req, res);
 
 	state.title = 'Fetching question';
 
@@ -11,7 +11,7 @@ exports.index = function(req, res){
 exports.all = function(req, res) {
 	//initialize the app
   	var app = require('../../shared/app.init');
-	var state = app.init(req);
+	var state = app.init(req, res);
 
 	switch(req.param('tab')) {
 		case 'latest':
@@ -34,7 +34,7 @@ exports.all = function(req, res) {
 exports.tagged = function(req, res) {
 	//initialize the app
   	var app = require('../../shared/app.init');
-	var state = app.init(req);
+	var state = app.init(req, res);
 
 	state.tag = encodeURIComponent(req.param('tag'));
 
@@ -107,7 +107,7 @@ exports.ask = function(req, res) {
 exports.edit = function (req, res) {
     //initialize the app
     var app = require('../../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     //set the title of the page
     state.title = 'Editing question';

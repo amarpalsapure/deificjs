@@ -89,12 +89,33 @@ app.use(express.methodOverride());
 app.use(express.favicon());
 app.use(express.cookieParser('9b7c1f44590b46e509db'));
 app.use(express.session());
-app.use(app.router);
-app.use(express.static(path.join(__dirname, 'server/site/public'), { maxAge: Infinity }));
-
 // passport related stuff
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(function(req, res, next) {
+  if (req.cookies.__app_session && req.url.toLowerCase().indexOf('/users/login') == -1) {
+    var userData = req.cookies["_app_session_user"];
+    var apUser = {}, userSplit = userData.split('|');
+    apUser.firstname = userSplit[0];
+    apUser.lastname = userSplit[1];
+    apUser.accountname = userSplit[2];
+    apUser.username = userSplit[3];
+    apUser.email = userSplit[4];
+    if (req && req.signedCookies && req.signedCookies.u && req.signedCookies.u.e == apUser.email) {
+      next();
+    } else if (req.cookies.__app_session) {
+      res.clearCookie('u');
+      res.redirect("/users/login?returnurl=" + req.url);
+    }
+  } else {
+    next();
+  }
+});
+
+app.use(app.router);
+app.use(express.static(path.join(__dirname, 'server/site/public'), { maxAge: Infinity }));
+
 
 // development only
 process.config.environment = app.get('env');
@@ -238,7 +259,7 @@ app.get('/users/login', appSetup.init, userRoute.login);
 // user edit page
 app.get('/users/edit/:id', appSetup.init, userRoute.edit);
 
-// get user by id withour name in url
+// get user by id without name in url
 app.get('/users/:id', appSetup.init, userRoute.findById);
 
 // get user by id with name in url

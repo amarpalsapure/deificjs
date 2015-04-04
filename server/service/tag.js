@@ -5,7 +5,7 @@ exports.findAll = function (req, res) {
 
     //get the state of app
     var app = require('../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     //initialize the sdk
     var sdk = require('./appacitive.init');
@@ -63,7 +63,7 @@ exports.findById = function (req, res) {
 
     //get the state of app
     var app = require('../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     //initialize the sdk
     var sdk = require('./appacitive.init');
@@ -85,7 +85,7 @@ exports.findById = function (req, res) {
 exports.save = function (req, res) {
     //get the state of app
     var app = require('../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     //initialize appacitive sdk
     var sdk = require('./appacitive.init');

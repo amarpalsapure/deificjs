@@ -1,7 +1,7 @@
 exports.index = function (req, res) {
     //initialize the app
     var app = require('../../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     switch (req.param('tab')) {
         case 'votes':
@@ -23,7 +23,7 @@ exports.index = function (req, res) {
 
 exports.about = function (req, res) {
     var app = require('../../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
     state.title = "About";
 
     res.render('about', state);

@@ -1,7 +1,7 @@
 exports.index = function(req, res){
 	//initialize the app
   	var app = require('../../shared/app.init');
-	var state = app.init(req);
+	var state = app.init(req, res);
 
 	state.title = 'Users';
 
@@ -10,7 +10,7 @@ exports.index = function(req, res){
 exports.findById = function(req, res) {
 	//initialize the app
   	var app = require('../../shared/app.init');
-	var state = app.init(req);
+	var state = app.init(req, res);
 
 	if (req.param('title')) {
 	    var capitalize = function (s) {
@@ -28,7 +28,7 @@ exports.findById = function(req, res) {
 exports.login = function(req, res){
 	//initialize the app
   	var app = require('../../shared/app.init');
-	var state = app.init(req);
+	var state = app.init(req, res);
 
 	//set the title of the page
 	state.title = 'Log In';
@@ -37,17 +37,18 @@ exports.login = function(req, res){
 	var context = require('../../shared/context');
 	//set the context
 	context.set(state.token, function(user) {
-	    res.redirect(process.config.host);
+	    res.redirect(process.config.host + (req.query.returnurl || ""));
 	}, function(err) {
 		//delete the cookie, and redirect user to login page
 		res.clearCookie('u');
-    	res.render('login', state);
-	});
+		res.redirect("http://portal.appacitive.com?ru=" + process.config.host + "/users/login" + encodeURI("?returnurl=" + req.query.returnurl));
+    	//res.render('login', state);
+	}, req, res);
 };
 exports.edit = function (req, res) {
     //initialize the app
     var app = require('../../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     state.title = 'User';
 

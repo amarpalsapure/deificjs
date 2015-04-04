@@ -1,9 +1,9 @@
-brand:=Hunters For Luck
+brand:=Appacitive Q&A
 appId:=44426464501825839
 apikey:=LzxqS6hmUHu6bOltwWUXyzKNZ+GmfTRrgNiNZd8K+RQ=
 env:=sandbox
-sa:=chirag_sanghvi7@hotmail.com, csanghvi@appacitive.com
-host:=http://qa.hfl.appyoda.io:8400
+sa:=noreply@gmail.com
+host:=http://deepthought.appacitive.com:8400
 allowsignup:=true
 feedbackemail:=csanghvi@appacitive.com
 fbappid:=

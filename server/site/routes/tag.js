@@ -1,7 +1,7 @@
 exports.index = function(req, res){
 	//initialize the app
   	var app = require('../../shared/app.init');
-	var state = app.init(req);
+	var state = app.init(req, res);
 	state.title = 'Tags';
 
 	res.render('tags', state);
@@ -10,7 +10,7 @@ exports.index = function(req, res){
 exports.add = function (req, res) {
     //initialize the app
     var app = require('../../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     if (!state.token) return res.redirect('/users/login?returnurl=' + req.path);
 
@@ -32,7 +32,7 @@ exports.add = function (req, res) {
 exports.info = function (req, res) {
     //initialize the app
     var app = require('../../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
     state.title = "'" + req.param('tag') + "' tag wiki";
 
     res.render('tagwiki', state);
@@ -41,7 +41,7 @@ exports.info = function (req, res) {
 exports.edit = function (req, res) {
     //initialize the app
     var app = require('../../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     if (!state.token) return res.redirect('/users/login?returnurl=' + req.path);
 

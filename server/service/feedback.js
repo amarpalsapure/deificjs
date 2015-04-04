@@ -1,7 +1,7 @@
 exports.send = function(req, res) {
     //get the state of app
     var app = require('../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     //intialize SDK
     var sdk = require('./appacitive.init');

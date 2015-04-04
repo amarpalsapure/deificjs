@@ -70,7 +70,7 @@ exports.findAll = function(req, res) {
 var __authorizeAction = function (req, res, action) {
     //get the state of app
     var app = require('../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     //get the transformer
     var transformer = require('./infra/transformer');
@@ -91,6 +91,6 @@ var __authorizeAction = function (req, res, action) {
         }, function (error) {
             //delete the cookie, and redirect user to login page
             return res.status(401).json(transformer.toSessionExpiredError(res, error));
-        });
+        }, req, res);
     }
 };

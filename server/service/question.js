@@ -33,7 +33,7 @@ var _findById = function (req, res) {
 
     //get the state of app
     var app = require('../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     //initialize the SDK
     var sdk = require('./appacitive.init');
@@ -176,7 +176,7 @@ var _tagSearch = function (req, res) {
 
     //get the state of app
     var app = require('../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     //initialize the SDK
     var sdk = require('./appacitive.init');
@@ -282,7 +282,7 @@ var _findAll = function (req, res) {
     };
     //get the state of app
     var app = require('../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     //initialize the SDK
     var sdk = require('./appacitive.init');
@@ -356,7 +356,7 @@ exports.update = function (req, res) {
 
     //get the state of app
     var app = require('../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     //initialize appacitive sdk
     var sdk = require('./appacitive.init');
@@ -724,7 +724,7 @@ exports.save = function (req, res) {
 
     //get the state of app
     var app = require('../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     //initialize appacitive sdk
     var sdk = require('./appacitive.init');
@@ -860,7 +860,7 @@ exports.del = function (req, res) {
 
     //get the state of app
     var app = require('../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     //intialize SDK
     var sdk = require('./appacitive.init');

@@ -9,7 +9,7 @@ exports.findById = function (req, res) {
 
     //get the state of app
     var app = require('../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     //initialize the sdk
     var sdk = require('./appacitive.init');
@@ -49,7 +49,7 @@ exports.update = function (req, res) {
     //get the state of app
     //to check if user is logged in or not
     var app = require('../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     //initialize appacitive sdk
     var sdk = require('./appacitive.init');
@@ -386,7 +386,7 @@ exports.save = function (req, res) {
     //get the state of app
     //to check if user is logged in or not
     var app = require('../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     //initialize appacitive sdk
     var sdk = require('./appacitive.init');
@@ -526,7 +526,7 @@ exports.del = function (req, res) {
 
     //get the state of app
     var app = require('../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     //intialize SDK
     var sdk = require('./appacitive.init');

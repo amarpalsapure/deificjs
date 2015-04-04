@@ -16,7 +16,7 @@ exports.entitycreate = function (req, res) {
     //get the state of app
     //to check if user is logged in or not
     var app = require('../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     //initialize appacitive sdk
     var sdk = require('./appacitive.init');

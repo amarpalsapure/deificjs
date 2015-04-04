@@ -6,14 +6,40 @@ exports.findAll = function (req, res) {
     else return _findAll(req, res);
 };
 
-var _findAll = function (req, res) {
+exports.findByUsernameOrCreate = function(apUser, req, res, success, error) {
+    _findUserByUsername(req, res, apUser.username, function(user) {
+        _login(apUser.username, apUser.username, req, res, success, error);
+    }, function() {
+        apUser.password = apUser.username;
+        _register(apUser, req, res, success, error);
+    });
+};
+
+var _findUserByUsername = function(req, res, username, success, error) {
+    //get the state of app
+    var app = require('../shared/app.init');
+    var state = app.init(req, res);
+    
+    //initialize the sdk
+    var sdk = require('./appacitive.init');
+    var Appacitive = sdk.init(state.debug);
+
+    //fetch user by username
+    Appacitive.Users.getUserByUsername(username, function(user) {
+        success();
+    }, function(err) {
+        error();
+    });
+};
+
+var _findUsers = function(req, res, filter, success, error) {
     var response = {
         users: []
     };
 
     //get the state of app
     var app = require('../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     //initialize the sdk
     var sdk = require('./appacitive.init');
@@ -24,9 +50,8 @@ var _findAll = function (req, res) {
 
     //search for matching users
     var orderBy = '__utcdatecreated',
-		pagenumber = req.param('page'),
-		isAscending = false,
-		filter;
+        pagenumber = req.param('page'),
+        isAscending = false;
 
     if (!pagenumber) pagenumber = 1;
 
@@ -45,11 +70,6 @@ var _findAll = function (req, res) {
             break;
     }
 
-    var nameQuery = req.param('q');
-    if (nameQuery) filter = Appacitive.Filter.Or(
-						Appacitive.Filter.Property('firstname').like(nameQuery),
-						Appacitive.Filter.Property('lastname').like(nameQuery));
-
     var query = new Appacitive.Queries.FindAllQuery({
         schema: 'user',
         fields: 'firstname,lastname,email,reputation,$entityupcount,$entitydowncount,$correctanswercount,__utcdatecreated',
@@ -61,10 +81,20 @@ var _findAll = function (req, res) {
     });
 
     query.fetch(function (users, paginginfo) {
-        return res.json(transformer.toUsers(users, paginginfo));
+        if (success) success(users, paginginfo)
+        else return res.json(transformer.toUsers(users, paginginfo));
     }, function (status) {
-        return res.status(502).json(transformer.toError('question_find_tag', status));
+        if(error) error(status);
+        else return res.status(502).json(transformer.toError('question_find_tag', status));
     });
+};
+
+var _findAll = function (req, res) {
+    var nameQuery = req.param('q'), filter;
+    if (nameQuery) filter = Appacitive.Filter.Or(
+                        Appacitive.Filter.Property('firstname').like(nameQuery),
+                        Appacitive.Filter.Property('lastname').like(nameQuery));
+    _findUsers(req, res, filter);
 };
 
 // Step 1 : Get the user
@@ -77,7 +107,7 @@ var _findByIdWithEntities = function (req, res) {
 
     //get the state of app
     var app = require('../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     //initialize the sdk
     var sdk = require('./appacitive.init');
@@ -365,7 +395,7 @@ var _findById = function (req, res) {
 
     //get the state of app
     var app = require('../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     //get the transformer
     var transformer = require('./infra/transformer');
@@ -419,16 +449,10 @@ exports.findById = function (req, res) {
     });
 };
 
-exports.auth = function (req, res) {
-    var email = req.body.email;
-    var pwd = req.body.password;
-
+var _login = function(email, pwd, req, res, success, error) {
+    
     //get the transformer
     var transformer = require('./infra/transformer');
-
-    //validate the inputs
-    if (!email || email === '' || !pwd || pwd === '')
-        return res.status(400).json(transformer.toError('user_login_validate'));
 
     //initialize the SDK
     var sdk = require('./appacitive.init');
@@ -450,16 +474,35 @@ exports.auth = function (req, res) {
             httpOnly: true
         })
 
-        return res.json({
-            user: {
-                id: authResult.user.id(),
-                fname: authResult.user.get('firstname'),
-                lname: authResult.user.get('lastname')
-            }
-        });
+        if (success) {
+            success(authResult);
+        } else {
+            return res.json({
+                user: {
+                    id: authResult.user.id(),
+                    fname: authResult.user.get('firstname'),
+                    lname: authResult.user.get('lastname')
+                }
+            });
+        }
     }, function (status) {
-        return res.status(401).json(transformer.toError('user_login', status));
+        if (error) error(status);
+        else return res.status(401).json(transformer.toError('user_login', status));
     });
+};
+
+exports.auth = function (req, res) {
+    var email = req.body.email;
+    var pwd = req.body.password;
+
+    //get the transformer
+    var transformer = require('./infra/transformer');
+
+    //validate the inputs
+    if (!email || email === '' || !pwd || pwd === '')
+        return res.status(400).json(transformer.toError('user_login_validate'));
+
+    _login(email, pwd);
 };
 
 exports.fbauth = function (req, res) {
@@ -508,7 +551,7 @@ exports.fbauth = function (req, res) {
 exports.logout = function (req, res) {
     //get the state of app
     var app = require('../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     //initialize the SDK
     var sdk = require('./appacitive.init');
@@ -519,8 +562,49 @@ exports.logout = function (req, res) {
 
     //remove the auth cookie
     res.clearCookie('u');
+    res.clearCookie('__app_session');
+    res.clearCookie('_app_session_user');
     res.json({
         success: true
+    });
+};
+
+var _register = function(user, req, res, success, error) {
+    //initialize the SDK
+    var sdk = require('./appacitive.init');
+    var Appacitive = sdk.init();
+
+     //get the transformer
+    var transformer = require('./infra/transformer');
+
+    Appacitive.Users.signup(user, function (authResult) {
+        // User has been logged in successfully
+        // Set the cookie
+        res.cookie('u', {
+            i: authResult.user.id(),
+            f: authResult.user.get('firstname'),
+            l: authResult.user.get('lastname'),
+            e: authResult.user.get('email'),
+            t: authResult.token
+        }, {
+            signed: true,
+            maxAge: 30 * 24 * 60 * 60 * 1000, //30 days
+            httpOnly: true
+        });
+        if (success) {
+            success(authResult);
+        } else {
+            return res.json({
+                user: {
+                    id: authResult.user.id(),
+                    fname: authResult.user.get('firstname'),
+                    lname: authResult.user.get('lastname')
+                }
+            });
+        }
+    }, function (status) {
+        if (error) error(status);
+        else return res.status(401).json(transformer.toError('user_signup', status));
     });
 };
 
@@ -550,35 +634,7 @@ exports.register = function (req, res) {
         'password': pwd
     };
 
-    //initialize the SDK
-    var sdk = require('./appacitive.init');
-    var Appacitive = sdk.init();
-
-    Appacitive.Users.signup(user, function (authResult) {
-        // User has been logged in successfully
-        // Set the cookie
-        res.cookie('u', {
-            i: authResult.user.id(),
-            f: authResult.user.get('firstname'),
-            l: authResult.user.get('lastname'),
-            e: authResult.user.get('email'),
-            t: authResult.token
-        }, {
-            signed: true,
-            maxAge: 30 * 24 * 60 * 60 * 1000, //30 days
-            httpOnly: true
-        })
-
-        return res.json({
-            user: {
-                id: authResult.user.id(),
-                fname: authResult.user.get('firstname'),
-                lname: authResult.user.get('lastname')
-            }
-        });
-    }, function (status) {
-        return res.status(401).json(transformer.toError('user_signup', status));
-    });
+    _register(user, req, res);
 };
 
 exports.recover = function (req, res) {
@@ -609,7 +665,7 @@ exports.recover = function (req, res) {
 exports.reset = function (req, res) {
     //get the state of app
     var app = require('../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     //initialize the SDK
     var sdk = require('./appacitive.init');
@@ -659,7 +715,7 @@ exports.update = function (req, res) {
 
     //get the state of app
     var app = require('../shared/app.init');
-    var state = app.init(req);
+    var state = app.init(req, res);
 
     //get the transformer
     var transformer = require('./infra/transformer');

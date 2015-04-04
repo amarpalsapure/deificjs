@@ -10,7 +10,7 @@ exports.search = function(req, res) {
 
 	//get the state of app
 	var app = require('../shared/app.init');
-	var state = app.init(req);
+	var state = app.init(req, res);
 
 	//initialize the SDK
 	var sdk = require('./appacitive.init');

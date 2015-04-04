@@ -1,4 +1,4 @@
-exports.init = function (req) {
+exports.init = function (req, res) {
     var config = process.config;
 
     var state = {
@@ -16,7 +16,7 @@ exports.init = function (req) {
         token: '',
         isSA: false
     };
-    if (req && req.signedCookies && req.signedCookies.u) {
+    if (req && req.signedCookies && req.signedCookies.u && req.cookies.__app_session) {
         state.hidelogin = 'hide';
         state.hidelogout = '';
         state.isauth = true;
@@ -32,6 +32,8 @@ exports.init = function (req) {
 
 
         state.token = req.signedCookies.u.t;
+    } else {
+        res.clearCookie('u');
     }
     var isfbenabled = false, istwitterenbalbed = false;
     if (process.config.fbappid != '') isfbenabled = true;
