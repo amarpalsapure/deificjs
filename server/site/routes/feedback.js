@@ -17,5 +17,5 @@ exports.index = function(req, res){
         //delete the cookie, and redirect user to login page
         res.clearCookie('u');
         res.redirect('/users/login?returnurl=/feedback&s=1');
-    });
+    }, req, res);
 };

@@ -26,7 +26,7 @@ exports.add = function (req, res) {
         //delete the cookie, and redirect user to login page
         res.clearCookie('u');
         res.redirect('/users/login?returnurl=' + req.path + '&s=1');
-    });
+    }, req, res);
 };
 
 exports.info = function (req, res) {
